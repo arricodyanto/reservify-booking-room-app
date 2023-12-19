@@ -3,14 +3,16 @@ package repository
 import (
 	"booking-room-app/config"
 	"booking-room-app/entity"
+	"booking-room-app/shared/model"
 	"database/sql"
 	"log"
+	"math"
 )
 
 type RoomRepository interface {
 	Create(payload entity.Room) (entity.Room, error)
 	Get(id string) (entity.Room, error)
-	List() ([]entity.Room, error)
+	List(page, size int) ([]entity.Room, model.Paging, error)
 	Update(payload entity.Room) (entity.Room, error)
 	UpdateStatus(payload entity.Room) (entity.Room, error)
 }
@@ -50,12 +52,14 @@ func (r *roomRepository) Get(id string) (entity.Room, error) {
 }
 
 // List implements RoomRepository.
-func (r *roomRepository) List() ([]entity.Room, error) {
+func (r *roomRepository) List(page, size int) ([]entity.Room, model.Paging, error) {
 	var rooms []entity.Room
-	rows, err := r.db.Query(config.SelectRoomList)
+	offset := (page - 1) * size
+
+	rows, err := r.db.Query(config.SelectRoomList, size, offset)
 	if err != nil {
 		log.Println("roomRepository.ListQuery", err.Error())
-		return []entity.Room{}, err
+		return []entity.Room{}, model.Paging{}, err
 	}
 
 	for rows.Next() {
@@ -63,13 +67,25 @@ func (r *roomRepository) List() ([]entity.Room, error) {
 		err := rows.Scan(&room.ID, &room.Name, &room.RoomType, &room.Capacity, &room.Status, &room.CreatedAt, &room.UpdatedAt)
 		if err != nil {
 			log.Println("roomRepository.ListScan", err.Error())
-			return []entity.Room{}, err
+			return []entity.Room{}, model.Paging{}, err
 		}
 
 		rooms = append(rooms, room)
 	}
 
-	return rooms, nil
+	totalRows := 0
+	if err := r.db.QueryRow(config.SelectCountRoom).Scan(&totalRows); err != nil {
+		return nil, model.Paging{}, err
+	}
+
+	paging := model.Paging{
+		Page:        page,
+		RowsPerPage: size,
+		TotalRows:   totalRows,
+		TotalPages:  int(math.Ceil(float64(totalRows) / float64(size))),
+	}
+
+	return rooms, paging, nil
 }
 
 // Update implements RoomRepository.

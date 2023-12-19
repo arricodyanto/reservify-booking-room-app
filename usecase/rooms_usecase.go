@@ -3,6 +3,7 @@ package usecase
 import (
 	"booking-room-app/entity"
 	"booking-room-app/repository"
+	"booking-room-app/shared/model"
 	"fmt"
 	"strings"
 	"time"
@@ -11,7 +12,7 @@ import (
 type RoomUseCase interface {
 	RegisterNewRoom(payload entity.Room) (entity.Room, error)
 	FindRoomByID(id string) (entity.Room, error)
-	FindAllRoom() ([]entity.Room, error)
+	FindAllRoom(page, size int) ([]entity.Room, model.Paging, error)
 	UpdateRoomDetail(payload entity.Room) (entity.Room, error)
 	UpdateRoomStatus(payload entity.Room) (entity.Room, error)
 }
@@ -21,8 +22,8 @@ type roomUseCase struct {
 }
 
 // FindAllRoom implements RoomUseCase.
-func (r *roomUseCase) FindAllRoom() ([]entity.Room, error) {
-	return r.repo.List()
+func (r *roomUseCase) FindAllRoom(page, size int) ([]entity.Room, model.Paging, error) {
+	return r.repo.List(page, size)
 }
 
 // FindRoomByID implements RoomUseCase.
