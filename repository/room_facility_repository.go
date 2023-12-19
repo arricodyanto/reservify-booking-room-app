@@ -53,7 +53,7 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 	}
 
 	totalRows := 0
-	if err := t.db.QueryRow(config.GetIdListRoomFacility).Scan(&totalRows); err != nil {
+	if err := t.db.QueryRow(config.GetCountRoomFacility).Scan(&totalRows); err != nil {
 		return nil, model.Paging{}, err
 	}
 
