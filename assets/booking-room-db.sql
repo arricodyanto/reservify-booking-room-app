@@ -19,14 +19,14 @@ CREATE TABLE facilities (
     quantity INT
 );
 
-CREATE TYPE status_type AS ENUM ('available', 'booked');
+CREATE TYPE status_type AS ENUM ('available', 'booked', 'unavailable' );
 
 CREATE TABLE rooms (
     id   uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name      VARCHAR(100),
     room_type VARCHAR(100),
     capacity  INT,
-    status status_type DEFAULT 'available', -- 'available', 'booked'
+    status status_type DEFAULT 'available', -- 'available', 'booked', 'unavailable'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
