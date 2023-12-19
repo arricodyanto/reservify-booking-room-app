@@ -12,3 +12,5 @@ fitur
 format yyyy-mm-dd hh-mm-ss
 
 pertanyaan : apakah laporannya dibuat otomatis dalam applikasi atau tidak?
+(dibuat 2 endpoint yang mana memfilter tanggal dan download)
+

@@ -4,7 +4,7 @@ package repository
 // get employees by id (GA, ADMIN) -GET
 // create employee (ADMIN) -POST
 // update employee (ADMIN) -POST
-// delete an employee (ADMIN) -DELETE
+// delete an employee (ADMIN) -DELETE (nanti dulu deh!!!)
 
 
 
