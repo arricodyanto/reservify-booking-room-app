@@ -77,7 +77,7 @@ func (r *roomRepository) Update(payload entity.Room) (entity.Room, error) {
 	var room entity.Room
 	room.ID = payload.ID
 
-	err := r.db.QueryRow(config.UpdateRoomByID, room.ID, payload.Name, payload.RoomType, payload.Capacity, payload.Capacity, payload.Status, payload.UpdatedAt).Scan(&room.CreatedAt)
+	err := r.db.QueryRow(config.UpdateRoomByID, room.ID, payload.Name, payload.RoomType, payload.Capacity, payload.Status, payload.UpdatedAt).Scan(&room.CreatedAt)
 	if err != nil {
 		log.Println("roomRepository.UpdateQueryRow", err.Error())
 		return entity.Room{}, err
