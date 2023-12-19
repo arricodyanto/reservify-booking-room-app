@@ -17,7 +17,7 @@ type RoomFacilityController struct {
 	// authMiddleware middleware.AuthMiddleware
 }
 
-func (t *RoomFacilityController) createHandler(ctx *gin.Context) {
+func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	var payload entity.RoomFacility
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
@@ -32,7 +32,7 @@ func (t *RoomFacilityController) createHandler(ctx *gin.Context) {
 	common.SendCreateResponse(ctx, transactions, "Created")
 }
 
-func (t *RoomFacilityController) listHandler(ctx *gin.Context) {
+func (t *RoomFacilityController) listRoomFacilityHandler(ctx *gin.Context) {
 	page, _ := strconv.Atoi(ctx.Query("page"))
 	size, _ := strconv.Atoi(ctx.Query("size"))
 
@@ -49,7 +49,7 @@ func (t *RoomFacilityController) listHandler(ctx *gin.Context) {
 	common.SendPagedResponse(ctx, response, paging, "Ok")
 }
 
-func (t *RoomFacilityController) getTransactionById(ctx *gin.Context) {
+func (t *RoomFacilityController) getRoomFacilityById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	transactions, err := t.transactionUC.FindRoomFacilityById(id)
 	if err != nil {
@@ -60,7 +60,7 @@ func (t *RoomFacilityController) getTransactionById(ctx *gin.Context) {
 	common.SendSingleResponse(ctx, transactions, "Ok")
 }
 
-func (t *RoomFacilityController) updateStatusHandler(ctx *gin.Context) {
+func (t *RoomFacilityController) updateRoomFacilityHandler(ctx *gin.Context) {
 	var payload entity.RoomFacility
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
@@ -76,10 +76,10 @@ func (t *RoomFacilityController) updateStatusHandler(ctx *gin.Context) {
 }
 
 func (t *RoomFacilityController) Route() {
-	t.rg.GET(config.TransactionList, t.listHandler)
-	t.rg.GET(config.TransactionGetById, t.getTransactionById)
-	t.rg.POST(config.TransactionCreate, t.createHandler)
-	t.rg.PUT(config.TransactionUpdatePerm, t.updateStatusHandler)
+	t.rg.GET(config.RoomFacilityList, t.listRoomFacilityHandler)
+	t.rg.GET(config.RoomFacilityGetById, t.getRoomFacilityById)
+	t.rg.POST(config.RoomFacilityCreate, t.createRoomFacilityHandler)
+	t.rg.PUT(config.RoomFacilityUpdate, t.updateRoomFacilityHandler)
 }
 
 func NewRoomFacilityController(transactionUC usecase.RoomFacilityUsecase, rg *gin.RouterGroup) *RoomFacilityController {
