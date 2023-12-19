@@ -3,8 +3,11 @@ package controller
 import (
 	"booking-room-app/config"
 	"booking-room-app/entity"
+	"booking-room-app/shared/common"
+	"booking-room-app/shared/model"
 	"booking-room-app/usecase"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,69 +20,69 @@ type RoomController struct {
 func (r *RoomController) createHandler(c *gin.Context) {
 	var payload entity.Room
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		// send error
+		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	room, err := r.roomUC.RegisterNewRoom(payload)
 	if err != nil {
-		// senderror
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	// sendsingle
-	fmt.Println(room)
+	common.SendCreateResponse(c, room, "Created")
 }
 
 func (r *RoomController) getHandler(c *gin.Context) {
 	id := c.Param("id")
 	room, err := r.roomUC.FindRoomByID(id)
 	if err != nil {
-		// senderror
+		common.SendErrorResponse(c, http.StatusNotFound, fmt.Sprintf("Room with ID %s not found", id))
 		return
 	}
-	// sendsingle
-	fmt.Println(room)
+	common.SendSingleResponse(c, room, "Ok")
 }
 
 func (r *RoomController) listHandler(c *gin.Context) {
-	room, err := r.roomUC.FindAllRoom()
+	rooms, err := r.roomUC.FindAllRoom()
 	if err != nil {
-		// senderror
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	// sendpaged
-	fmt.Println(room)
+
+	var response []interface{}
+	for _, v := range rooms {
+		response = append(response, v)
+	}
+	common.SendPagedResponse(c, response, model.Paging{}, "Ok")
 }
 
 func (r *RoomController) updateDetailHandler(c *gin.Context) {
 	var payload entity.Room
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		// send error
+		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	room, err := r.roomUC.UpdateRoomDetail(payload)
 	if err != nil {
-		// senderror
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	// sendsingle
-	fmt.Println(room)
+	common.SendCreateResponse(c, room, "Updated")
 }
 func (r *RoomController) updateStatusHandler(c *gin.Context) {
 	var payload entity.Room
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		// send error
+		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	room, err := r.roomUC.UpdateRoomStatus(payload)
 	if err != nil {
-		// senderror
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	// sendsingle
-	fmt.Println(room)
+	common.SendSingleResponse(c, room, "Ok")
 }
 
 func (r *RoomController) Route() {
