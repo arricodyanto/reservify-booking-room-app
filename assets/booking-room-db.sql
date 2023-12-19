@@ -11,11 +11,12 @@ CREATE TABLE employees (
     updated_at TIMESTAMP
 );
 
+
 CREATE TABLE facilities (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name     VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     quantity INT
 );
 
