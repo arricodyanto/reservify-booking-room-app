@@ -4,6 +4,7 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/repository"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -49,6 +50,7 @@ func (r *roomUseCase) UpdateRoomDetail(payload entity.Room) (entity.Room, error)
 		return entity.Room{}, fmt.Errorf("oops, field required")
 	}
 
+	payload.Status = strings.ToLower(payload.Status)
 	payload.UpdatedAt = time.Now()
 	room, err := r.repo.Update(payload)
 	if err != nil {
@@ -63,6 +65,7 @@ func (r *roomUseCase) UpdateRoomStatus(payload entity.Room) (entity.Room, error)
 		return entity.Room{}, fmt.Errorf("oops, field required")
 	}
 
+	payload.Status = strings.ToLower(payload.Status)
 	payload.UpdatedAt = time.Now()
 	room, err := r.repo.UpdateStatus(payload)
 	if err != nil {
