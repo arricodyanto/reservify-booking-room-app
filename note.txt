@@ -1,5 +1,5 @@
 fitur 
-1. Login -POST (generate token) expired 1 jam
+1. Login -POST (generate token) expired 1 jam (alief)
 2. get all rooms (ALL ROLE) -GET
 3. Request booking rooms (employee & admin) -POST
 4. permission list (GA) -GET
