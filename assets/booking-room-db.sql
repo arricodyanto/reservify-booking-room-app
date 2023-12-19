@@ -47,12 +47,12 @@ CREATE TYPE transaction_status AS ENUM ('pending', 'accepted', 'declined');
 
 CREATE TABLE transactions (
     ID INT PRIMARY KEY,
-    employe_id uuid,
+    employee_id uuid,
     room_id uuid,
     decription TEXT,
     status transaction_status DEFAULT 'pending', -- 'pending', 'accepted', 'declined'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    FOREIGN KEY (employe_id) REFERENCES employees(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
