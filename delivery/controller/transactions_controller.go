@@ -75,6 +75,11 @@ func (t *TransactionsController) getTransactionByEmployeeId(ctx *gin.Context) {
 
 func (t *TransactionsController) updateStatusHandler(ctx *gin.Context) {
 	var payload entity.Transaction
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	transactions, err := t.transactionUC.AccStatusBooking(payload)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
