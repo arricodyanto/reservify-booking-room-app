@@ -35,6 +35,7 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 		log.Println("roomFacilityRepository.Query:", err.Error())
 		return nil, model.Paging{}, err
 	}
+
 	for rows.Next() {
 		var roomFacility entity.RoomFacility
 		err = rows.Scan(
@@ -50,10 +51,10 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 		}
 		roomFacilities = append(roomFacilities, roomFacility)
 	}
+
 	totalRows := 0
 	if err := t.db.QueryRow(config.GetIdListRoomFacility).Scan(&totalRows); err != nil {
-		return nil,
-			model.Paging{}, err
+		return nil, model.Paging{}, err
 	}
 
 	paging := model.Paging{
