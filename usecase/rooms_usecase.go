@@ -13,6 +13,7 @@ type RoomUseCase interface {
 	RegisterNewRoom(payload entity.Room) (entity.Room, error)
 	FindRoomByID(id string) (entity.Room, error)
 	FindAllRoom(page, size int) ([]entity.Room, model.Paging, error)
+	FindAllRoomStatus(status string, page, size int) ([]entity.Room, model.Paging, error)
 	UpdateRoomDetail(payload entity.Room) (entity.Room, error)
 	UpdateRoomStatus(payload entity.Room) (entity.Room, error)
 }
@@ -24,6 +25,11 @@ type roomUseCase struct {
 // FindAllRoom implements RoomUseCase.
 func (r *roomUseCase) FindAllRoom(page, size int) ([]entity.Room, model.Paging, error) {
 	return r.repo.List(page, size)
+}
+
+// FindAllRoomStatus implements RoomUseCase.
+func (r *roomUseCase) FindAllRoomStatus(status string, page, size int) ([]entity.Room, model.Paging, error) {
+	return r.repo.ListStatus(status, page, size)
 }
 
 // FindRoomByID implements RoomUseCase.

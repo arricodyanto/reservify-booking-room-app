@@ -46,15 +46,24 @@ func (r *RoomController) getHandler(c *gin.Context) {
 func (r *RoomController) listHandler(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	size, _ := strconv.Atoi(c.Query("size"))
+	status := c.Query("status")
 
 	var rooms []entity.Room
 	var paging model.Paging
 	var err error
 
-	if page == 0 && size == 0 {
-		rooms, paging, err = r.roomUC.FindAllRoom(1, 5)
+	if status == "" {
+		if page == 0 && size == 0 {
+			rooms, paging, err = r.roomUC.FindAllRoom(1, 5)
+		} else {
+			rooms, paging, err = r.roomUC.FindAllRoom(page, size)
+		}
 	} else {
-		rooms, paging, err = r.roomUC.FindAllRoom(page, size)
+		if page == 0 && size == 0 {
+			rooms, paging, err = r.roomUC.FindAllRoomStatus(status, 1, 5)
+		} else {
+			rooms, paging, err = r.roomUC.FindAllRoomStatus(status, page, size)
+		}
 	}
 
 	if err != nil {
