@@ -18,8 +18,8 @@ import (
 type RoomFacilityRepository interface {
 	Create(payload entity.RoomFacility) (entity.RoomFacility, error)
 	List(page, size int) ([]entity.RoomFacility, model.Paging, error)
-	GetTransactionById(id string) ([]entity.RoomFacility, error)
-	UpdatePemission(payload entity.RoomFacility) (entity.RoomFacility, error)
+	GetTransactionById(id string) (entity.RoomFacility, error)
+	UpdateRoomFacility(payload entity.RoomFacility) (entity.RoomFacility, error)
 }
 
 type roomFacilityRepository struct {
@@ -70,29 +70,19 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 }
 
 // get by ID room facilities (ADMIN) -GET
-func (t *roomFacilityRepository) GetTransactionById(id string) ([]entity.RoomFacility, error) {
-	var roomFacilities []entity.RoomFacility
-	rows, err := t.db.Query(config.SelectRoomFacilityByID, id)
+func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacility, error) {
+	var roomFacility entity.RoomFacility
+	err := t.db.QueryRow(config.SelectRoomFacilityByID, id).Scan(
+		&roomFacility.ID,
+		&roomFacility.RoomId,
+		&roomFacility.FacilityId,
+		&roomFacility.Quantity,
+		&roomFacility.CreatedAt,
+		&roomFacility.UpdatedAt)
 	if err != nil {
-		return nil, err
+		return entity.RoomFacility{}, err
 	}
-	for rows.Next() {
-		var roomFacility entity.RoomFacility
-		err := rows.Scan(
-			&roomFacility.ID,
-			&roomFacility.RoomId,
-			&roomFacility.FacilityId,
-			&roomFacility.Quantity,
-			&roomFacility.CreatedAt,
-			&roomFacility.UpdatedAt)
-		if err != nil {
-			log.Println("roomFacilityRepository.Rows.Next():",
-				err.Error())
-			return nil, err
-		}
-		roomFacilities = append(roomFacilities, roomFacility)
-	}
-	return roomFacilities, nil
+	return roomFacility, nil
 }
 
 // create room facilities (ADMIN) -POST
@@ -116,7 +106,7 @@ func (t *roomFacilityRepository) Create(payload entity.RoomFacility) (entity.Roo
 }
 
 // update room facilites (ADMIN) -GET
-func (t *roomFacilityRepository) UpdatePemission(payload entity.RoomFacility) (entity.RoomFacility, error) {
+func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility) (entity.RoomFacility, error) {
 	var roomFacility entity.RoomFacility
 
 	err := t.db.QueryRow(
