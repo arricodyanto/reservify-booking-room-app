@@ -20,6 +20,10 @@ type roomFacilityUsecase struct {
 }
 
 func (rf *roomFacilityUsecase) FindAllRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error) {
+	if page == 0 && size == 0 {
+		page = 1
+		size = 5
+	}
 	return rf.repo.List(page, size)
 }
 
