@@ -121,23 +121,15 @@ func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string) ([
 
 // (create transaction) Request booking rooms (employee & admin) -POST
 func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Transaction, error) {
-	var transactions entity.Transaction
-	// updatedAtStr := payload.UpdatedAt.Format("2006-01-02 15:04:05")
-	// createdAtStr := payload.CreatedAt.Format("2006-01-02 15:04:05")
-
+	var transactions entity.Transaction	
 	err := t.db.QueryRow(config.InsertTransactions,
-	payload.EmployeeId,
-	payload.RoomId,
-	payload.Description,
-	payload.UpdatedAt).Scan(&payload.ID, &payload.Status, &payload.CreatedAt)
-	if err != nil {
-		return entity.Transaction{}, err
-	}
-	// updatedAt, _ := time.Parse("2006-01-02 15:04:05", updatedAtStr)
-	// createdAt, _ := time.Parse("2006-01-02 15:04:05", createdAtStr)
-
-	// payload.UpdatedAt = updatedAt
-	// payload.CreatedAt = createdAt
+		payload.EmployeeId,
+		payload.RoomId,
+		payload.Description,
+		payload.UpdatedAt).Scan(&payload.ID, &payload.Status, &payload.CreatedAt)
+		if err != nil {
+			return entity.Transaction{}, err
+		}
 
 	transactions = payload
 	return transactions, err
@@ -146,14 +138,15 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 // update permission (GA) -PUT
 func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (entity.Transaction, error) {
 	var transactions entity.Transaction
-
-	 err := t.db.QueryRow(config.UpdatePermission,
+	
+	err := t.db.QueryRow(config.UpdatePermission,
 		payload.Status,
-		payload.ID).Scan(&transactions.EmployeeId, &transactions.RoomId,&transactions.Description, &transactions.UpdatedAt)
-	if err != nil {
-		log.Println("transactionsRepository.UpdateStatus:", err.Error())
-		return entity.Transaction{}, err
-	}
+		payload.ID,
+		payload.UpdatedAt).Scan(&payload.EmployeeId, &payload.RoomId,&payload.Description, &payload.CreatedAt)
+		if err != nil {
+			log.Println("transactionsRepository.UpdateStatus:", err.Error())
+			return entity.Transaction{}, err
+		}
 
 	transactions = payload
 	return transactions, err

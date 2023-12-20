@@ -47,6 +47,7 @@ func (t *transactionsUsecase) RequestNewBookingRooms(payload entity.Transaction)
 }
 
 func (t *transactionsUsecase) AccStatusBooking(payload entity.Transaction) (entity.Transaction, error) {
+	payload.UpdatedAt = time.Now()
 	transactions, err := t.repo.UpdatePemission(payload)
 	if err != nil {
 		// fmt.Println(payload.Status)
