@@ -9,7 +9,7 @@ const (
 	RoomGetById      = "/rooms/:id"
 	RoomUpdateStatus = "/rooms/status"
 	RoomUpdate       = "/rooms"
-	RoomDelete       = "/rooms/:id"
+	// RoomDelete       = "/rooms/:id"
 
 	// Facilities
 	FacilitiesCreate  = "/facilities"

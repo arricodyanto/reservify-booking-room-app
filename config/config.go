@@ -40,6 +40,17 @@ func (c *Config) ConfigConfiguration() error {
 	}
 
 	c.ApiConfig = ApiConfig{ApiPort: os.Getenv("API_PORT")}
+	// tokenExpire, _ := strconv.Atoi(os.Getenv("TOKEN_EXPIRE"))
+	// c.TokenConfig = TokenConfig{
+	// 	IssuerName:       os.Getenv("TOKEN_ISSUE"),
+	// 	JwtSignatureKey:  []byte(os.Getenv("TOKEN_SECRET")),
+	// 	JwtSigningMethod: jwt.SigningMethodHS256,
+	// 	JwtExpiresTime:   time.Duration(tokenExpire) * time.Minute,
+	// }
+
+	if c.Host == "" || c.Port == "" || c.User == "" || c.Name == "" || c.Driver == "" || c.ApiPort == "" {
+		return fmt.Errorf("missing required environment")
+	}
 
 	return nil
 }
