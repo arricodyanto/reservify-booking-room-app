@@ -10,7 +10,6 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/shared/model"
 	"database/sql"
-	"fmt"
 	"log"
 	"math"
 )
@@ -19,7 +18,7 @@ type RoomFacilityRepository interface {
 	Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, error)
 	List(page, size int) ([]entity.RoomFacility, model.Paging, error)
 	GetTransactionById(id string) (entity.RoomFacility, error)
-	UpdateRoomFacility(payload entity.RoomFacility) (entity.RoomFacility, error)
+	UpdateRoomFacility(payload entity.RoomFacility, newFacilityQuantity int) (entity.RoomFacility, error)
 	GetQuantityFacilityByID(id string) (int, error)
 }
 
@@ -141,10 +140,18 @@ func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity
 }
 
 // update room facilites (ADMIN) -GET
-func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility) (entity.RoomFacility, error) {
+func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility, newFacilityQuantity int) (entity.RoomFacility, error) {
 	var roomFacility entity.RoomFacility
 
-	err := t.db.QueryRow(
+	// begin transaction
+	tx, err := t.db.Begin()
+	if err != nil {
+		log.Println("roomFacilityRepository.BeginTransaction:", err.Error())
+		return entity.RoomFacility{}, err
+	}
+
+	// update room-facility
+	err = tx.QueryRow(
 		config.UpdateRoomFacility,
 		payload.RoomId,
 		payload.FacilityId,
@@ -155,8 +162,24 @@ func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility)
 		return entity.RoomFacility{}, err
 	}
 
+	// change facility quantity
+	if newFacilityQuantity != -1 {
+		_, err = tx.Exec(config.UpdateQuantityFacilityByID, newFacilityQuantity, payload.FacilityId)
+		if err != nil {
+			log.Println("roomFacilityRepository.QueryChangeQuantity:", err.Error())
+			return entity.RoomFacility{}, err
+		}
+	}
+
+	// commit transaction
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		log.Println("roomFacilityRepository.CommitTransaction:", err.Error())
+		return entity.RoomFacility{}, err
+	}
+
 	roomFacility = payload
-	fmt.Println(payload)
 	return roomFacility, err
 }
 
