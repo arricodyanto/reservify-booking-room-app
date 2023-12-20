@@ -52,7 +52,7 @@ func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.Room
 		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to get previous data :%v", err.Error())
 	}
 
-	// parsial update checking
+	// partial update checking
 	if payload.RoomId == "" {
 		payload.RoomId = oldRoomFacility.RoomId
 	}
