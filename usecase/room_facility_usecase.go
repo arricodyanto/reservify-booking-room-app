@@ -32,10 +32,7 @@ func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) ([]entity.RoomFac
 }
 
 func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error) {
-	// updatedAtStr := payload.UpdatedAt.Format("2006-01-02 15:04:05")
 	payload.UpdatedAt = time.Now()
-	// updatedAt, _ := time.Parse("2006-01-02 15:04:05", updatedAtStr)
-	// payload.UpdatedAt = updatedAt
 
 	transactions, err := rf.repo.Create(payload)
 	if err != nil {
@@ -47,7 +44,6 @@ func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFac
 func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error) {
 	transactions, err := rf.repo.UpdatePemission(payload)
 	if err != nil {
-		// fmt.Println(payload.Status)
 		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to update data transations :%v", err.Error())
 	}
 	return transactions, nil
