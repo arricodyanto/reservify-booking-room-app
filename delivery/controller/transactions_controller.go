@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,7 +38,35 @@ func (t *TransactionsController) listHandler(ctx *gin.Context) {
 	page, _ := strconv.Atoi(ctx.Query("page"))
 	size, _ := strconv.Atoi(ctx.Query("size"))
 
-	transactions, paging, err := t.transactionUC.FindAllTransactions(page, size)
+	startDate := ctx.Query("startDate")
+	endDate := ctx.Query("endDate")
+
+	if page == 0 || size == 0 {
+		page = 1
+		size = 5
+	}
+	
+	if startDate == "" {
+		startDate = "1000-01-01" 
+	}
+
+	if endDate == "" {
+		endDate = "3000-12-31" 
+	}
+
+	startDateTime, err := time.Parse("2006-01-02", startDate)
+	if err != nil {
+		common.SendErrorResponse(ctx, http.StatusBadRequest, "Invalid startDate format")
+		return
+	}
+
+	endDateTime, err := time.Parse("2006-01-02", endDate)
+	if err != nil {
+		common.SendErrorResponse(ctx, http.StatusBadRequest, "Invalid endDate format")
+		return
+	}
+
+	transactions, paging, err := t.transactionUC.FindAllTransactions(page, size, startDateTime, endDateTime)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return

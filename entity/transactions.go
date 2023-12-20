@@ -6,8 +6,12 @@ type Transaction struct {
 	ID          string `json:"id"`
 	EmployeeId  string `json:"employeeId"`
 	RoomId      string `json:"roomId"`
+	RoomFacilities []RoomFacility `json:"roomFacilities,omitempty"`
 	Description string `json:"description"`
 	Status      string `json:"status"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	StartTime time.Time `json:"startTime"`
+	EndTime time.Time `json:"endTime"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+
 }

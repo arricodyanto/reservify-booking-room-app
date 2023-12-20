@@ -9,7 +9,7 @@ import (
 )
 
 type TransactionsUsecase interface {
-	FindAllTransactions(page, size int) ([]entity.Transaction, model.Paging, error)
+	FindAllTransactions(page, size int,startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error)
 	FindTransactionsById(id string) ([]entity.Transaction, error)
 	FindTransactionsByEmployeeId(employeeId string) ([]entity.Transaction, error)
 	RequestNewBookingRooms(payload entity.Transaction) (entity.Transaction, error)
@@ -21,8 +21,8 @@ type transactionsUsecase struct {
 	repo repository.TransactionsRepository
 }
 
-func (t *transactionsUsecase) FindAllTransactions(page, size int) ([]entity.Transaction, model.Paging, error) {
-	return t.repo.List(page, size)
+func (t *transactionsUsecase) FindAllTransactions(page, size int, startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error) {
+	return t.repo.List(page, size, startDate, endDate)
 }
 
 func (t *transactionsUsecase) FindTransactionsById(id string) ([]entity.Transaction, error) {
