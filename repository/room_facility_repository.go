@@ -97,26 +97,18 @@ func (t *roomFacilityRepository) GetTransactionById(id string) ([]entity.RoomFac
 // create room facilities (ADMIN) -POST
 func (t *roomFacilityRepository) Create(payload entity.RoomFacility) (entity.RoomFacility, error) {
 	var roomFacilities entity.RoomFacility
-	// updatedAtStr := payload.UpdatedAt.Format("2006-01-02 15:04:05")
-	// createdAtStr := payload.CreatedAt.Format("2006-01-02 15:04:05")
-
 	err := t.db.QueryRow(
 		config.InsertRoomFacility,
 		payload.RoomId,
 		payload.FacilityId,
-		payload.Quantity,
-		payload.UpdatedAt).
+		payload.Quantity).
 		Scan(
 			&payload.ID,
-			&payload.CreatedAt)
+			&payload.CreatedAt,
+			&payload.UpdatedAt)
 	if err != nil {
 		return entity.RoomFacility{}, err
 	}
-	// updatedAt, _ := time.Parse("2006-01-02 15:04:05", updatedAtStr)
-	// createdAt, _ := time.Parse("2006-01-02 15:04:05", createdAtStr)
-
-	// payload.UpdatedAt = updatedAt
-	// payload.CreatedAt = createdAt
 
 	roomFacilities = payload
 	return roomFacilities, err
