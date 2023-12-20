@@ -123,10 +123,9 @@ func (t *roomFacilityRepository) UpdatePemission(payload entity.RoomFacility) (e
 		payload.RoomId,
 		payload.FacilityId,
 		payload.Quantity,
-		payload.UpdatedAt,
-		payload.ID).Scan(&roomFacility.CreatedAt)
+		payload.ID).Scan(&roomFacility.CreatedAt, &roomFacility.UpdatedAt)
 	if err != nil {
-		log.Println("roomFacilityRepository.UpdateStatus:", err.Error())
+		log.Println("roomFacilityRepository.UpdateRoomFacility:", err.Error())
 		return entity.RoomFacility{}, err
 	}
 
