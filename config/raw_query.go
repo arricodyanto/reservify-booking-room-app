@@ -14,5 +14,8 @@ const (
 	InsertTransactions = `INSERT INTO transactions (employee_id, room_id, description, start_time, end_time, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, status, created_at`
 
 	UpdatePermission = `UPDATE transactions SET status = $1, updated_at = $3 WHERE id = $2 RETURNING employee_id, room_id, description, start_time, end_time, created_at`
+
+	InsertRoomFacility     = `INSERT INTO trx_room_facility (room_id, facility_id, quantity) VALUES ($1, $2, $3)`
+	UpdateFacilityQuantity = `UPDATE facilities SET quantity - $1 WHERE id = $2`
 	// `SELECT id, date, amount, transaction_type, balance, description, created_at, updated_at FROM expenses WHERE LOWER(transaction_type::text) = LOWER($1)`
 )

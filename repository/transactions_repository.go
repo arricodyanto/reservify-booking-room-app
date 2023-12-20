@@ -199,6 +199,25 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 		if err != nil {
 			return entity.Transaction{}, err
 		}
+		  // Insert ke tabel roomFacilities dan kurangi quantity di facilities
+		  for _, roomFacility := range payload.RoomFacilities {
+			_, err := t.db.Exec(config.InsertRoomFacility,
+				payload.ID,
+				roomFacility.FacilityId,
+				roomFacility.Quantity)
+	
+			if err != nil {
+				return entity.Transaction{}, err
+			}
+	
+			// Kurangi quantity di tabel facilities
+			_, err =t.db.Exec(config.UpdateFacilityQuantity,
+				roomFacility.Quantity,
+				roomFacility.FacilityId)
+			if err != nil {
+				return entity.Transaction{}, err
+			}
+		}
 
 	transactions = payload
 	return transactions, err
