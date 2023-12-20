@@ -27,17 +27,6 @@ func SendSingleResponse(c *gin.Context, data interface{}, message string) {
 	})
 }
 
-func SendPagedResponse(c *gin.Context, data []interface{}, paging model.Paging, message string) {
-	c.JSON(http.StatusOK, &model.PagedResponse{
-		Status: model.Status{
-			Code:    http.StatusOK,
-			Message: message,
-		},
-		Data:   data,
-		Paging: paging,
-	})
-}
-
 func SendErrorResponse(c *gin.Context, code int, message string) {
 	c.AbortWithStatusJSON(code, &model.Status{
 		Code:    code,
