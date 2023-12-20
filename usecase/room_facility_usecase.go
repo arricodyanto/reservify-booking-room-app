@@ -5,7 +5,6 @@ import (
 	"booking-room-app/repository"
 	"booking-room-app/shared/model"
 	"fmt"
-	"time"
 )
 
 type RoomFacilityUsecase interface {
@@ -35,7 +34,6 @@ func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) (entity.RoomFacil
 
 // add room-facility
 func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error) {
-	payload.UpdatedAt = time.Now()
 
 	transactions, err := rf.repo.Create(payload)
 	if err != nil {
