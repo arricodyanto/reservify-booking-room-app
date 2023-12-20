@@ -10,6 +10,7 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/shared/model"
 	"database/sql"
+	"fmt"
 	"log"
 	"math"
 )
@@ -123,13 +124,14 @@ func (t *roomFacilityRepository) UpdatePemission(payload entity.RoomFacility) (e
 		payload.RoomId,
 		payload.FacilityId,
 		payload.Quantity,
-		payload.ID).Scan(&roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+		payload.ID).Scan(&payload.CreatedAt, &payload.UpdatedAt)
 	if err != nil {
 		log.Println("roomFacilityRepository.UpdateRoomFacility:", err.Error())
 		return entity.RoomFacility{}, err
 	}
 
 	roomFacility = payload
+	fmt.Println(payload)
 	return roomFacility, err
 }
 
