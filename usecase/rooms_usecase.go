@@ -36,7 +36,11 @@ func (r *roomUseCase) RegisterNewRoom(payload entity.Room) (entity.Room, error) 
 	if payload.Name == "" || payload.RoomType == "" || payload.Capacity == 0 {
 		return entity.Room{}, fmt.Errorf("oops, field required")
 	}
-
+	if payload.Status == "" {
+		payload.Status = "available"
+	} else {
+		payload.Status = strings.ToLower(payload.Status)
+	}
 	payload.UpdatedAt = time.Now()
 	room, err := r.repo.Create(payload)
 	if err != nil {
@@ -50,8 +54,12 @@ func (r *roomUseCase) UpdateRoomDetail(payload entity.Room) (entity.Room, error)
 	if payload.ID == "" || payload.Name == "" || payload.RoomType == "" || payload.Capacity == 0 || payload.Status == "" {
 		return entity.Room{}, fmt.Errorf("oops, field required")
 	}
+	if payload.Status == "" {
+		payload.Status = "available"
+	} else {
+		payload.Status = strings.ToLower(payload.Status)
+	}
 
-	payload.Status = strings.ToLower(payload.Status)
 	payload.UpdatedAt = time.Now()
 	room, err := r.repo.Update(payload)
 	if err != nil {
@@ -65,8 +73,12 @@ func (r *roomUseCase) UpdateRoomStatus(payload entity.Room) (entity.Room, error)
 	if payload.ID == "" || payload.Status == "" {
 		return entity.Room{}, fmt.Errorf("oops, field required")
 	}
+	if payload.Status == "" {
+		payload.Status = "available"
+	} else {
+		payload.Status = strings.ToLower(payload.Status)
+	}
 
-	payload.Status = strings.ToLower(payload.Status)
 	payload.UpdatedAt = time.Now()
 	room, err := r.repo.UpdateStatus(payload)
 	if err != nil {
