@@ -30,7 +30,6 @@ func (c *Config) ConfigConfiguration() error {
 	if err != nil {
 		return fmt.Errorf("missing env file %v", err.Error())
 	}
-
 	c.DbConfig = DbConfig{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),

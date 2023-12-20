@@ -14,14 +14,16 @@ import (
 
 type Server struct {
 	roomUC usecase.RoomUseCase
-	engine *gin.Engine
-	host   string
+	facilitiesUC usecase.FacilitiesUseCase
+	engine       *gin.Engine
+	host         string
 }
 
 func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
 
 	controller.NewRoomController(s.roomUC, rg).Route()
+	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
 }
 
 func (s *Server) Run() {
@@ -35,21 +37,25 @@ func NewServer() *Server {
 	cfg, _ := config.NewConfig()
 
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
-	// fmt.Println(dsn)
 	db, err := sql.Open(cfg.Driver, dsn)
 	if err != nil {
 		panic(err.Error())
 	}
 
+	// Inject DB ke -> repository
 	roomRepo := repository.NewRoomRepository(db)
+	facilityRepo := repository.NewFasilitesRepository(db)
 
+	// Inject REPO ke -> useCase
 	roomUC := usecase.NewRoomUseCase(roomRepo)
+	facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
 	return &Server{
 		roomUC: roomUC,
+		facilitiesUC: facilitiesUC,
 		engine: engine,
 		host:   host,
 	}
