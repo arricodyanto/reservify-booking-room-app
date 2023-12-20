@@ -34,10 +34,20 @@ func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) (entity.RoomFacil
 
 // add room-facility
 func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error) {
-
-	transactions, err := rf.repo.Create(payload)
+	// Check that the quantity entered does not exceed the quantity in facility
+	quantity, err := rf.repo.GetQuantityFacilityByID(payload.FacilityId)
 	if err != nil {
-		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to save data transations :%v", err.Error())
+		return entity.RoomFacility{}, err
+	}
+	if payload.Quantity > quantity {
+		return entity.RoomFacility{}, fmt.Errorf("oppps, quantity exceeds the facility quantity")
+	}
+	newQuantity := quantity - payload.Quantity
+
+	// create room-facility transaction
+	transactions, err := rf.repo.Create(payload, newQuantity)
+	if err != nil {
+		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to save room-facility transations :%v", err.Error())
 	}
 	return transactions, nil
 }

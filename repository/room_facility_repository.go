@@ -16,14 +16,25 @@ import (
 )
 
 type RoomFacilityRepository interface {
-	Create(payload entity.RoomFacility) (entity.RoomFacility, error)
+	Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, error)
 	List(page, size int) ([]entity.RoomFacility, model.Paging, error)
 	GetTransactionById(id string) (entity.RoomFacility, error)
 	UpdateRoomFacility(payload entity.RoomFacility) (entity.RoomFacility, error)
+	GetQuantityFacilityByID(id string) (int, error)
 }
 
 type roomFacilityRepository struct {
 	db *sql.DB
+}
+
+// get quantity from facilities by facility ID
+func (t *roomFacilityRepository) GetQuantityFacilityByID(id string) (int, error) {
+	var quantity int
+	err := t.db.QueryRow(config.GetQuantityFacilityByID, id).Scan(&quantity)
+	if err != nil {
+		return 0, err
+	}
+	return quantity, nil
 }
 
 // get all room facilities (ADMIN) -GET
@@ -86,9 +97,17 @@ func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacil
 }
 
 // create room facilities (ADMIN) -POST
-func (t *roomFacilityRepository) Create(payload entity.RoomFacility) (entity.RoomFacility, error) {
+func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, error) {
 	var roomFacilities entity.RoomFacility
-	err := t.db.QueryRow(
+
+	// begin transaction
+	tx, err := t.db.Begin()
+	if err != nil {
+		return entity.RoomFacility{}, err
+	}
+
+	// insert data
+	err = tx.QueryRow(
 		config.InsertRoomFacility,
 		payload.RoomId,
 		payload.FacilityId,
@@ -98,6 +117,22 @@ func (t *roomFacilityRepository) Create(payload entity.RoomFacility) (entity.Roo
 			&payload.CreatedAt,
 			&payload.UpdatedAt)
 	if err != nil {
+		log.Println("roomFacilityRepository.QueryInsertData:", err.Error())
+		return entity.RoomFacility{}, err
+	}
+
+	// reduce quantity in facility
+	_, err = tx.Exec(config.UpdateQuantityFacilityByID, newQuantity, payload.FacilityId)
+	if err != nil {
+		log.Println("roomFacilityRepository.QueryReduceQuantity:", err.Error())
+		return entity.RoomFacility{}, err
+	}
+
+	// commit transaction
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		log.Println("roomFacilityRepository.TransactionCommit:", err.Error())
 		return entity.RoomFacility{}, err
 	}
 
