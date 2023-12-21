@@ -107,7 +107,7 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 
 func (e *EmployeeController) Route() {
 	e.rg.GET(config.EmployeesGetById, e.getByIdHandler)
-	e.rg.GET(config.EmployeesGetById, e.getByUsernameHandler)
+	e.rg.GET(config.EmployeesGetByUsername, e.getByUsernameHandler)
 	// belum
 	// e.rg.GET(config.EmployeesList, e.getHandler)
 	// berhasil tapi belum ada validasi
