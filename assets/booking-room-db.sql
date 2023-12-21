@@ -51,7 +51,7 @@ CREATE TYPE transaction_status AS ENUM ('pending', 'accepted', 'declined');
 
 CREATE TABLE transactions (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    employe_id uuid,
+    employee_id uuid,
     room_id uuid,
     description TEXT,
     status transaction_status DEFAULT 'pending', -- 'pending', 'accepted', 'declined'
