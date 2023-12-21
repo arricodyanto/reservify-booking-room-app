@@ -13,14 +13,23 @@ import (
 )
 
 type Server struct {
-	facilitiesUC usecase.FacilitiesUseCase
-	engine       *gin.Engine
-	host         string
+	roomUC         usecase.RoomUseCase
+	facilitiesUC   usecase.FacilitiesUseCase
+	employeeUC usecase.EmployeesUseCase
+	roomFacilityUc usecase.RoomFacilityUsecase
+	transactionsUc usecase.TransactionsUsecase
+	engine         *gin.Engine
+	host           string
 }
 
 func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
+
+	controller.NewRoomController(s.roomUC, rg).Route()
 	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
+	controller.NewEmployeeController(s.employeeUC, rg).Route()
+	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
+	controller.NewTransactionsController(s.transactionsUc, rg).Route()
 }
 
 func (s *Server) Run() {
@@ -32,23 +41,37 @@ func (s *Server) Run() {
 
 func NewServer() *Server {
 	cfg, _ := config.NewConfig()
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
+
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
 	db, err := sql.Open(cfg.Driver, dsn)
-	fmt.Println(cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
+
 	// Inject DB ke -> repository
+	roomRepo := repository.NewRoomRepository(db)
 	facilityRepo := repository.NewFasilitesRepository(db)
+	employeeRepo := repository.NewEmployeeRepository(db)
+	roomFacilityRepo := repository.NewRoomFacilityRepository(db)
+	transactionsRepo := repository.NewTransactionsRepository(db)
 
 	// Inject REPO ke -> useCase
+	roomUC := usecase.NewRoomUseCase(roomRepo)
 	facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
+	employeeUC := usecase.NewEmployeeUseCase(employeeRepo)
+	roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
+	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
+
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
+
 	return &Server{
-		facilitiesUC: facilitiesUC,
-		engine:       engine,
-		host:         host,
+		roomUC:         roomUC,
+		facilitiesUC:   facilitiesUC,
+		employeeUC: employeeUC,
+		transactionsUc: transactionsUc,
+		roomFacilityUc: roomFacilityUc,
+		engine:         engine,
+		host:           host,
 	}
 }

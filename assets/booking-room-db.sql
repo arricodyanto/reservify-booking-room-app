@@ -1,11 +1,16 @@
 CREATE DATABASE booking_room_db;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
+
 CREATE TABLE employees (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50),
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(200),
     division VARCHAR(50),
     position VARCHAR(50),
+    role role_type DEFAULT 'employee',
     contact VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
@@ -47,13 +52,15 @@ CREATE TABLE trx_room_facility (
 CREATE TYPE transaction_status AS ENUM ('pending', 'accepted', 'declined');
 
 CREATE TABLE transactions (
-    ID INT PRIMARY KEY,
-    employe_id uuid,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    employee_id uuid,
     room_id uuid,
-    decription TEXT,
+    description TEXT,
     status transaction_status DEFAULT 'pending', -- 'pending', 'accepted', 'declined'
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    FOREIGN KEY (employe_id) REFERENCES employees(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );

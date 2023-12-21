@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SendPagedResponse(ctx *gin.Context, data []interface{}, paging model.Paging, message string) {
-	ctx.JSON(http.StatusOK, &model.PagedResponse{
+func SendPagedResponse(c *gin.Context, data []interface{}, paging model.Paging, message string) {
+	c.JSON(http.StatusOK, &model.PagedResponse{
 		Status: model.Status{
 			Code:    http.StatusOK,
 			Message: message,
