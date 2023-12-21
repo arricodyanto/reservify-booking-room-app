@@ -65,4 +65,3 @@ func NewServer() *Server {
 		host:   host,
 	}
 }
->>>>>>> delivery/server.go
