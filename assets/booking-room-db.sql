@@ -59,6 +59,6 @@ CREATE TABLE transactions (
     end_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    FOREIGN KEY (employe_id) REFERENCES employees(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
