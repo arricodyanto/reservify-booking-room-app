@@ -5,6 +5,7 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/shared/model"
 	"database/sql"
+	"fmt"
 	"log"
 	"math"
 	"time"
@@ -209,15 +210,39 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 		if err != nil {
 			return entity.Transaction{}, err
 		}
-
-		// Kurangi quantity di tabel facilities
-		_, err = t.db.Exec(config.UpdateFacilityQuantity,
-			roomFacility.Quantity,
-			roomFacility.FacilityId)
-		if err != nil {
-			return entity.Transaction{}, err
+		  // Insert ke tabel roomFacilities dan kurangi quantity di facilities
+		  var roomFacilities[] entity.RoomFacility
+		  for _, roomFacility := range payload.RoomFacilities {
+			err = t.db.QueryRow(config.InsertRoomFacility,
+				payload.RoomId,
+				roomFacility.FacilityId,
+				roomFacility.Quantity,
+				payload.UpdatedAt).Scan(&roomFacility.Id, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+	
+			if err != nil {
+				return entity.Transaction{}, err
+			}
+			var quantity int
+			err = t.db.QueryRow(config.SelectQuantityFacility,
+				roomFacility.FacilityId).Scan(&quantity)
+			if err != nil {
+				return entity.Transaction{}, err
+			}
+			if roomFacility.Quantity > quantity {
+				return entity.Transaction{}, fmt.Errorf("quantity more than stock")
+			}
+	
+			// Kurangi quantity di tabel facilities
+			err = t.db.QueryRow(config.UpdateFacilityQuantity,
+				roomFacility.Quantity,
+				roomFacility.FacilityId).Scan(&roomFacility.Id, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+			if err != nil {
+				return entity.Transaction{}, err
+			}
+			roomFacilities = append(roomFacilities, roomFacility)
 		}
-	}
+		payload.RoomFacilities = roomFacilities
+
 
 	transactions = payload
 	return transactions, err
