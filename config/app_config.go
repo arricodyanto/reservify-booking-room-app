@@ -21,6 +21,7 @@ const (
 	EmployeesList    = "/employees"
 	EmployeesCreate  = "/employees"
 	EmployeesGetById = "/employees/:id"
+	EmployeesGetByUsername = "/employees/:username"
 	EmployeesUpdate  = "/employees"
 	EmployeesDelete  = "/employees/:id"
 
