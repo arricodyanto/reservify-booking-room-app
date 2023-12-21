@@ -7,6 +7,7 @@ const (
 	GetCountRoomFacility       = `SELECT COUNT(*) FROM trx_room_facility`
 	GetQuantityFacilityByID    = `SELECT quantity FROM facilities WHERE id = $1`
 	UpdateQuantityFacilityByID = `UPDATE facilities SET quantity = $1 WHERE id = $2`
+	InsertTrxRoomFacility      = `INSERT INTO trx_room_facility (room_id, facility_id, quantity, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING id, created_at, updated_at`
 
 	SelectTransactionList         = `SELECT id, employee_id, room_id, description, status, start_time, end_time, created_at, updated_at FROM transactions WHERE created_at BETWEEN $3 AND ($4::date + 1) - interval '1 second' ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 	SelectRoomWithFacilities      = `SELECT r.id, r.facility_id, r.quantity, r.created_at, r.updated_at FROM rooms t JOIN trx_room_facility r on t.id = r.room_id WHERE t.id = $1;`
