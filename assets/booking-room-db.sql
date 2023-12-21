@@ -7,7 +7,7 @@ CREATE TABLE employees (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50),
     username VARCHAR(50) UNIQUE,
-    password VARCHAR(50),
+    password VARCHAR(200),
     division VARCHAR(50),
     position VARCHAR(50),
     role role_type DEFAULT 'employee',
