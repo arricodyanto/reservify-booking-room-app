@@ -210,15 +210,15 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 		if err != nil {
 			return entity.Transaction{}, err
 		}
-		  // Insert ke tabel roomFacilities dan kurangi quantity di facilities
-		  var roomFacilities[] entity.RoomFacility
-		  for _, roomFacility := range payload.RoomFacilities {
+		// Insert ke tabel roomFacilities dan kurangi quantity di facilities
+		var roomFacilities []entity.RoomFacility
+		for _, roomFacility := range payload.RoomFacilities {
 			err = t.db.QueryRow(config.InsertRoomFacility,
 				payload.RoomId,
 				roomFacility.FacilityId,
 				roomFacility.Quantity,
-				payload.UpdatedAt).Scan(&roomFacility.Id, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
-	
+				payload.UpdatedAt).Scan(&roomFacility.ID, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+
 			if err != nil {
 				return entity.Transaction{}, err
 			}
@@ -231,11 +231,11 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 			if roomFacility.Quantity > quantity {
 				return entity.Transaction{}, fmt.Errorf("quantity more than stock")
 			}
-	
+
 			// Kurangi quantity di tabel facilities
 			err = t.db.QueryRow(config.UpdateFacilityQuantity,
 				roomFacility.Quantity,
-				roomFacility.FacilityId).Scan(&roomFacility.Id, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+				roomFacility.FacilityId).Scan(&roomFacility.ID, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
 			if err != nil {
 				return entity.Transaction{}, err
 			}
@@ -243,7 +243,7 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 		}
 		payload.RoomFacilities = roomFacilities
 
-
+	}
 	transactions = payload
 	return transactions, err
 }
