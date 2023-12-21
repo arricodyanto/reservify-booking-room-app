@@ -31,6 +31,7 @@ func (t *roomFacilityRepository) GetQuantityFacilityByID(id string) (int, error)
 	var quantity int
 	err := t.db.QueryRow(config.GetQuantityFacilityByID, id).Scan(&quantity)
 	if err != nil {
+		log.Println("roomFacilityRepository.QueryGetQuantityFacilityByID:", err.Error())
 		return 0, err
 	}
 	return quantity, nil
@@ -65,6 +66,7 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 
 	totalRows := 0
 	if err := t.db.QueryRow(config.GetCountRoomFacility).Scan(&totalRows); err != nil {
+		log.Println("roomFacilityRepository.QueryRowGetCountRoomFacility:", err.Error())
 		return nil, model.Paging{}, err
 	}
 
@@ -90,6 +92,7 @@ func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacil
 		&roomFacility.CreatedAt,
 		&roomFacility.UpdatedAt)
 	if err != nil {
+		log.Println("roomFacilityRepository.QueryRowSelectRoomFacilityByID:", err.Error())
 		return entity.RoomFacility{}, err
 	}
 	return roomFacility, nil
@@ -102,6 +105,7 @@ func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity
 	// begin transaction
 	tx, err := t.db.Begin()
 	if err != nil {
+		log.Println("roomFacilityRepository.BeginTransaction:", err.Error())
 		return entity.RoomFacility{}, err
 	}
 
