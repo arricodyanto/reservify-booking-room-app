@@ -26,7 +26,7 @@ func (e *employeesUseCase) FindEmployeesByUsername(username string) (entity.Empl
 	if username == "" {
 		return entity.Employee{}, errors.New("id harus diisi")
 	}
-	return e.repo.GetEmployeesByID(username)
+	return e.repo.GetEmployeesByUsername(username)
 }
 
 // ListAll implements EmployeesUseCase.

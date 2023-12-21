@@ -13,6 +13,7 @@ import (
 type EmployeeRepository interface {
 	// GetAllEmployees() ([]entity.Employee, error)
 	GetEmployeesByID(id string) (entity.Employee, error)
+	GetEmployeesByUsername(username string) (entity.Employee, error)
 	CreateEmployee(payload entity.Employee) (entity.Employee, error)
 	UpdateEmployee(payload entity.Employee) (entity.Employee, error)
 	List(page, size int) ([]entity.Employee, model.Paging, error)

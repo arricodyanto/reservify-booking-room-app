@@ -58,7 +58,7 @@ func (e *EmployeeController) getByIdHandler(ctx *gin.Context) {
 	common.SendSingleResponse(ctx, employee, "Ok")
 }
 func (e *EmployeeController) getByUsernameHandler(ctx *gin.Context) {
-	username := ctx.Param("username")
+	username := ctx.Param("user")
 	employee, err := e.employeeUC.FindEmployeesByUsername(username)
 	if err != nil {
 
