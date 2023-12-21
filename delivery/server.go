@@ -15,6 +15,7 @@ import (
 type Server struct {
 	roomUC         usecase.RoomUseCase
 	facilitiesUC   usecase.FacilitiesUseCase
+	employeeUC usecase.EmployeesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
 	transactionsUc usecase.TransactionsUsecase
 	engine         *gin.Engine
@@ -26,6 +27,7 @@ func (s *Server) initRoute() {
 
 	controller.NewRoomController(s.roomUC, rg).Route()
 	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
+	controller.NewEmployeeController(s.employeeUC, rg).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
 	controller.NewTransactionsController(s.transactionsUc, rg).Route()
 }
@@ -49,12 +51,14 @@ func NewServer() *Server {
 	// Inject DB ke -> repository
 	roomRepo := repository.NewRoomRepository(db)
 	facilityRepo := repository.NewFasilitesRepository(db)
+	employeeRepo := repository.NewEmployeeRepository(db)
 	roomFacilityRepo := repository.NewRoomFacilityRepository(db)
 	transactionsRepo := repository.NewTransactionsRepository(db)
 
 	// Inject REPO ke -> useCase
 	roomUC := usecase.NewRoomUseCase(roomRepo)
 	facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
+	employeeUC := usecase.NewEmployeeUseCase(employeeRepo)
 	roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
 	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
 
@@ -64,6 +68,7 @@ func NewServer() *Server {
 	return &Server{
 		roomUC:         roomUC,
 		facilitiesUC:   facilitiesUC,
+		employeeUC: employeeUC,
 		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
 		engine:         engine,
