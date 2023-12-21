@@ -19,15 +19,18 @@ type EmployeeController struct {
 // untuk create employee
 // masalah di validasi
 func (e *EmployeeController) createHandler(ctx *gin.Context) {
+
 	var payload entity.Employee
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
 	employee, err := e.employeeUC.RegisterNewEmployee(payload)
+
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
+
 	}
 	common.SendCreateResponse(ctx, employee, "Created")
 }
@@ -48,6 +51,7 @@ func (e *EmployeeController) getByIdHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
 	employee, err := e.employeeUC.FindEmployeesByID(id)
 	if err != nil {
+
 		common.SendErrorResponse(ctx, http.StatusNotFound, "Employee with ID "+id+" not found")
 		return
 	}
@@ -55,6 +59,7 @@ func (e *EmployeeController) getByIdHandler(ctx *gin.Context) {
 }
 
 // update
+
 func (e *EmployeeController) putHandler(ctx *gin.Context) {
 	var payload entity.Employee
 	err := ctx.ShouldBindJSON(&payload)
@@ -81,6 +86,7 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 		return
 	}
 	var response []interface{}
+
 	for _, v := range employees {
 		response = append(response, v)
 	}
@@ -103,7 +109,7 @@ func (e *EmployeeController) Route() {
 
 }
 
-func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup) *EmployeeController {
+func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup) *EmployeeController{
 	return &EmployeeController{
 		employeeUC: employeeUC,
 		rg:         rg,

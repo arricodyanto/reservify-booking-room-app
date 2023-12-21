@@ -40,9 +40,6 @@ func (e *employeesUseCase) FindEmployeesByID(id string) (entity.Employee, error)
 
 // RegisterNewEmployee implements EmployeesUseCase.
 func (e *employeesUseCase) RegisterNewEmployee(payload entity.Employee) (entity.Employee, error) {
-	// if payload.ID == "" || payload.Name == "" || payload.Password == "" || payload.Role == "" || payload.Division == "" || payload.Position == "" || payload.Contact == "" {
-	// 	return entity.Employee{}, errors.New("name harus diisi")
-	// }
 	return e.repo.CreateEmployee(payload)
 }
 
@@ -54,4 +51,3 @@ func (e *employeesUseCase) UpdateEmployee(payload entity.Employee) (entity.Emplo
 func NewEmployeeUseCase(repo repository.EmployeeRepository) EmployeesUseCase {
 	return &employeesUseCase{repo: repo}
 }
-

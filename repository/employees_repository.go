@@ -95,6 +95,7 @@ func (e *employeeRepository) GetEmployeesByID(id string) (entity.Employee, error
 	return employee, nil
 }
 
+
 // Awal
 func (e *employeeRepository) GetEmployeesByUsername(username string) (entity.Employee, error) {
 	var employee entity.Employee
@@ -205,4 +206,3 @@ func NewEmployeeRepository(db *sql.DB) EmployeeRepository {
 // update employee (ADMIN) -POS
 
 // delete an employee (ADMIN) -DELETE (nanti dulu deh!!!)
-

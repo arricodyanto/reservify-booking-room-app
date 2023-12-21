@@ -54,4 +54,3 @@ func NewServer() *Server {
 		host:   host,
 	}
 }
-
