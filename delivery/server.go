@@ -15,6 +15,7 @@ import (
 type Server struct {
 	roomUC usecase.RoomUseCase
 	facilitiesUC usecase.FacilitiesUseCase
+	transactionsUc usecase.TransactionsUsecase
 	engine       *gin.Engine
 	host         string
 }
@@ -24,6 +25,7 @@ func (s *Server) initRoute() {
 
 	controller.NewRoomController(s.roomUC, rg).Route()
 	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
+	controller.NewTransactionsController(s.transactionsUc, rg).Route()
 }
 
 func (s *Server) Run() {
@@ -45,10 +47,12 @@ func NewServer() *Server {
 	// Inject DB ke -> repository
 	roomRepo := repository.NewRoomRepository(db)
 	facilityRepo := repository.NewFasilitesRepository(db)
+	transactionsRepo := repository.NewTransactionsRepository(db)
 
 	// Inject REPO ke -> useCase
 	roomUC := usecase.NewRoomUseCase(roomRepo)
 	facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
+	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
@@ -56,6 +60,7 @@ func NewServer() *Server {
 	return &Server{
 		roomUC: roomUC,
 		facilitiesUC: facilitiesUC,
+		transactionsUc: transactionsUc,
 		engine: engine,
 		host:   host,
 	}

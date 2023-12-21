@@ -4,6 +4,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE employees (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50),
+    username VARCHAR(50),
+    password VARCHAR(50),
+    role VARCHAR(10),
     division VARCHAR(50),
     position VARCHAR(50),
     contact VARCHAR(20),
@@ -47,11 +50,13 @@ CREATE TABLE trx_room_facility (
 CREATE TYPE transaction_status AS ENUM ('pending', 'accepted', 'declined');
 
 CREATE TABLE transactions (
-    ID INT PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     employe_id uuid,
     room_id uuid,
-    decription TEXT,
+    description TEXT,
     status transaction_status DEFAULT 'pending', -- 'pending', 'accepted', 'declined'
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     FOREIGN KEY (employe_id) REFERENCES employees(id),
