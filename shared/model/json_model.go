@@ -15,5 +15,3 @@ type PagedResponse struct {
 	Data   []interface{} `json:"data"`
 	Paging Paging        `json:"paging"`
 }
-
-

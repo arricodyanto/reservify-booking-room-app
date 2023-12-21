@@ -6,5 +6,3 @@ type Paging struct {
 	TotalRows   int `json:"totalRows"`
 	TotalPages  int `json:"totalPages"`
 }
-
-

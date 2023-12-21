@@ -9,7 +9,7 @@ const (
 	RoomGetById      = "/rooms/:id"
 	RoomUpdateStatus = "/rooms/status"
 	RoomUpdate       = "/rooms"
-	RoomDelete       = "/rooms/:id"
+	// RoomDelete       = "/rooms/:id"
 
 	// Facilities
 	FacilitiesCreate  = "/facilities"
@@ -29,9 +29,9 @@ const (
 	TransactionList       = "/transactions"
 	TransactionCreate     = "/transactions"
 	TransactionGetById    = "/transactions/:id"
-	TransactionGetByEmpId = "/transactions/:employeeId"
+	TransactionGetByEmpId = "/transactions/employee/:employeeId"
 	// TransactionPermList   = "/transactions"
-	TransactionUpdatePerm = "/transactions"
+	TransactionUpdatePerm = "/transactions/status"
 
 	// Room Facilities
 	RoomFacilityCreate  = "/roomfacilities"
