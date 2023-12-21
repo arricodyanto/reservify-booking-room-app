@@ -34,11 +34,9 @@ func (t *transactionsUsecase) FindTransactionsByEmployeeId(employeeId string) ([
 }
 
 func (t *transactionsUsecase) RequestNewBookingRooms(payload entity.Transaction) (entity.Transaction, error) {
-	// updatedAtStr := payload.UpdatedAt.Format("2006-01-02 15:04:05")
 	payload.UpdatedAt = time.Now()
-	// updatedAt, _ := time.Parse("2006-01-02 15:04:05", updatedAtStr)
-	// payload.UpdatedAt = updatedAt
 
+	
 	transactions, err := t.repo.Create(payload)
 	if err != nil {
 		return entity.Transaction{}, fmt.Errorf("oppps, failed to save data transations :%v", err.Error())
