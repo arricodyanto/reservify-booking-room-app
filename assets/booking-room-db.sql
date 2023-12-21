@@ -1,14 +1,16 @@
 CREATE DATABASE booking_room_db;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
+
 CREATE TABLE employees (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50),
-    username VARCHAR(50),
-    password VARCHAR(50),
-    role VARCHAR(10),
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(200),
     division VARCHAR(50),
     position VARCHAR(50),
+    role role_type DEFAULT 'employee',
     contact VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
