@@ -16,8 +16,6 @@ type EmployeeController struct {
 	rg         *gin.RouterGroup
 }
 
-// untuk create employee
-// masalah di validasi
 func (e *EmployeeController) createHandler(ctx *gin.Context) {
 
 	var payload entity.Employee
@@ -35,17 +33,6 @@ func (e *EmployeeController) createHandler(ctx *gin.Context) {
 	common.SendCreateResponse(ctx, employee, "Created")
 }
 
-// Read
-//
-//	func (e *EmployeeController) getHandler(ctx *gin.Context){
-//		employee, err := e.employeeUC.FindAllEmployees()
-//		if err != nil{
-//			common.SendErrorResponse(ctx, http.StatusNotFound, "Employee's not found")
-//			return
-//		}
-//		common.SendSingleResponse(ctx, employee, "Ok")
-//	}
-//
 // read by
 func (e *EmployeeController) getByIdHandler(ctx *gin.Context) {
 	id := ctx.Param("id")
@@ -95,6 +82,7 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
+	
 	var response []interface{}
 
 	for _, v := range employees {
@@ -108,16 +96,9 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 func (e *EmployeeController) Route() {
 	e.rg.GET(config.EmployeesGetById, e.getByIdHandler)
 	e.rg.GET(config.EmployeesGetByUsername, e.getByUsernameHandler)
-	// belum
-	// e.rg.GET(config.EmployeesList, e.getHandler)
-	// berhasil tapi belum ada validasi
 	e.rg.POST(config.EmployeesCreate, e.createHandler)
-	// put
 	e.rg.PUT(config.EmployeesUpdate, e.putHandler)
-
-	// list
 	e.rg.GET(config.EmployeesList, e.ListHandler)
-
 }
 
 func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup) *EmployeeController{

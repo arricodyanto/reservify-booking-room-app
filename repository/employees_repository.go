@@ -8,10 +8,11 @@ import (
 	"log"
 	"math"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type EmployeeRepository interface {
-	// GetAllEmployees() ([]entity.Employee, error)
 	GetEmployeesByID(id string) (entity.Employee, error)
 	GetEmployeesByUsername(username string) (entity.Employee, error)
 	CreateEmployee(payload entity.Employee) (entity.Employee, error)
@@ -23,16 +24,34 @@ type employeeRepository struct {
 	db *sql.DB
 }
 
+
 // CreateEmployee implements EmployeeRepository.
+func hashPassword(password string) (string, error) {
+	// Menghasilkan hashed password dengan salt menggunakan bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(hashedPassword), nil
+}
+
 func (e *employeeRepository) CreateEmployee(payload entity.Employee) (entity.Employee, error) {
 	var employee entity.Employee
 
 	payload.UpdatedAt = time.Now()
 
-	err := e.db.QueryRow(config.InsertEmployee,
+	// Hash password
+	hashedPassword, err := hashPassword(payload.Password)
+	if err != nil {
+		log.Println("Gagal menghash password: ", err.Error())
+		return entity.Employee{}, err
+	}
+
+	err = e.db.QueryRow(config.InsertEmployee,
 		payload.Name,
 		payload.Username,
-		payload.Password,
+		hashedPassword, // Gunakan password yang dihash, bukan plaintext
 		payload.Role,
 		payload.Division,
 		payload.Position,
@@ -43,9 +62,10 @@ func (e *employeeRepository) CreateEmployee(payload entity.Employee) (entity.Emp
 		log.Println("employeeRepository.QueryRow: ", err.Error())
 		return entity.Employee{}, err
 	}
+
 	employee.Name = payload.Name
 	employee.Username = payload.Username
-	employee.Password = payload.Password
+	employee.Password = hashedPassword
 	employee.Role = payload.Role
 	employee.Division = payload.Division
 	employee.Position = payload.Position
@@ -54,26 +74,6 @@ func (e *employeeRepository) CreateEmployee(payload entity.Employee) (entity.Emp
 	return employee, nil
 
 }
-
-// GetAllEmployees implements EmployeeRepository.
-// func (e *employeeRepository) GetAllEmployees() ([]entity.Employee, error) {
-// 	var employee []entity.Employee
-// 	rows, err := e.db.Query(config.SelectAllEmployee)
-// 	if err != nil {
-// 		log.Println("employeeRepository.GetAllEmployees.Query: ", err.Error())
-// 		return []entity.Employee{}, err
-// 	}
-// 	for rows.Next() {
-// 		var emp entity.Employee
-// 		err := rows.Scan(&emp.ID, &emp.Name, &emp.Username, &emp.Password, &emp.Role, &emp.Division, &emp.Position, &emp.Contact, &emp.CreatedAt, &emp.UpdatedAt)
-// 		if err != nil {
-// 			log.Println("employeeRepository.rows.Next(): ", err.Error())
-// 			return []entity.Employee{}, err
-// 		}
-// 		employee = append(employee, emp)
-// 	}
-// 	return employee, nil
-// }
 
 // GetEmployeesByID implements EmployeeRepository.
 func (e *employeeRepository) GetEmployeesByID(id string) (entity.Employee, error) {
@@ -96,7 +96,6 @@ func (e *employeeRepository) GetEmployeesByID(id string) (entity.Employee, error
 	return employee, nil
 }
 
-
 // Awal
 func (e *employeeRepository) GetEmployeesByUsername(username string) (entity.Employee, error) {
 	var employee entity.Employee
@@ -117,16 +116,24 @@ func (e *employeeRepository) GetEmployeesByUsername(username string) (entity.Emp
 	}
 	return employee, nil
 }
+
 // Akhir
 
 // UpdateEmployee implements EmployeeRepository.
 func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Employee, error) {
 	var employee entity.Employee
 	payload.UpdatedAt = time.Now()
-	err := e.db.QueryRow(config.UpdateEmployee,
+
+	hashedPassword, err := hashPassword(payload.Password)
+	if err != nil {
+		log.Println("Gagal menghash password: ", err.Error())
+		return entity.Employee{}, err
+	}
+
+	err = e.db.QueryRow(config.UpdateEmployee,
 		payload.Name,
 		payload.Username,
-		payload.Password,
+		hashedPassword,
 		payload.Role,
 		payload.Division,
 		payload.Position,
@@ -141,7 +148,7 @@ func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Emp
 	employee.ID = payload.ID
 	employee.Name = payload.Name
 	employee.Username = payload.Username
-	employee.Password = payload.Password
+	employee.Password = hashedPassword
 	employee.Role = payload.Role
 	employee.Division = payload.Division
 	employee.Position = payload.Position
@@ -198,12 +205,3 @@ func (e *employeeRepository) List(page, size int) ([]entity.Employee, model.Pagi
 func NewEmployeeRepository(db *sql.DB) EmployeeRepository {
 	return &employeeRepository{db: db}
 }
-
-// get all employees (GA, ADMIN) -GET
-
-// get employees by id (GA, ADMIN) -GET
-
-// create employee (ADMIN) -POST
-// update employee (ADMIN) -POS
-
-// delete an employee (ADMIN) -DELETE (nanti dulu deh!!!)

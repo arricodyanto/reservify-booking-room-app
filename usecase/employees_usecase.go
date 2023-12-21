@@ -5,11 +5,10 @@ import (
 	"booking-room-app/repository"
 	"booking-room-app/shared/model"
 	"errors"
-	// "fmt"
+	"fmt"
 )
 
 type EmployeesUseCase interface {
-	// FindAllEmployees() ([]entity.Employee, error)
 	FindEmployeesByID(id string) (entity.Employee, error)
 	FindEmployeesByUsername(username string) (entity.Employee, error)
 	RegisterNewEmployee(payload entity.Employee) (entity.Employee, error)
@@ -31,13 +30,12 @@ func (e *employeesUseCase) FindEmployeesByUsername(username string) (entity.Empl
 
 // ListAll implements EmployeesUseCase.
 func (e *employeesUseCase) ListAll(page int, size int) ([]entity.Employee, model.Paging, error) {
+	if page == 0 && size == 0 {
+		page = 1
+		size = 5
+	}
 	return e.repo.List(page, size)
 }
-
-// FindAllEmployees implements EmployeesUseCase.
-// func (e *employeesUseCase) FindAllEmployees() ([]entity.Employee, error) {
-// 	return e.repo.GetAllEmployees()
-// }
 
 // FindEmployeesByID implements EmployeesUseCase.
 func (e *employeesUseCase) FindEmployeesByID(id string) (entity.Employee, error) {
@@ -49,12 +47,28 @@ func (e *employeesUseCase) FindEmployeesByID(id string) (entity.Employee, error)
 
 // RegisterNewEmployee implements EmployeesUseCase.
 func (e *employeesUseCase) RegisterNewEmployee(payload entity.Employee) (entity.Employee, error) {
-	return e.repo.CreateEmployee(payload)
+	if payload.Name == "" || payload.Password == "" || payload.Role == "" || payload.Division == "" || payload.Position == "" || payload.Contact == "" {
+		return entity.Employee{}, fmt.Errorf("oops, field required")
+	}
+
+	employee, err := e.repo.CreateEmployee(payload)
+	if err != nil {
+		return entity.Employee{}, fmt.Errorf("oppps, failed to save data employee :%v", err.Error())
+	}
+	return employee, nil
 }
 
 // UpdateEmployee implements EmployeesUseCase.
 func (e *employeesUseCase) UpdateEmployee(payload entity.Employee) (entity.Employee, error) {
-	return e.repo.UpdateEmployee(payload)
+	if payload.ID == "" ||payload.Name == "" || payload.Password == "" || payload.Role == "" || payload.Division == "" || payload.Position == "" || payload.Contact == "" {
+		return entity.Employee{}, fmt.Errorf("oops, field required")
+	}
+
+	employee, err := e.repo.UpdateEmployee(payload)
+	if err != nil {
+		return entity.Employee{}, fmt.Errorf("oppps, failed to save data employee :%v", err.Error())
+	}
+	return employee, nil
 }
 
 func NewEmployeeUseCase(repo repository.EmployeeRepository) EmployeesUseCase {

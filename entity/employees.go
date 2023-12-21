@@ -12,5 +12,5 @@ type Employee struct {
 	Position  string    `json:"position"`
 	Contact   string    `json:"contact"`
 	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updateAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
