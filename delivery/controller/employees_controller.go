@@ -57,6 +57,16 @@ func (e *EmployeeController) getByIdHandler(ctx *gin.Context) {
 	}
 	common.SendSingleResponse(ctx, employee, "Ok")
 }
+func (e *EmployeeController) getByUsernameHandler(ctx *gin.Context) {
+	username := ctx.Param("username")
+	employee, err := e.employeeUC.FindEmployeesByUsername(username)
+	if err != nil {
+
+		common.SendErrorResponse(ctx, http.StatusNotFound, "Employee with Username "+username+" not found")
+		return
+	}
+	common.SendSingleResponse(ctx, employee, "Ok")
+}
 
 // update
 
@@ -97,6 +107,7 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 
 func (e *EmployeeController) Route() {
 	e.rg.GET(config.EmployeesGetById, e.getByIdHandler)
+	e.rg.GET(config.EmployeesGetById, e.getByUsernameHandler)
 	// belum
 	// e.rg.GET(config.EmployeesList, e.getHandler)
 	// berhasil tapi belum ada validasi

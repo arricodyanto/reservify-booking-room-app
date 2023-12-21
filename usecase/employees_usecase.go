@@ -11,6 +11,7 @@ import (
 type EmployeesUseCase interface {
 	// FindAllEmployees() ([]entity.Employee, error)
 	FindEmployeesByID(id string) (entity.Employee, error)
+	FindEmployeesByUsername(username string) (entity.Employee, error)
 	RegisterNewEmployee(payload entity.Employee) (entity.Employee, error)
 	UpdateEmployee(payload entity.Employee) (entity.Employee, error)
 	ListAll(page, size int) ([]entity.Employee, model.Paging, error)
@@ -18,6 +19,14 @@ type EmployeesUseCase interface {
 
 type employeesUseCase struct {
 	repo repository.EmployeeRepository
+}
+
+// FindEmployeesByUsername implements EmployeesUseCase.
+func (e *employeesUseCase) FindEmployeesByUsername(username string) (entity.Employee, error) {
+	if username == "" {
+		return entity.Employee{}, errors.New("id harus diisi")
+	}
+	return e.repo.GetEmployeesByID(username)
 }
 
 // ListAll implements EmployeesUseCase.
