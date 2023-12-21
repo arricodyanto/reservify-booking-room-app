@@ -183,6 +183,6 @@ func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility,
 	return roomFacility, err
 }
 
-func NewTransactionsRepository(db *sql.DB) RoomFacilityRepository {
+func NewRoomFacilityRepository(db *sql.DB) RoomFacilityRepository {
 	return &roomFacilityRepository{db: db}
 }

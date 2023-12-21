@@ -13,12 +13,12 @@ import (
 )
 
 type Server struct {
-	roomUC usecase.RoomUseCase
-	facilitiesUC usecase.FacilitiesUseCase
+	roomUC         usecase.RoomUseCase
+	facilitiesUC   usecase.FacilitiesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
 	transactionsUc usecase.TransactionsUsecase
-	engine       *gin.Engine
-	host         string
+	engine         *gin.Engine
+	host           string
 }
 
 func (s *Server) initRoute() {
@@ -49,24 +49,24 @@ func NewServer() *Server {
 	// Inject DB ke -> repository
 	roomRepo := repository.NewRoomRepository(db)
 	facilityRepo := repository.NewFasilitesRepository(db)
-	roomFacilityRepo := repository.NewTransactionsRepository(db)
+	roomFacilityRepo := repository.NewRoomFacilityRepository(db)
 	transactionsRepo := repository.NewTransactionsRepository(db)
 
 	// Inject REPO ke -> useCase
 	roomUC := usecase.NewRoomUseCase(roomRepo)
 	facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
-	roomFacilityUc := usecase.NewTransactionsUsecase(roomFacilityRepo)
+	roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
 	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
 	return &Server{
-		roomUC: roomUC,
-		facilitiesUC: facilitiesUC,
+		roomUC:         roomUC,
+		facilitiesUC:   facilitiesUC,
 		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
-		engine: engine,
-		host:   host,
+		engine:         engine,
+		host:           host,
 	}
 }

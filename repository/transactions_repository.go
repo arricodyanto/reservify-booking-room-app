@@ -23,7 +23,7 @@ type transactionsRepository struct {
 }
 
 // list transaction (admin & GA) -GET
-func (t *transactionsRepository) List(page, size int,startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error) {
+func (t *transactionsRepository) List(page, size int, startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error) {
 	var transactions []entity.Transaction
 	offset := (page - 1) * size
 
@@ -44,30 +44,30 @@ func (t *transactionsRepository) List(page, size int,startDate, endDate time.Tim
 			&transaction.EndTime,
 			&transaction.CreatedAt,
 			&transaction.UpdatedAt)
-	if err != nil {
-		log.Println("transactionsRepository.Rows.Next():", err.Error())
-		return nil, model.Paging{}, err
-	}
+		if err != nil {
+			log.Println("transactionsRepository.Rows.Next():", err.Error())
+			return nil, model.Paging{}, err
+		}
 
-	RoomFacilitiesRows, err := t.db.Query(config.SelectRoomWithFacilities, transaction.RoomId)
-	if err!= nil {
-        log.Println("transactionsRepository.Query:", err.Error())
-        return nil, model.Paging{}, err
-    }
-	for RoomFacilitiesRows.Next() {
-		var roomFacility entity.RoomFacility
-        err = RoomFacilitiesRows.Scan(
-            &roomFacility.Id,
-            &roomFacility.FacilityId,
-            &roomFacility.Quantity,
-            &roomFacility.CreatedAt,
-            &roomFacility.UpdatedAt)
-        if err!= nil {
-            log.Println("transactionsRepository.Rows.Next():", err.Error())
-            return nil, model.Paging{}, err
-        }
-        transaction.RoomFacilities = append(transaction.RoomFacilities, roomFacility)
-    }
+		RoomFacilitiesRows, err := t.db.Query(config.SelectRoomWithFacilities, transaction.RoomId)
+		if err != nil {
+			log.Println("transactionsRepository.Query:", err.Error())
+			return nil, model.Paging{}, err
+		}
+		for RoomFacilitiesRows.Next() {
+			var roomFacility entity.RoomFacility
+			err = RoomFacilitiesRows.Scan(
+				&roomFacility.ID,
+				&roomFacility.FacilityId,
+				&roomFacility.Quantity,
+				&roomFacility.CreatedAt,
+				&roomFacility.UpdatedAt)
+			if err != nil {
+				log.Println("transactionsRepository.Rows.Next():", err.Error())
+				return nil, model.Paging{}, err
+			}
+			transaction.RoomFacilities = append(transaction.RoomFacilities, roomFacility)
+		}
 
 		transactions = append(transactions, transaction)
 	}
@@ -103,7 +103,7 @@ func (t *transactionsRepository) GetTransactionById(id string) ([]entity.Transac
 			&transaction.RoomId,
 			&transaction.Description,
 			&transaction.Status,
-			&transaction.StartTime, 
+			&transaction.StartTime,
 			&transaction.EndTime,
 			&transaction.CreatedAt,
 			&transaction.UpdatedAt)
@@ -114,19 +114,19 @@ func (t *transactionsRepository) GetTransactionById(id string) ([]entity.Transac
 		}
 
 		RoomFacilitiesRows, err := t.db.Query(config.SelectRoomWithFacilities, transaction.RoomId)
-		if err!= nil {
+		if err != nil {
 			log.Println("transactionsRepository.Query:", err.Error())
 			return nil, err
 		}
 		for RoomFacilitiesRows.Next() {
 			var roomFacility entity.RoomFacility
 			err = RoomFacilitiesRows.Scan(
-				&roomFacility.Id,
+				&roomFacility.ID,
 				&roomFacility.FacilityId,
 				&roomFacility.Quantity,
 				&roomFacility.CreatedAt,
 				&roomFacility.UpdatedAt)
-			if err!= nil {
+			if err != nil {
 				log.Println("transactionsRepository.Rows.Next():", err.Error())
 				return nil, err
 			}
@@ -141,7 +141,7 @@ func (t *transactionsRepository) GetTransactionById(id string) ([]entity.Transac
 func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string) ([]entity.Transaction, error) {
 	var transactions []entity.Transaction
 	rows, err := t.db.Query(config.SelectTransactionByEmployeeID, employeeId)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string) ([
 			&transaction.RoomId,
 			&transaction.Description,
 			&transaction.Status,
-			&transaction.StartTime, 
+			&transaction.StartTime,
 			&transaction.EndTime,
 			&transaction.CreatedAt,
 			&transaction.UpdatedAt)
@@ -163,19 +163,19 @@ func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string) ([
 			return nil, err
 		}
 		RoomFacilitiesRows, err := t.db.Query(config.SelectRoomWithFacilities, transaction.RoomId)
-		if err!= nil {
+		if err != nil {
 			log.Println("transactionsRepository.Query:", err.Error())
 			return nil, err
 		}
 		for RoomFacilitiesRows.Next() {
 			var roomFacility entity.RoomFacility
 			err = RoomFacilitiesRows.Scan(
-				&roomFacility.Id,
+				&roomFacility.ID,
 				&roomFacility.FacilityId,
 				&roomFacility.Quantity,
 				&roomFacility.CreatedAt,
 				&roomFacility.UpdatedAt)
-			if err!= nil {
+			if err != nil {
 				log.Println("transactionsRepository.Rows.Next():", err.Error())
 				return nil, err
 			}
@@ -188,7 +188,7 @@ func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string) ([
 
 // (create transaction) Request booking rooms (employee & admin) -POST
 func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Transaction, error) {
-	var transactions entity.Transaction	
+	var transactions entity.Transaction
 	err := t.db.QueryRow(config.InsertTransactions,
 		payload.EmployeeId,
 		payload.RoomId,
@@ -196,45 +196,46 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 		payload.StartTime,
 		payload.EndTime,
 		payload.UpdatedAt).Scan(&payload.ID, &payload.Status, &payload.CreatedAt)
+	if err != nil {
+		return entity.Transaction{}, err
+	}
+	// Insert ke tabel roomFacilities dan kurangi quantity di facilities
+	for _, roomFacility := range payload.RoomFacilities {
+		_, err := t.db.Exec(config.InsertRoomFacility,
+			payload.ID,
+			roomFacility.FacilityId,
+			roomFacility.Quantity)
+
 		if err != nil {
 			return entity.Transaction{}, err
 		}
-		  // Insert ke tabel roomFacilities dan kurangi quantity di facilities
-		  for _, roomFacility := range payload.RoomFacilities {
-			_, err := t.db.Exec(config.InsertRoomFacility,
-				payload.ID,
-				roomFacility.FacilityId,
-				roomFacility.Quantity)
-	
-			if err != nil {
-				return entity.Transaction{}, err
-			}
-	
-			// Kurangi quantity di tabel facilities
-			_, err =t.db.Exec(config.UpdateFacilityQuantity,
-				roomFacility.Quantity,
-				roomFacility.FacilityId)
-			if err != nil {
-				return entity.Transaction{}, err
-			}
+
+		// Kurangi quantity di tabel facilities
+		_, err = t.db.Exec(config.UpdateFacilityQuantity,
+			roomFacility.Quantity,
+			roomFacility.FacilityId)
+		if err != nil {
+			return entity.Transaction{}, err
 		}
+	}
 
 	transactions = payload
 	return transactions, err
 }
+
 // permission list (GA) -GET (batal)
 // update permission (GA) -PUT
 func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (entity.Transaction, error) {
 	var transactions entity.Transaction
-	
+
 	err := t.db.QueryRow(config.UpdatePermission,
 		payload.Status,
 		payload.ID,
-		payload.UpdatedAt).Scan(&payload.EmployeeId, &payload.RoomId,&payload.Description,&payload.StartTime, &payload.EndTime, &payload.CreatedAt)
-		if err != nil {
-			log.Println("transactionsRepository.UpdateStatus:", err.Error())
-			return entity.Transaction{}, err
-		}
+		payload.UpdatedAt).Scan(&payload.EmployeeId, &payload.RoomId, &payload.Description, &payload.StartTime, &payload.EndTime, &payload.CreatedAt)
+	if err != nil {
+		log.Println("transactionsRepository.UpdateStatus:", err.Error())
+		return entity.Transaction{}, err
+	}
 
 	transactions = payload
 	return transactions, err
