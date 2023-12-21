@@ -9,17 +9,25 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 type Server struct {
+	roomUC usecase.RoomUseCase
+	facilitiesUC usecase.FacilitiesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
-	engine         *gin.Engine
-	host           string
+	transactionsUc usecase.TransactionsUsecase
+	engine       *gin.Engine
+	host         string
 }
 
 func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
+
+	controller.NewRoomController(s.roomUC, rg).Route()
+	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
+	controller.NewTransactionsController(s.transactionsUc, rg).Route()
 }
 
 func (s *Server) Run() {
@@ -31,24 +39,34 @@ func (s *Server) Run() {
 
 func NewServer() *Server {
 	cfg, _ := config.NewConfig()
-	dns := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
-	db, err := sql.Open(cfg.Driver, dns)
+
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name)
+	db, err := sql.Open(cfg.Driver, dsn)
 	if err != nil {
-		panic("connection error")
+		panic(err.Error())
 	}
 
-	// inject DB ke repository
+	// Inject DB ke -> repository
+	roomRepo := repository.NewRoomRepository(db)
+	facilityRepo := repository.NewFasilitesRepository(db)
 	roomFacilityRepo := repository.NewTransactionsRepository(db)
-	// inject repository ke usecase
+	transactionsRepo := repository.NewTransactionsRepository(db)
+
+	// Inject REPO ke -> useCase
+	roomUC := usecase.NewRoomUseCase(roomRepo)
+	facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
 	roomFacilityUc := usecase.NewTransactionsUsecase(roomFacilityRepo)
+	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
+
 	return &Server{
+		roomUC: roomUC,
+		facilitiesUC: facilitiesUC,
+		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
-		engine:         engine,
-		host:           host,
-		// jwtService: jwtService,
+		engine: engine,
+		host:   host,
 	}
 }
