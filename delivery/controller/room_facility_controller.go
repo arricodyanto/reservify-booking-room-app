@@ -26,16 +26,8 @@ func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	}
 
 	// check required field
-	if payload.RoomId == "" {
-		common.SendErrorResponse(ctx, http.StatusBadRequest, "field roomId required")
-		return
-	}
-	if payload.FacilityId == "" {
-		common.SendErrorResponse(ctx, http.StatusBadRequest, "field facilityId required")
-		return
-	}
-	if payload.Quantity == 0 {
-		common.SendErrorResponse(ctx, http.StatusBadRequest, "field quantity required and not zero")
+	if payload.RoomId == "" || payload.FacilityId == "" || payload.Quantity == 0 {
+		common.SendErrorResponse(ctx, http.StatusBadRequest, "field roomId, facilityId, and quantity are required")
 		return
 	}
 
