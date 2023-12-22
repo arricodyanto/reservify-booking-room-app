@@ -48,6 +48,7 @@ func (suite *FacilitiesControllerTestSuite) TestListHandler_Success() {
 	}
 	suite.fum.On("FindAllFacilities", 1, 5).Return(mockFacility, mockPaging, nil)
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities?page=1&size=5", nil)
 	assert.NoError(suite.T(), err)
 
@@ -66,6 +67,8 @@ func (suite *FacilitiesControllerTestSuite) TestListHandler_Fail() {
 
 	suite.fum.On("FindAllFacilities", 1, 5).Return(mockFacility, model.Paging{}, mockError)
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities?page=1&size=5", nil)
 	assert.NoError(suite.T(), err)
 
@@ -84,6 +87,8 @@ func (suite *FacilitiesControllerTestSuite) TestGetHandler_Success() {
 	suite.fum.On("FindFacilitiesById", "").Return(expectedFasilities, nil)
 
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities/1", nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -102,6 +107,8 @@ func (suite *FacilitiesControllerTestSuite) TestGetHandler_Error() {
 	suite.fum.On("FindFacilitiesById", "").Return(expectedFasilities, mockError)
 
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities/1", nil)
 	assert.NoError(suite.T(), err)
 
@@ -125,6 +132,8 @@ func (suite *FacilitiesControllerTestSuite) TestCreateHandler_Success() {
 	suite.fum.On("RegisterNewFacilities", mockPayload).Return(mockFacility, nil)
 
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	requestBody := `{"name": "This is name", "quantity": 10}`
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -147,6 +156,8 @@ func (suite *FacilitiesControllerTestSuite) TestCreateHandler_BadRequest() {
 	suite.fum.On("RegisterNewFacilities", &mockPayload).Return(expectedFasilities, mockError)
 
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/facilities", nil)
 	assert.NoError(suite.T(), err)
 
@@ -169,6 +180,8 @@ func (suite *FacilitiesControllerTestSuite) TestCreateHandler_InternalServerErro
 	suite.fum.On("RegisterNewFacilities", mockPayload).Return(expectedFasilities, mockError)
 
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	requestBody := `{"name": "This is name", "quantity": 10}`
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -194,6 +207,8 @@ func (suite *FacilitiesControllerTestSuite) TestUpdateHandler_Success() {
 	suite.fum.On("EditFacilities", mockPayload).Return(mockFacility, nil)
 
 	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc.Route()
+
 	requestBody := `{"id": "1","name": "This is name", "quantity": 10}`
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
