@@ -3,6 +3,7 @@ package repo_mock
 import (
 	"booking-room-app/entity"
 	"booking-room-app/shared/model"
+	"time"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -10,8 +11,8 @@ import (
 type TransactionsRepoMock struct {
 	mock.Mock
 }
-func (t *TransactionsRepoMock) List(page, size int) ([]entity.Transaction, model.Paging, error) {
-	args := t.Called(page, size)
+func (t *TransactionsRepoMock) List(page, size int, startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error) {
+	args := t.Called(page, size, startDate, endDate)
 	return args.Get(0).([]entity.Transaction), args.Get(1).(model.Paging), args.Error(2)
 
 }
