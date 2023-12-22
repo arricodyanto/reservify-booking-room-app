@@ -48,6 +48,50 @@ func (suite *TransactionsRepositoryTestSuite) SetupTest() {
 	suite.mockSql = mock
 	suite.repo = NewTransactionsRepository(suite.mockDb)
 }
+
+func (suite *TransactionsRepositoryTestSuite) TestGetByEmployeeId_Success() {
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectTransactionByEmployeeID)).WithArgs(expectedTransactions.EmployeeId).WillReturnRows(sqlmock.NewRows([]string{"id", "employee_id", "room_id","description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedTransactions.ID, expectedTransactions.EmployeeId, expectedTransactions.RoomId, expectedTransactions.Description, expectedTransactions.Status, expectedTransactions.StartTime, expectedTransactions.EndTime, expectedTransactions.CreatedAt, expectedTransactions.UpdatedAt))
+
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectRoomWithFacilities)).WithArgs("1").WillReturnRows(sqlmock.NewRows([]string{"r.id", "r.facility_id", "r.quantity", "r.created_at", "r.updated_at"}).AddRow(expectedRoomFacilities.ID, expectedRoomFacilities.FacilityId, expectedRoomFacilities.Quantity, expectedRoomFacilities.CreatedAt, expectedRoomFacilities.UpdatedAt))
+
+    _, err := suite.repo.GetTransactionByEmployeId(expectedTransactions.ID)
+    suite.NoError(err)
+}
+
+func (suite *TransactionsRepositoryTestSuite) TestGetByEmployeeId_Fail() {
+	_, err := suite.repo.GetTransactionByEmployeId(expectedTransactions.EmployeeId)
+	suite.Error(err)
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectTransactionByEmployeeID)).
+        WithArgs(expectedTransactions.EmployeeId).
+		WillReturnRows(sqlmock.NewRows([]string{"employee_id"}).
+		AddRow(expectedTransactions.EmployeeId))
+
+
+    _, err = suite.repo.GetTransactionByEmployeId("1")
+    assert.Error(suite.T(), err)
+	assert.NotNil(suite.T(), err)
+}
+
+func (suite *TransactionsRepositoryTestSuite) TestGetIdEmployeeId_Fail() {
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectTransactionByEmployeeID)).WithArgs(expectedTransactions.EmployeeId).WillReturnRows(sqlmock.NewRows([]string{"id", "employee_id", "room_id","description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedTransactions.ID, expectedTransactions.EmployeeId, expectedTransactions.RoomId, expectedTransactions.Description, expectedTransactions.Status, expectedTransactions.StartTime, expectedTransactions.EndTime, expectedTransactions.CreatedAt, expectedTransactions.UpdatedAt))
+
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectRoomWithFacilities)).WillReturnRows(sqlmock.NewRows([]string{"r.id", "r.facility_id", "r.quantity", "r.created_at", "r.updated_at"}).AddRow(expectedRoomFacilities.ID, expectedRoomFacilities.FacilityId, expectedRoomFacilities.Quantity, expectedRoomFacilities.CreatedAt, expectedRoomFacilities.UpdatedAt))
+
+    _, err := suite.repo.GetTransactionByEmployeId(expectedTransactions.ID)
+    assert.Error(suite.T(), err)
+	assert.NotNil(suite.T(), err)
+}
+
+func (suite *TransactionsRepositoryTestSuite) TestListEmployeeAtGetByEmployeeId_Fail() {
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectTransactionByEmployeeID)).WithArgs(expectedTransactions.EmployeeId).WillReturnRows(sqlmock.NewRows([]string{"id", "employee_id", "room_id","description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedTransactions.ID, expectedTransactions.EmployeeId, expectedTransactions.RoomId, expectedTransactions.Description, expectedTransactions.Status, expectedTransactions.StartTime, expectedTransactions.EndTime, expectedTransactions.CreatedAt, expectedTransactions.UpdatedAt))
+
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectRoomWithFacilities)).WithArgs("1").WillReturnRows(sqlmock.NewRows([]string{"r.id", "r.facility_id", "r.quantity", "r.created_at"}).AddRow(expectedRoomFacilities.ID, expectedRoomFacilities.FacilityId, expectedRoomFacilities.Quantity, expectedRoomFacilities.CreatedAt))
+
+    _, err := suite.repo.GetTransactionByEmployeId(expectedTransactions.ID)
+    assert.Error(suite.T(), err)
+	assert.NotNil(suite.T(), err)
+} 
+
 func (suite *TransactionsRepositoryTestSuite) TestGetById_Success() {
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectTransactionByID)).WithArgs(expectedTransactions.ID).WillReturnRows(sqlmock.NewRows([]string{"id", "employee_id", "room_id","description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedTransactions.ID, expectedTransactions.EmployeeId, expectedTransactions.RoomId, expectedTransactions.Description, expectedTransactions.Status, expectedTransactions.StartTime, expectedTransactions.EndTime, expectedTransactions.CreatedAt, expectedTransactions.UpdatedAt))
 
@@ -55,7 +99,7 @@ func (suite *TransactionsRepositoryTestSuite) TestGetById_Success() {
 
     _, err := suite.repo.GetTransactionById(expectedTransactions.ID)
     suite.NoError(err)
-} 
+}
 
 func (suite *TransactionsRepositoryTestSuite) TestScanGetById_Fail() {
 	_, err := suite.repo.GetTransactionById(expectedTransactions.ID)
@@ -94,7 +138,6 @@ func (suite *TransactionsRepositoryTestSuite) TestGetRoomFacilitiRows_Fail() {
     assert.Error(suite.T(), err)
 	assert.NotNil(suite.T(), err)
 }
-
 
 func (suite *TransactionsRepositoryTestSuite) TestCreate_Success() {
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(`INSERT INTO transactions (employee_id, room_id, description, start_time, end_time, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, status, created_at`)).WithArgs(
@@ -142,8 +185,6 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_Fail() {
     assert.NotNil(suite.T(), err)
     assert.Error(suite.T(), err)
 }
-
-
 
 func (suite *TransactionsRepositoryTestSuite) TestCreate_RoomFacilitiesNil() {
 	var expected = entity.Transaction{
@@ -302,48 +343,6 @@ func (suite *TransactionsRepositoryTestSuite) TestUpdate_Fail() {
     assert.NotNil(suite.T(), err)
     assert.Error(suite.T(), err)    
 }
-
-
-// func (suite *TransactionsRepositoryTestSuite) TestList_Success() {
-// 	page := 2
-// 	size := 2
-
-// 	// expectedPaging := model.Paging{
-// 	// 	Page:        page,
-// 	// 	RowsPerPage: size,
-// 	// 	TotalRows:   5,
-// 	// 	TotalPages:  1,
-// 	// }
-
-// 	expectedTransactions := []entity.Transaction{
-// 		{ID:"1", EmployeeId: "1", RoomId: "1", Status: "pending", StartTime:  time.Now(), EndTime:  time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
-// 		{ID:"2", EmployeeId: "2", RoomId: "2", Status: "pending", StartTime:  time.Now(), EndTime:  time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
-// 	}
-	
-// 	rows := sqlmock.NewRows([]string{"id", "employee_id", "room_id", "description", "status", "start_time", "end_time","created_at", "updated_at"}).
-// 	AddRow("1","1","1","test","pending", time.Now(), time.Now(), time.Now(), time.Now()).
-// 	AddRow("2","2","2","test","pending", time.Now(), time.Now(), time.Now(), time.Now())
-
-// 	suite.mockSql.ExpectQuery(regexp.QuoteMeta( `SELECT id, employee_id, room_id, description, status, start_time, end_time, created_at, updated_at FROM transactions WHERE created_at BETWEEN $3 AND ($4::date + 1) - interval '1 second' ORDER BY created_at DESC LIMIT $1 OFFSET $2`)).WithArgs(size, (page-1)*size, expectedTransactions[0].StartTime, expectedTransactions[0].EndTime).WillReturnRows(rows)
-	
-// 	row := sqlmock.NewRows([]string{"r.id", "r.facility_id", "r.quantity", "r.created_at", "r.updated_at"}).AddRow(expectedRoomFacilities.ID, expectedRoomFacilities.FacilityId, expectedRoomFacilities.Quantity, expectedRoomFacilities.CreatedAt, expectedRoomFacilities.UpdatedAt,)
-	
-	
-// 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(`SELECT r.id, r.facility_id, r.quantity, r.created_at, r.updated_at FROM rooms t JOIN trx_room_facility r on t.id = r.room_id WHERE t.id = $1;`)).WithArgs(expectedTransactions[0].RoomId).WillReturnRows(row)
-// 	// // suite.mockSql.ExpectQuery(`SELECT`).WithArgs(size, (page-1)*size).WillReturnRows(rows)
-
-// 	// suite.mockSql.ExpectQuery(regexp.QuoteMeta(`SELECT COUNT(*) FROM transactions`)).WillReturnRows(sqlmock.NewRows([]string{"total_rows"}).AddRow(2))
-
-	
-// 	_, _, err := suite.repo.List(page, size, expectedTransactions[0].StartTime, expectedTransactions[0].EndTime)
-// 	assert.Nil(suite.T(), err)
-// 	assert.Equal(suite.T(), expectedTransactions, expectedTransactions)
-// 	// assert.Equal(suite.T(), expectedPaging, paging)
-// }
-
-
-
-
 
 func TestTransactionsRepositoryTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionsRepositoryTestSuite))
