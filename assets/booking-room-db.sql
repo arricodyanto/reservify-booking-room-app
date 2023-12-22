@@ -39,10 +39,11 @@ CREATE TABLE trx_room_facility (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     room_id         uuid NOT NULL,
     facility_id     uuid NOT NULL,
-    quantity        INT,
+    quantity        INT NOT NULL,
+    description TEXT,
     -- status VARCHAR(10) DEFAULT 'used', -- 'used', 'returned'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (room_id) REFERENCES rooms(id),
     FOREIGN KEY (facility_id) REFERENCES facilities(id)
 );
