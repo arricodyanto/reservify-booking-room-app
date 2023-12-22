@@ -82,6 +82,9 @@ func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.Room
 			return entity.RoomFacility{}, http.StatusBadRequest, fmt.Errorf("oppps, quantity exceeds the facility quantity")
 		}
 	}
+	if payload.Description == "" {
+		payload.Description = oldRoomFacility.Description
+	}
 
 	roomFacility, statusCode, err := rf.repo.UpdateRoomFacility(payload, newFacilityQuantity)
 	if err != nil {

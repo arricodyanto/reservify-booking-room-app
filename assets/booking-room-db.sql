@@ -36,14 +36,14 @@ CREATE TABLE rooms (
 );
 
 CREATE TABLE trx_room_facility (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() UNIQUE,
     room_id         uuid NOT NULL,
     facility_id     uuid NOT NULL,
     quantity        INT NOT NULL,
     description TEXT,
-    -- status VARCHAR(10) DEFAULT 'used', -- 'used', 'returned'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_composite PRIMARY KEY (column1, column2)
     FOREIGN KEY (room_id) REFERENCES rooms(id),
     FOREIGN KEY (facility_id) REFERENCES facilities(id)
 );

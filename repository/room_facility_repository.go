@@ -60,6 +60,7 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 			&roomFacility.RoomId,
 			&roomFacility.FacilityId,
 			&roomFacility.Quantity,
+			&roomFacility.Description,
 			&roomFacility.CreatedAt,
 			&roomFacility.UpdatedAt)
 		if err != nil {
@@ -94,6 +95,7 @@ func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacil
 		&roomFacility.RoomId,
 		&roomFacility.FacilityId,
 		&roomFacility.Quantity,
+		&roomFacility.Description,
 		&roomFacility.CreatedAt,
 		&roomFacility.UpdatedAt)
 	if err != nil {
@@ -123,7 +125,8 @@ func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity
 		config.InsertTrxRoomFacility,
 		payload.RoomId,
 		payload.FacilityId,
-		payload.Quantity).
+		payload.Quantity,
+		payload.Description).
 		Scan(
 			&payload.ID,
 			&payload.CreatedAt,
@@ -169,6 +172,7 @@ func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility,
 		payload.RoomId,
 		payload.FacilityId,
 		payload.Quantity,
+		payload.Description,
 		payload.ID).Scan(&payload.CreatedAt, &payload.UpdatedAt)
 	if err != nil {
 		log.Println("roomFacilityRepository.UpdateRoomFacility:", err.Error())
