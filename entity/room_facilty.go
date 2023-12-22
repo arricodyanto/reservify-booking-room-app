@@ -4,7 +4,7 @@ import "time"
 
 type RoomFacility struct {
 	ID         string    `json:"id"`
-	RoomId     string    `json:"roomId"`
+	RoomId     string    `json:"roomId,omitempty"`
 	FacilityId string    `json:"facilityId"`
 	Quantity   int       `json:"quantity"`
 	CreatedAt  time.Time `json:"createdAt"`
