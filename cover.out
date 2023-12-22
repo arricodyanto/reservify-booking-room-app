@@ -173,7 +173,7 @@ booking-room-app/repository/transactions_repository.go:231.5,234.19 2 1
 booking-room-app/repository/transactions_repository.go:234.19,236.6 1 1
 booking-room-app/repository/transactions_repository.go:237.5,237.58 1 1
 booking-room-app/repository/transactions_repository.go:239.4,243.28 3 1
-booking-room-app/repository/transactions_repository.go:248.106,255.17 3 0
-booking-room-app/repository/transactions_repository.go:255.17,258.4 2 0
-booking-room-app/repository/transactions_repository.go:260.2,261.26 2 0
+booking-room-app/repository/transactions_repository.go:248.106,255.17 3 1
+booking-room-app/repository/transactions_repository.go:255.17,258.4 2 1
+booking-room-app/repository/transactions_repository.go:260.2,261.26 2 1
 booking-room-app/repository/transactions_repository.go:264.67,266.2 1 1

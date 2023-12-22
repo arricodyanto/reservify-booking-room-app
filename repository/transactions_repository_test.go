@@ -49,6 +49,32 @@ func (suite *TransactionsRepositoryTestSuite) SetupTest() {
 	suite.repo = NewTransactionsRepository(suite.mockDb)
 }
 
+func (suite *TransactionsRepositoryTestSuite) TestUpdatePermission_Success() {
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdatePermission)).WithArgs(expectedTransactions.Status, expectedTransactions.ID, expectedTransactions.UpdatedAt).WillReturnRows(
+	sqlmock.NewRows([]string{"employee_id", "room_id", "description", "start_time", "end_time", "created_at"}).AddRow(
+		expectedTransactions.EmployeeId, 
+		expectedTransactions.RoomId,
+		expectedTransactions.Description,
+		expectedTransactions.StartTime,
+		expectedTransactions.EndTime,
+		expectedTransactions.CreatedAt,
+		))
+
+	actual, err := suite.repo.UpdatePemission(expectedTransactions)
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), expectedTransactions.Description, actual.Description)
+}
+
+func (suite *TransactionsRepositoryTestSuite) TestUpdatePermission_Fail() {
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdatePermission)).WithArgs(expectedTransactions.Status, expectedTransactions.ID, expectedTransactions.UpdatedAt).WillReturnRows(
+	sqlmock.NewRows([]string{"employee_id"}).AddRow(
+		expectedTransactions.EmployeeId))
+
+	_, err := suite.repo.UpdatePemission(expectedTransactions)
+	assert.Error(suite.T(), err)
+}
+
+
 func (suite *TransactionsRepositoryTestSuite) TestGetByEmployeeId_Success() {
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectTransactionByEmployeeID)).WithArgs(expectedTransactions.EmployeeId).WillReturnRows(sqlmock.NewRows([]string{"id", "employee_id", "room_id","description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedTransactions.ID, expectedTransactions.EmployeeId, expectedTransactions.RoomId, expectedTransactions.Description, expectedTransactions.Status, expectedTransactions.StartTime, expectedTransactions.EndTime, expectedTransactions.CreatedAt, expectedTransactions.UpdatedAt))
 
