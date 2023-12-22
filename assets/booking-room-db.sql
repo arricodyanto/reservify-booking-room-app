@@ -1,11 +1,16 @@
 CREATE DATABASE booking_room_db;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
+
 CREATE TABLE employees (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50),
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(200),
     division VARCHAR(50),
     position VARCHAR(50),
+    role role_type DEFAULT 'employee',
     contact VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
@@ -33,13 +38,14 @@ CREATE TABLE rooms (
 );
 
 CREATE TABLE trx_room_facility (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() UNIQUE,
     room_id         uuid NOT NULL,
     facility_id     uuid NOT NULL,
-    quantity        INT,
-    -- status VARCHAR(10) DEFAULT 'used', -- 'used', 'returned'
+    quantity        INT NOT NULL,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_composite PRIMARY KEY (column1, column2)
     FOREIGN KEY (room_id) REFERENCES rooms(id),
     FOREIGN KEY (facility_id) REFERENCES facilities(id)
 );
@@ -47,13 +53,15 @@ CREATE TABLE trx_room_facility (
 CREATE TYPE transaction_status AS ENUM ('pending', 'accepted', 'declined');
 
 CREATE TABLE transactions (
-    ID INT PRIMARY KEY,
-    employe_id uuid,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    employee_id uuid,
     room_id uuid,
-    decription TEXT,
+    description TEXT,
     status transaction_status DEFAULT 'pending', -- 'pending', 'accepted', 'declined'
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    FOREIGN KEY (employe_id) REFERENCES employees(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
