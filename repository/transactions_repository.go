@@ -227,10 +227,9 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 			}
 			payload.RoomFacilities = roomFacilities
 
-
-			transactions = payload
-			return transactions, err
-		}
+	}
+	transactions = payload
+	return transactions, err
 }
 // permission list (GA) -GET (batal)
 // update permission (GA) -PUT
