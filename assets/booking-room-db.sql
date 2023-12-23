@@ -34,7 +34,7 @@ CREATE TABLE rooms (
     capacity  INT,
     status status_type DEFAULT 'available', -- 'available', 'booked', 'unavailable'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE trx_room_facility (
