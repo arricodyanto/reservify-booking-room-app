@@ -10,8 +10,8 @@ import (
 
 type TransactionsUsecase interface {
 	FindAllTransactions(page, size int,startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error)
-	FindTransactionsById(id string) ([]entity.Transaction, error)
-	FindTransactionsByEmployeeId(employeeId string) ([]entity.Transaction, error)
+	FindTransactionsById(id string) (entity.Transaction, error)
+	FindTransactionsByEmployeeId(employeeId string) (entity.Transaction, error)
 	RequestNewBookingRooms(payload entity.Transaction) (entity.Transaction, error)
 	AccStatusBooking(payload entity.Transaction) (entity.Transaction, error)
 	
@@ -25,11 +25,11 @@ func (t *transactionsUsecase) FindAllTransactions(page, size int, startDate, end
 	return t.repo.List(page, size, startDate, endDate)
 }
 
-func (t *transactionsUsecase) FindTransactionsById(id string) ([]entity.Transaction, error) {
+func (t *transactionsUsecase) FindTransactionsById(id string) (entity.Transaction, error) {
 	return t.repo.GetTransactionById(id)
 }
 
-func (t *transactionsUsecase) FindTransactionsByEmployeeId(employeeId string) ([]entity.Transaction, error) {
+func (t *transactionsUsecase) FindTransactionsByEmployeeId(employeeId string) (entity.Transaction, error) {
 	return t.repo.GetTransactionByEmployeId(employeeId)
 }
 
