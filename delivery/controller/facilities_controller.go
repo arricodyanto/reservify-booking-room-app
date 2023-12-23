@@ -78,10 +78,10 @@ func (f *FacilitiesController) createHandler(ctx *gin.Context) {
 }
 
 func (f *FacilitiesController) Route() {
-	f.rg.POST(config.FacilitiesCreate, f.authMiddleware.RequireToken("admin", "employee", "ga"), f.createHandler)
-	f.rg.GET(config.FacilitiesList, f.authMiddleware.RequireToken("admin", "employee", "ga"), f.listHandler)
-	f.rg.GET(config.FacilitiesGetById, f.authMiddleware.RequireToken("admin", "employee", "ga"), f.getHandler)
-	f.rg.PUT(config.FacilitiesUpdate, f.authMiddleware.RequireToken("admin", "employee", "ga"), f.updateHandler)
+	f.rg.POST(config.FacilitiesCreate, f.authMiddleware.RequireToken("admin"), f.createHandler)
+	f.rg.GET(config.FacilitiesList, f.authMiddleware.RequireToken("admin"), f.listHandler)
+	f.rg.GET(config.FacilitiesGetById, f.authMiddleware.RequireToken("admin"), f.getHandler)
+	f.rg.PUT(config.FacilitiesUpdate, f.authMiddleware.RequireToken("admin"), f.updateHandler)
 }
 
 func NewFacilitiesController(facilitiesUC usecase.FacilitiesUseCase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *FacilitiesController {
