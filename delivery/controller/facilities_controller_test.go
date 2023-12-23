@@ -2,6 +2,7 @@ package controller
 
 import (
 	"booking-room-app/entity"
+	middleware_mock "booking-room-app/mock/middleware"
 	usecase_mock "booking-room-app/mock/usecase"
 	"booking-room-app/shared/model"
 	"errors"
@@ -20,13 +21,17 @@ type FacilitiesControllerTestSuite struct {
 	suite.Suite
 	rg  *gin.RouterGroup
 	fum *usecase_mock.FacilitiesUseCaseMock
+	amm *middleware_mock.AuthMiddlewareMock
 }
 
 func (suite *FacilitiesControllerTestSuite) SetupTest() {
 	suite.fum = new(usecase_mock.FacilitiesUseCaseMock)
+	suite.amm = new(middleware_mock.AuthMiddlewareMock)
 	router := gin.Default()
 	gin.SetMode(gin.TestMode)
-	suite.rg = router.Group("/api/v1")
+	rg := router.Group("/api/v1")
+	rg.Use(suite.amm.RequireToken("userssss"))
+	suite.rg = rg
 }
 
 var expectedFasilities = entity.Facilities{
@@ -47,7 +52,7 @@ func (suite *FacilitiesControllerTestSuite) TestListHandler_Success() {
 		TotalPages:  1,
 	}
 	suite.fum.On("FindAllFacilities", 1, 5).Return(mockFacility, mockPaging, nil)
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	handlerFunc.Route()
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities?page=1&size=5", nil)
 	assert.NoError(suite.T(), err)
@@ -66,9 +71,7 @@ func (suite *FacilitiesControllerTestSuite) TestListHandler_Fail() {
 	mockError := errors.New("something went wrong")
 
 	suite.fum.On("FindAllFacilities", 1, 5).Return(mockFacility, model.Paging{}, mockError)
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities?page=1&size=5", nil)
 	assert.NoError(suite.T(), err)
 
@@ -86,9 +89,7 @@ func (suite *FacilitiesControllerTestSuite) TestGetHandler_Success() {
 	// mockID := "1"
 	suite.fum.On("FindFacilitiesById", "").Return(expectedFasilities, nil)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities/1", nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -106,9 +107,7 @@ func (suite *FacilitiesControllerTestSuite) TestGetHandler_Error() {
 	mockError := errors.New("facility not found")
 	suite.fum.On("FindFacilitiesById", "").Return(expectedFasilities, mockError)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	request, err := http.NewRequest(http.MethodGet, "/api/v1/facilities/1", nil)
 	assert.NoError(suite.T(), err)
 
@@ -131,9 +130,7 @@ func (suite *FacilitiesControllerTestSuite) TestCreateHandler_Success() {
 
 	suite.fum.On("RegisterNewFacilities", mockPayload).Return(mockFacility, nil)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	requestBody := `{"name": "This is name", "quantity": 10}`
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -155,9 +152,7 @@ func (suite *FacilitiesControllerTestSuite) TestCreateHandler_BadRequest() {
 	// Mock the ShouldBindJSON method to return an error
 	suite.fum.On("RegisterNewFacilities", &mockPayload).Return(expectedFasilities, mockError)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/facilities", nil)
 	assert.NoError(suite.T(), err)
 
@@ -179,9 +174,7 @@ func (suite *FacilitiesControllerTestSuite) TestCreateHandler_InternalServerErro
 
 	suite.fum.On("RegisterNewFacilities", mockPayload).Return(expectedFasilities, mockError)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	requestBody := `{"name": "This is name", "quantity": 10}`
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -206,9 +199,7 @@ func (suite *FacilitiesControllerTestSuite) TestUpdateHandler_Success() {
 
 	suite.fum.On("EditFacilities", mockPayload).Return(mockFacility, nil)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
-	handlerFunc.Route()
-
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	requestBody := `{"id": "1","name": "This is name", "quantity": 10}`
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -228,7 +219,7 @@ func (suite *FacilitiesControllerTestSuite) TestUpdateHandler_BadRequest() {
 
 	suite.fum.On("EditFacilities", &mockPayload).Return(expectedFasilities, mockError)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/facilities", nil)
 	assert.NoError(suite.T(), err)
 
@@ -249,7 +240,7 @@ func (suite *FacilitiesControllerTestSuite) TestUpdateHandler_NotFound() {
 
 	suite.fum.On("EditFacilities", mockPayload).Return(expectedFasilities, mockError)
 
-	handlerFunc := NewFacilitiesController(suite.fum, suite.rg)
+	handlerFunc := NewFacilitiesController(suite.fum, suite.rg, suite.amm)
 	requestBody := `{"id": "nonexistent_id"}`
 	request, err := http.NewRequest(http.MethodPut, "/api/v1/facilities", strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
