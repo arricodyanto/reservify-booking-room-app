@@ -87,7 +87,6 @@ func (f *fasilitiesRepository) List(page, size int) ([]entity.Facilities, model.
 	}
 
 	return facilities, paging, nil
-
 }
 
 // get facility details by ID (ADMIN) -GET
@@ -121,7 +120,6 @@ func (f *fasilitiesRepository) UpdateById(payload entity.Facilities) (entity.Fac
 		payload.Quantity,
 		payload.UpdatedAt,
 		payload.ID).Scan(
-		&fasilities.ID,
 		&fasilities.CreatedAt)
 
 	if err != nil {
@@ -129,6 +127,7 @@ func (f *fasilitiesRepository) UpdateById(payload entity.Facilities) (entity.Fac
 		return entity.Facilities{}, err
 	}
 
+	fasilities.ID = payload.ID
 	fasilities.Name = payload.Name
 	fasilities.Quantity = payload.Quantity
 	fasilities.UpdatedAt = payload.UpdatedAt
