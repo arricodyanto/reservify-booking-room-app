@@ -14,7 +14,7 @@ import (
 type TransactionsRepository interface {
 	Create(payload entity.Transaction) (entity.Transaction, error)
 	List(page, size int, startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error)
-	GetTransactionById(id string) ([]entity.Transaction, error)
+	GetTransactionById(id string) (entity.Transaction, error)
 	GetTransactionByEmployeId(EmployeeId string) ([]entity.Transaction, error)
 	UpdatePemission(payload entity.Transaction) (entity.Transaction, error)
 }
@@ -90,34 +90,25 @@ func (t *transactionsRepository) List(page, size int,startDate, endDate time.Tim
 }
 
 // get transaction by id (GA) - GET
-func (t *transactionsRepository) GetTransactionById(id string) ([]entity.Transaction, error) {
-	var transactions []entity.Transaction
-	rows, err := t.db.Query(config.SelectTransactionByID, id)
+func (t *transactionsRepository) GetTransactionById(id string) (entity.Transaction, error) {
+	var transactions entity.Transaction
+	err := t.db.QueryRow(config.SelectTransactionByID, id).Scan(
+		&transactions.ID,
+		&transactions.EmployeeId,
+		&transactions.RoomId,
+		&transactions.Description,
+		&transactions.Status,
+		&transactions.StartTime, 
+		&transactions.EndTime,
+		&transactions.CreatedAt,
+		&transactions.UpdatedAt)
 	if err != nil {
-		return nil, err
+		return entity.Transaction{}, err
 	}
-	for rows.Next() {
-		var transaction entity.Transaction
-		err := rows.Scan(
-			&transaction.ID,
-			&transaction.EmployeeId,
-			&transaction.RoomId,
-			&transaction.Description,
-			&transaction.Status,
-			&transaction.StartTime, 
-			&transaction.EndTime,
-			&transaction.CreatedAt,
-			&transaction.UpdatedAt)
-		if err != nil {
-			log.Println("transactionRepository.Rows.Next():",
-				err.Error())
-			return nil, err
-		}
-
-		RoomFacilitiesRows, err := t.db.Query(config.SelectRoomWithFacilities, transaction.RoomId)
+		RoomFacilitiesRows, err := t.db.Query(config.SelectRoomWithFacilities, transactions.RoomId)
 		if err!= nil {
 			log.Println("transactionsRepository.Query:", err.Error())
-			return nil, err
+			return entity.Transaction{}, err
 		}
 		for RoomFacilitiesRows.Next() {
 			var roomFacility entity.RoomFacility
@@ -129,12 +120,10 @@ func (t *transactionsRepository) GetTransactionById(id string) ([]entity.Transac
 				&roomFacility.UpdatedAt)
 			if err!= nil {
 				log.Println("transactionsRepository.Rows.Next():", err.Error())
-				return nil, err
+				return entity.Transaction{}, err
 			}
-			transaction.RoomFacilities = append(transaction.RoomFacilities, roomFacility)
+			transactions.RoomFacilities = append(transactions.RoomFacilities, roomFacility)
 		}
-		transactions = append(transactions, transaction)
-	}
 	return transactions, nil
 }
 
