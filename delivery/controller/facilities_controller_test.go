@@ -2,8 +2,8 @@ package controller
 
 import (
 	"booking-room-app/entity"
-	middleware_mock "booking-room-app/mock/middleware"
-	usecase_mock "booking-room-app/mock/usecase"
+	"booking-room-app/mock/middleware_mock"
+	"booking-room-app/mock/usecase_mock"
 	"booking-room-app/shared/model"
 	"errors"
 	"net/http"

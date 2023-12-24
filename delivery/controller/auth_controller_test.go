@@ -2,7 +2,7 @@ package controller
 
 import (
 	"booking-room-app/entity/dto"
-	usecase_mock "booking-room-app/mock/usecase"
+	"booking-room-app/mock/usecase_mock"
 	"errors"
 	"net/http"
 	"net/http/httptest"
