@@ -4,7 +4,7 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/entity/dto"
 	"booking-room-app/mock/service_mock"
-	usecase_mock "booking-room-app/mock/usecase"
+	"booking-room-app/mock/usecase_mock"
 	"fmt"
 	"testing"
 	"time"
