@@ -21,12 +21,12 @@ const (
 	SelectQuantityFacility        = `SELECT quantity FROM facilities WHERE id = $1`
 	// `SELECT id, date, amount, transaction_type, balance, description, created_at, updated_at FROM expenses WHERE LOWER(transaction_type::text) = LOWER($1)`
 
-	InsertRoom            = `INSERT INTO rooms (name, room_type, capacity, status, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
+	InsertRoom            = `INSERT INTO rooms (name, room_type, capacity, status) VALUES ($1, $2, $3, $4) RETURNING id, created_at`
 	SelectRoomByID        = `SELECT id, name, room_type, capacity, status, created_at, updated_at FROM rooms WHERE id = $1`
 	SelectRoomList        = `SELECT id, name, room_type, capacity, status, created_at, updated_at FROM rooms ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 	SelectRoomListStatus  = `SELECT id, name, room_type, capacity, status, created_at, updated_at FROM rooms WHERE status = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`
-	UpdateRoomByID        = `UPDATE rooms SET name = $2, room_type = $3, capacity = $4, status = $5, updated_at = $6 WHERE id = $1 RETURNING created_at`
-	UpdateRoomStatus      = `UPDATE rooms SET status = $2, updated_at = $3 WHERE id = $1 RETURNING name, room_type, capacity, created_at`
+	UpdateRoomByID        = `UPDATE rooms SET name = $2, room_type = $3, capacity = $4, status = $5, updated_at = $6 WHERE id = $1 RETURNING created_at, updated_at`
+	UpdateRoomStatus      = `UPDATE rooms SET status = $2, updated_at = $3 WHERE id = $1 RETURNING name, room_type, capacity, created_at, updated_at`
 	SelectCountRoom       = `SELECT COUNT(*) FROM rooms`
 	SelectCountRoomStatus = `SELECT COUNT(*) FROM rooms WHERE status = $1`
 
@@ -41,11 +41,11 @@ const (
 	InsertEmployee = "INSERT INTO employees(name, username, password, role, division, position, contact, updated_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, created_at;"
 
 	SelectAllEmployee = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees LIMIT $1 OFFSET $2;"
-	
-		// done
-	SelectEmployeeByID = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE id = $1;"
+
+	// done
+	SelectEmployeeByID       = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE id = $1;"
 	SelectEmployeeByUsername = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE username = $1;"
-	
+
 	// done
 	UpdateEmployee = `UPDATE employees SET name = $1, username = $2, password = $3, role = $4, division = $5, position = $6, contact = $7, updated_at = $8 WHERE id = $9 RETURNING created_at`
 )
