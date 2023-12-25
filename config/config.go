@@ -29,7 +29,6 @@ type TokenConfig struct {
 	JwtSigningMethod *jwt.SigningMethodHMAC
 	JwtExpiresTime   time.Duration
 }
-
 type Config struct {
 	DbConfig
 	ApiConfig

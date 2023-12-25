@@ -29,8 +29,8 @@ type Server struct {
 func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
 
-	controller.NewRoomController(s.roomUC, rg).Route()
 	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
+	controller.NewRoomController(s.roomUC, authMiddleware, rg).Route()
 	controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
 	controller.NewEmployeeController(s.employeeUC, rg, authMiddleware).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()

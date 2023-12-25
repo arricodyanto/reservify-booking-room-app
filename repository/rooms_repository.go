@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"log"
 	"math"
+	"time"
 )
 
 type RoomRepository interface {
@@ -25,7 +26,7 @@ type roomRepository struct {
 // Create implements RoomRepository.
 func (r *roomRepository) Create(payload entity.Room) (entity.Room, error) {
 	var room entity.Room
-	err := r.db.QueryRow(config.InsertRoom, payload.Name, payload.RoomType, payload.Capacity, payload.Status, payload.UpdatedAt).Scan(&room.ID, &room.CreatedAt)
+	err := r.db.QueryRow(config.InsertRoom, payload.Name, payload.RoomType, payload.Capacity, payload.Status).Scan(&room.ID, &room.CreatedAt, &room.UpdatedAt)
 	if err != nil {
 		log.Println("roomRepository.CreateQueryRow", err.Error())
 		return entity.Room{}, err
@@ -35,7 +36,6 @@ func (r *roomRepository) Create(payload entity.Room) (entity.Room, error) {
 	room.RoomType = payload.RoomType
 	room.Capacity = payload.Capacity
 	room.Status = payload.Status
-	room.UpdatedAt = payload.UpdatedAt
 
 	return room, nil
 }
@@ -130,6 +130,7 @@ func (r *roomRepository) ListStatus(status string, page, size int) ([]entity.Roo
 func (r *roomRepository) Update(payload entity.Room) (entity.Room, error) {
 	var room entity.Room
 	room.ID = payload.ID
+	payload.UpdatedAt = time.Now()
 
 	err := r.db.QueryRow(config.UpdateRoomByID, room.ID, payload.Name, payload.RoomType, payload.Capacity, payload.Status, payload.UpdatedAt).Scan(&room.CreatedAt)
 	if err != nil {
@@ -150,15 +151,15 @@ func (r *roomRepository) Update(payload entity.Room) (entity.Room, error) {
 func (r *roomRepository) UpdateStatus(payload entity.Room) (entity.Room, error) {
 	var room entity.Room
 	room.ID = payload.ID
+	payload.UpdatedAt = time.Now()
 
-	err := r.db.QueryRow(config.UpdateRoomStatus, room.ID, payload.Status, payload.UpdatedAt).Scan(&room.Name, &room.RoomType, &room.Capacity, &room.CreatedAt)
+	err := r.db.QueryRow(config.UpdateRoomStatus, room.ID, payload.Status, payload.UpdatedAt).Scan(&room.Name, &room.RoomType, &room.Capacity, &room.CreatedAt, &room.UpdatedAt)
 	if err != nil {
 		log.Println("roomRepository.UpdateStatusQueryRow", err.Error())
 		return entity.Room{}, err
 	}
 
 	room.Status = payload.Status
-	room.UpdatedAt = payload.UpdatedAt
 
 	return room, nil
 }
