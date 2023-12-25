@@ -31,8 +31,8 @@ func (s *Server) initRoute() {
 
 	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
 	controller.NewRoomController(s.roomUC, authMiddleware, rg).Route()
-	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
-	controller.NewEmployeeController(s.employeeUC, rg).Route()
+	controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
+	controller.NewEmployeeController(s.employeeUC, rg, authMiddleware).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
 	controller.NewTransactionsController(s.transactionsUc, rg).Route()
 	controller.NewAuthController(s.authUsc, rg).Route()
