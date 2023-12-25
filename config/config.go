@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
-	"strconv"
+	// "strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -52,15 +52,15 @@ func (c *Config) ConfigConfiguration() error {
 
 	c.ApiConfig = ApiConfig{ApiPort: os.Getenv("API_PORT")}
 
-	tokenExpire, _ := strconv.Atoi(os.Getenv("TOKEN_EXPIRE"))
-	c.TokenConfig = TokenConfig{
-		IssuerName:       os.Getenv("TOKEN_ISSUE"),
-		JwtSignatureKy:   []byte(os.Getenv("TOKEN_SECRET")),
-		JwtSigningMethod: jwt.SigningMethodHS256,
-		JwtExpiresTime:   time.Duration(tokenExpire) * time.Minute,
-	}
+	// tokenExpire, _ := strconv.Atoi(os.Getenv("TOKEN_EXPIRE"))
+	// c.TokenConfig = TokenConfig{
+	// 	IssuerName:       os.Getenv("TOKEN_ISSUE"),
+	// 	JwtSignatureKy:   []byte(os.Getenv("TOKEN_SECRET")),
+	// 	JwtSigningMethod: jwt.SigningMethodHS256,
+	// 	JwtExpiresTime:   time.Duration(tokenExpire) * time.Minute,
+	// }
 
-	if c.Host == "" || c.Port == "" || c.User == "" || c.Name == "" || c.Driver == "" || c.ApiPort == "" || c.IssuerName == "" || c.JwtExpiresTime < 0 || len(c.JwtSignatureKy) == 0 {
+	if c.Host == "" || c.Port == "" || c.User == "" || c.Name == "" || c.Driver == "" || c.ApiPort == "" {
 		return fmt.Errorf("missing required environment")
 	}
 
