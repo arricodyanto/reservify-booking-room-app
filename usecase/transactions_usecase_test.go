@@ -23,6 +23,31 @@ var expectedTransactions = entity.Transaction{
     UpdatedAt: time.Now(),
 }
 
+var expectedTransaction = []entity.Transaction{
+	{
+	ID:        "1",
+    EmployeeId: "1",
+    RoomId:    "1",
+	RoomFacilities: []entity.RoomFacility{expectedRoomFacilities},
+	Status: "pending",
+	StartTime:  time.Now(),
+	EndTime:  time.Now(),
+    CreatedAt: time.Now(),
+    UpdatedAt: time.Now(),
+	},
+	{
+		ID:        "2",
+		EmployeeId: "2",
+		RoomId:    "2",
+		RoomFacilities: []entity.RoomFacility{expectedRoomFacilities},
+		Status: "pending",
+		StartTime:  time.Now(),
+		EndTime:  time.Now(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		},
+}
+
 var expectedRoomFacilities = entity.RoomFacility {
 	ID:        "1",
     RoomId:    "1",
@@ -31,7 +56,6 @@ var expectedRoomFacilities = entity.RoomFacility {
     CreatedAt: time.Now(),
     UpdatedAt: time.Now(),
 }
-
 
 type TransactionUseCaseTestSuite struct {
 	suite.Suite
@@ -123,6 +147,30 @@ func (suite *TransactionUseCaseTestSuite) TestGetTransactionById_Success() {
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), expectedTransactions.Description, actual.Description)
 }
+
+func (suite *TransactionUseCaseTestSuite) TestFindAllTransactions_Success() {
+	suite.trm.On("List", page, size, expectedTransaction[0].CreatedAt, expectedTransaction[0].CreatedAt).Return(expectedTransaction, expectedPaging, nil)
+
+	actual, paging, err := suite.tuc.FindAllTransactions(page, size, expectedTransaction[0].CreatedAt, expectedTransaction[0].CreatedAt)
+
+	assert.Nil(suite.T(), err)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), expectedTransaction[0].Description, actual[0].Description)
+	assert.Equal(suite.T(), expectedPaging.Page, paging.Page)
+
+}
+
+func (suite *TransactionUseCaseTestSuite) TestFindTransactionsByEmployeeId_Success() {
+	suite.trm.On("GetTransactionByEmployeId", expectedTransactions.EmployeeId).Return(expectedTransaction, nil)
+
+	actual, err := suite.tuc.FindTransactionsByEmployeeId(expectedTransactions.EmployeeId)
+
+	assert.Nil(suite.T(), err)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), expectedTransaction[0].Description, actual[0].Description)
+}
+
+
 
 
 func TestTransactionUseCaseTestSuite(t *testing.T) {
