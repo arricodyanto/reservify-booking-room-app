@@ -21,13 +21,13 @@ type RoomController struct {
 func (r *RoomController) createHandler(c *gin.Context) {
 	var payload entity.Room
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	room, err := r.roomUC.RegisterNewRoom(payload)
 	if err != nil {
-		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
+		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	common.SendCreateResponse(c, room, "Created")
@@ -81,13 +81,13 @@ func (r *RoomController) listHandler(c *gin.Context) {
 func (r *RoomController) updateDetailHandler(c *gin.Context) {
 	var payload entity.Room
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	room, err := r.roomUC.UpdateRoomDetail(payload)
 	if err != nil {
-		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
+		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	common.SendCreateResponse(c, room, "Updated")
@@ -95,16 +95,16 @@ func (r *RoomController) updateDetailHandler(c *gin.Context) {
 func (r *RoomController) updateStatusHandler(c *gin.Context) {
 	var payload entity.Room
 	if err := c.ShouldBindJSON(&payload); err != nil {
-		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
+		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	room, err := r.roomUC.UpdateRoomStatus(payload)
 	if err != nil {
-		common.SendErrorResponse(c, http.StatusBadRequest, err.Error())
+		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	common.SendSingleResponse(c, room, "Ok")
+	common.SendCreateResponse(c, room, "Ok")
 }
 
 func (r *RoomController) Route() {
