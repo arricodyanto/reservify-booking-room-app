@@ -2,6 +2,7 @@ package controller
 
 import (
 	"booking-room-app/config"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
@@ -16,7 +17,7 @@ import (
 type TransactionsController struct {
 	transactionUC usecase.TransactionsUsecase
 	rg *gin.RouterGroup
-	// authMiddleware middleware.AuthMiddleware
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (t *TransactionsController) createHandler(ctx *gin.Context) {
@@ -131,17 +132,17 @@ func (t *TransactionsController) updateStatusHandler(ctx *gin.Context) {
 }
 
 func (t *TransactionsController) Route() {
-	t.rg.GET(config.TransactionList, t.listHandler)
-	t.rg.GET(config.TransactionGetById, t.getTransactionById)
-	t.rg.GET(config.TransactionGetByEmpId, t.getTransactionByEmployeeId)
-	t.rg.POST(config.TransactionCreate, t.createHandler)
-	t.rg.PUT(config.TransactionUpdatePerm, t.updateStatusHandler)
+	t.rg.GET(config.TransactionList, t.authMiddleware.RequireToken("admin", "ga"), t.listHandler)
+	t.rg.GET(config.TransactionGetById, t.authMiddleware.RequireToken("admin", "ga", "employee"), t.getTransactionById)
+	t.rg.GET(config.TransactionGetByEmpId, t.authMiddleware.RequireToken("admin", "employee"), t.getTransactionByEmployeeId)
+	t.rg.POST(config.TransactionCreate, t.authMiddleware.RequireToken("admin", "employee"), t.createHandler)
+	t.rg.PUT(config.TransactionUpdatePerm, t.authMiddleware.RequireToken("ga"), t.updateStatusHandler)
 }
 
-func NewTransactionsController(transactionUC usecase.TransactionsUsecase, rg *gin.RouterGroup) *TransactionsController {
+func NewTransactionsController(transactionUC usecase.TransactionsUsecase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware,) *TransactionsController {
 	return &TransactionsController{
 		transactionUC: transactionUC,
 		rg:         rg,
-		// authMiddleware: authMiddleware,
+		authMiddleware: authMiddleware,
 	}
 }
