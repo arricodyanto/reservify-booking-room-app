@@ -20,7 +20,7 @@ type roomFacilityUsecase struct {
 }
 
 // find all room-facility
-func (rf *roomFacilityUsecase) FindAllRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error) {
+func (rf *roomFacilityUsecase) FindAllRoomFacility(page int, size int) ([]entity.RoomFacility, model.Paging, error) {
 	if page == 0 && size == 0 {
 		page = 1
 		size = 5
