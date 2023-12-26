@@ -132,7 +132,7 @@ func (r *roomRepository) Update(payload entity.Room) (entity.Room, error) {
 	room.ID = payload.ID
 	payload.UpdatedAt = time.Now()
 
-	err := r.db.QueryRow(config.UpdateRoomByID, room.ID, payload.Name, payload.RoomType, payload.Capacity, payload.Status, payload.UpdatedAt).Scan(&room.CreatedAt)
+	err := r.db.QueryRow(config.UpdateRoomByID, room.ID, payload.Name, payload.RoomType, payload.Capacity, payload.Status).Scan(&room.CreatedAt, &room.UpdatedAt)
 	if err != nil {
 		log.Println("roomRepository.UpdateQueryRow", err.Error())
 		return entity.Room{}, err
@@ -142,7 +142,6 @@ func (r *roomRepository) Update(payload entity.Room) (entity.Room, error) {
 	room.RoomType = payload.RoomType
 	room.Capacity = payload.Capacity
 	room.Status = payload.Status
-	room.UpdatedAt = payload.UpdatedAt
 
 	return room, nil
 }
@@ -153,7 +152,7 @@ func (r *roomRepository) UpdateStatus(payload entity.Room) (entity.Room, error) 
 	room.ID = payload.ID
 	payload.UpdatedAt = time.Now()
 
-	err := r.db.QueryRow(config.UpdateRoomStatus, room.ID, payload.Status, payload.UpdatedAt).Scan(&room.Name, &room.RoomType, &room.Capacity, &room.CreatedAt, &room.UpdatedAt)
+	err := r.db.QueryRow(config.UpdateRoomStatus, room.ID, payload.Status).Scan(&room.Name, &room.RoomType, &room.Capacity, &room.CreatedAt, &room.UpdatedAt)
 	if err != nil {
 		log.Println("roomRepository.UpdateStatusQueryRow", err.Error())
 		return entity.Room{}, err
