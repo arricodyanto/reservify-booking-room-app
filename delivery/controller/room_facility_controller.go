@@ -5,9 +5,10 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +21,8 @@ type RoomFacilityController struct {
 
 func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	var payload entity.RoomFacility
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -32,7 +34,7 @@ func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	}
 
 	// check valid uuid
-	_, err := uuid.Parse(payload.RoomId)
+	_, err = uuid.Parse(payload.RoomId)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, "invalid uuid for roomId field")
 		return
