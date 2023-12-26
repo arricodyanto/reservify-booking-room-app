@@ -2,6 +2,7 @@ package controller
 
 import (
 	"booking-room-app/config"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/shared/model"
@@ -14,8 +15,9 @@ import (
 )
 
 type RoomController struct {
-	roomUC usecase.RoomUseCase
-	rg     *gin.RouterGroup
+	roomUC         usecase.RoomUseCase
+	rg             *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (r *RoomController) createHandler(c *gin.Context) {
@@ -108,13 +110,13 @@ func (r *RoomController) updateStatusHandler(c *gin.Context) {
 }
 
 func (r *RoomController) Route() {
-	r.rg.POST(config.RoomCreate, r.createHandler)
-	r.rg.GET(config.RoomList, r.listHandler)
-	r.rg.GET(config.RoomGetById, r.getHandler)
-	r.rg.PUT(config.RoomUpdate, r.updateDetailHandler)
-	r.rg.PUT(config.RoomUpdateStatus, r.updateStatusHandler)
+	r.rg.POST(config.RoomCreate, r.authMiddleware.RequireToken("admin"), r.createHandler)
+	r.rg.GET(config.RoomList, r.authMiddleware.RequireToken("employee", "admin", "ga"), r.listHandler)
+	r.rg.GET(config.RoomGetById, r.authMiddleware.RequireToken("employee", "admin", "ga"), r.getHandler)
+	r.rg.PUT(config.RoomUpdate, r.authMiddleware.RequireToken("admin"), r.updateDetailHandler)
+	r.rg.PUT(config.RoomUpdateStatus, r.authMiddleware.RequireToken("admin", "ga"), r.updateStatusHandler)
 }
 
-func NewRoomController(roomUC usecase.RoomUseCase, rg *gin.RouterGroup) *RoomController {
-	return &RoomController{roomUC: roomUC, rg: rg}
+func NewRoomController(roomUC usecase.RoomUseCase, authMiddleware middleware.AuthMiddleware, rg *gin.RouterGroup) *RoomController {
+	return &RoomController{roomUC: roomUC, authMiddleware: authMiddleware, rg: rg}
 }

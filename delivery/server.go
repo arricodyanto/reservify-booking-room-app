@@ -17,7 +17,7 @@ import (
 type Server struct {
 	roomUC         usecase.RoomUseCase
 	facilitiesUC   usecase.FacilitiesUseCase
-	employeeUC usecase.EmployeesUseCase
+	employeeUC     usecase.EmployeesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
 	transactionsUc usecase.TransactionsUsecase
 	authUsc        usecase.AuthUseCase
@@ -30,9 +30,9 @@ func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
 
 	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
-	controller.NewRoomController(s.roomUC, rg).Route()
-	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
-	controller.NewEmployeeController(s.employeeUC, rg).Route()
+	controller.NewRoomController(s.roomUC, authMiddleware, rg).Route()
+	controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
+	controller.NewEmployeeController(s.employeeUC, rg, authMiddleware).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
 	controller.NewTransactionsController(s.transactionsUc, rg, authMiddleware).Route()
 	controller.NewAuthController(s.authUsc, rg).Route()
@@ -70,7 +70,6 @@ func NewServer() *Server {
 	jwtService := service.NewJwtService(cfg.TokenConfig)
 	authUc := usecase.NewAuthUseCase(employeeUC, jwtService)
 
-
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
@@ -78,7 +77,7 @@ func NewServer() *Server {
 		authUsc:        authUc,
 		roomUC:         roomUC,
 		facilitiesUC:   facilitiesUC,
-		employeeUC: employeeUC,
+		employeeUC:     employeeUC,
 		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
 		engine:         engine,
