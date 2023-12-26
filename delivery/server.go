@@ -3,7 +3,9 @@ package delivery
 import (
 	"booking-room-app/config"
 	"booking-room-app/delivery/controller"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/repository"
+	"booking-room-app/shared/service"
 	"booking-room-app/usecase"
 	"database/sql"
 	"fmt"
@@ -18,18 +20,22 @@ type Server struct {
 	employeeUC usecase.EmployeesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
 	transactionsUc usecase.TransactionsUsecase
+	authUsc        usecase.AuthUseCase
 	engine         *gin.Engine
+	jwtService     service.JwtService
 	host           string
 }
 
 func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
 
+	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
 	controller.NewRoomController(s.roomUC, rg).Route()
 	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
 	controller.NewEmployeeController(s.employeeUC, rg).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
-	controller.NewTransactionsController(s.transactionsUc, rg).Route()
+	controller.NewTransactionsController(s.transactionsUc, rg, authMiddleware).Route()
+	controller.NewAuthController(s.authUsc, rg).Route()
 }
 
 func (s *Server) Run() {
@@ -61,17 +67,22 @@ func NewServer() *Server {
 	employeeUC := usecase.NewEmployeeUseCase(employeeRepo)
 	roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
 	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
+	jwtService := service.NewJwtService(cfg.TokenConfig)
+	authUc := usecase.NewAuthUseCase(employeeUC, jwtService)
+
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
 	return &Server{
+		authUsc:        authUc,
 		roomUC:         roomUC,
 		facilitiesUC:   facilitiesUC,
 		employeeUC: employeeUC,
 		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
 		engine:         engine,
+		jwtService:     jwtService,
 		host:           host,
 	}
 }
