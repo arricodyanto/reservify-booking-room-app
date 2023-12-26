@@ -250,7 +250,7 @@ func (suite *TransactionsControllerTestSuite) TestGetTransactionById_Fail() {
 
 func (suite *TransactionsControllerTestSuite) TestgetTransactionByEmployeeId_Success() {
 	mockTransactions := []entity.Transaction{expectedTransactions}
-	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, nil)
+	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, expectedPaging, nil)
 
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
@@ -269,7 +269,7 @@ func (suite *TransactionsControllerTestSuite) TestgetTransactionByEmployeeId_Fai
 	mockTransactions := []entity.Transaction{expectedTransactions}
 
 	mockError := errors.New("transaction not found")
-	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, mockError)
+	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, expectedPaging, mockError)
 
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)

@@ -91,15 +91,28 @@ func (t *TransactionsController) getTransactionById(ctx *gin.Context) {
 }
 
 func (t *TransactionsController) getTransactionByEmployeeId(ctx *gin.Context) {
+	page, _ := strconv.Atoi(ctx.Query("page"))
+	size, _ := strconv.Atoi(ctx.Query("size"))
 	employeeId := ctx.Param("employeeId")
-	transactions, err := t.transactionUC.FindTransactionsByEmployeeId(employeeId)
+
+	if page == 0 || size == 0 {
+		page = 1
+		size = 5
+	}
+
+	transactions, paging, err := t.transactionUC.FindTransactionsByEmployeeId(employeeId, page, size)
 	if err != nil {
 		fmt.Println(employeeId)
 		common.SendErrorResponse(ctx, http.StatusNotFound, "transaction with employee ID "+employeeId+" not found")
 		return
 	}
 
-	common.SendSingleResponse(ctx, transactions, "Ok")
+	var response []interface{}
+	for _, v := range transactions {
+		response = append(response, v)
+	}
+
+	common.SendPagedResponse(ctx, response, paging, "Ok")
 }
 
 func (t *TransactionsController) updateStatusHandler(ctx *gin.Context) {
