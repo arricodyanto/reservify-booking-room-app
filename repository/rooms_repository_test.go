@@ -198,13 +198,13 @@ func (suite *RoomRepositoryTestSuite) TestListStatus_TotalRowsFailure() {
 }
 
 func (suite *RoomRepositoryTestSuite) TestUpdate_Success() {
-	suite.mockSql.ExpectQuery(`UPDATE`).WithArgs(expectedRoom.ID, expectedRoom.Name, expectedRoom.RoomType, expectedRoom.Capacity, expectedRoom.Status, expectedRoom.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"created_at"}).AddRow(expectedRoom.CreatedAt))
+	suite.mockSql.ExpectQuery(`UPDATE`).WithArgs(expectedRoom.ID, expectedRoom.Name, expectedRoom.RoomType, expectedRoom.Capacity, expectedRoom.Status).WillReturnRows(sqlmock.NewRows([]string{"created_at", "updated_at"}).AddRow(expectedRoom.CreatedAt, expectedRoom.UpdatedAt))
 
 	actual, err := suite.repo.Update(expectedRoom)
 
 	assert.Nil(suite.T(), err)
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), expectedRoom.Name, actual.Name)
+	assert.Equal(suite.T(), expectedRoom.Status, actual.Status)
 }
 
 func (suite *RoomRepositoryTestSuite) TestUpdate_Failure() {
@@ -218,7 +218,7 @@ func (suite *RoomRepositoryTestSuite) TestUpdate_Failure() {
 }
 
 func (suite *RoomRepositoryTestSuite) TestUpdateStatus_Success() {
-	suite.mockSql.ExpectQuery(`UPDATE`).WithArgs(expectedRoom.ID, expectedRoom.Status, expectedRoom.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"name", "room_type", "capacity", "created_at", "updated_at"}).AddRow(expectedRoom.Name, expectedRoom.RoomType, expectedRoom.Capacity, expectedRoom.CreatedAt, expectedRoom.UpdatedAt))
+	suite.mockSql.ExpectQuery(`UPDATE`).WithArgs(expectedRoom.ID, expectedRoom.Status).WillReturnRows(sqlmock.NewRows([]string{"name", "room_type", "capacity", "created_at", "updated_at"}).AddRow(expectedRoom.Name, expectedRoom.RoomType, expectedRoom.Capacity, expectedRoom.CreatedAt, expectedRoom.UpdatedAt))
 
 	actual, err := suite.repo.UpdateStatus(expectedRoom)
 
