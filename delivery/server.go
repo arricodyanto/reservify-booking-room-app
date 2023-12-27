@@ -35,7 +35,7 @@ func (s *Server) initRoute() {
 	controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
 	controller.NewEmployeeController(s.employeeUC, rg, authMiddleware).Route()
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
-	controller.NewTransactionsController(s.transactionsUc, rg).Route()
+	controller.NewTransactionsController(s.transactionsUc, rg, authMiddleware).Route()
 	controller.NewAuthController(s.authUsc, rg).Route()
 	controller.NewReportController(s.reportUC, rg, authMiddleware).Route()
 }

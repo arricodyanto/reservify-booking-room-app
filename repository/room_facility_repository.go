@@ -16,9 +16,9 @@ import (
 )
 
 type RoomFacilityRepository interface {
-	Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, int, error)
-	List(page, size int) ([]entity.RoomFacility, model.Paging, error)
-	GetTransactionById(id string) (entity.RoomFacility, int, error)
+	CreateRoomFacility(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, int, error)
+	ListRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error)
+	GetRoomFacilityById(id string) (entity.RoomFacility, int, error)
 	UpdateRoomFacility(payload entity.RoomFacility, newFacilityQuantity int) (entity.RoomFacility, int, error)
 	GetQuantityFacilityByID(id string) (int, int, error)
 }
@@ -43,7 +43,7 @@ func (t *roomFacilityRepository) GetQuantityFacilityByID(id string) (int, int, e
 }
 
 // get all room facilities (ADMIN) -GET
-func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, model.Paging, error) {
+func (t *roomFacilityRepository) ListRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error) {
 	var roomFacilities []entity.RoomFacility
 	offset := (page - 1) * size
 
@@ -88,7 +88,7 @@ func (t *roomFacilityRepository) List(page, size int) ([]entity.RoomFacility, mo
 }
 
 // get by ID room facilities (ADMIN) -GET
-func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacility, int, error) {
+func (t *roomFacilityRepository) GetRoomFacilityById(id string) (entity.RoomFacility, int, error) {
 	var roomFacility entity.RoomFacility
 	err := t.db.QueryRow(config.SelectRoomFacilityByID, id).Scan(
 		&roomFacility.ID,
@@ -110,7 +110,7 @@ func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacil
 }
 
 // create room facilities (ADMIN) -POST
-func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, int, error) {
+func (t *roomFacilityRepository) CreateRoomFacility(payload entity.RoomFacility, newFacilityQuantity int) (entity.RoomFacility, int, error) {
 	var roomFacilities entity.RoomFacility
 
 	// begin transaction
@@ -137,7 +137,7 @@ func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity
 	}
 
 	// reduce quantity in facility
-	_, err = tx.Exec(config.UpdateQuantityFacilityByID, newQuantity, payload.FacilityId)
+	_, err = tx.Exec(config.UpdateQuantityFacilityByID, newFacilityQuantity, payload.FacilityId)
 	if err != nil {
 		log.Println("roomFacilityRepository.QueryReduceQuantity:", err.Error())
 		return entity.RoomFacility{}, http.StatusInternalServerError, err
