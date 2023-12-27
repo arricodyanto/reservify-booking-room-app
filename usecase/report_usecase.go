@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 type ReportUseCase interface {
-	PrintAllReports(startDate, endDate string) ([]dto.ReportDto, error)
+	PrintAllReports(rangeParam string) ([]dto.ReportDto, error)
 }
 
 type reportUseCase struct {
@@ -18,7 +19,7 @@ type reportUseCase struct {
 }
 
 // FindAllReports implements ReportUseCase.
-func (r *reportUseCase) PrintAllReports(startDate string, endDate string) ([]dto.ReportDto, error) {
+func (r *reportUseCase) PrintAllReports(rangeParam string) ([]dto.ReportDto, error) {
 	// Generate file
 	file, err := os.Create("public/transaction.csv")
 	if err != nil {
@@ -32,6 +33,22 @@ func (r *reportUseCase) PrintAllReports(startDate string, endDate string) ([]dto
 
 	// Write the file headers
 	writer.Write([]string{"ID", "ID Pegawai", "Nama Pegawai", "Username Akun Pegawai", "Divisi", "Jabatan", "Kontak Pegawai", "ID Ruangan", "Nama Ruangan", "Jenis Ruangan", "Kapasitas", "Daftar Fasilitas", "Catatan Pemesanan", "Status Pemesanan", "Jam Mulai Peminjaman Ruangan", "Jam Akhir Peminjaman Ruangan", "Waktu Pemesanan Dibuat", "Terakhir Diperbarui"})
+
+	var startDate, endDate time.Time
+	switch rangeParam {
+	case "day":
+		startDate = time.Now().AddDate(0, 0, -1)
+		endDate = time.Now()
+	case "week":
+		startDate = time.Now().AddDate(0, 0, -7)
+		endDate = time.Now()
+	case "month":
+		startDate = time.Now().AddDate(0, -1, 0)
+		endDate = time.Now()
+	case "year":
+		startDate = time.Now().AddDate(-1, 0, 0)
+		endDate = time.Now()
+	}
 
 	reports, err := r.repo.List(startDate, endDate)
 	if err != nil {

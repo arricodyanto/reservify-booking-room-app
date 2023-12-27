@@ -1,13 +1,15 @@
 package repository
 
 import (
+	"booking-room-app/config"
 	"booking-room-app/entity/dto"
 	"database/sql"
 	"log"
+	"time"
 )
 
 type ReportRepository interface {
-	List(startDate, endDate string) ([]dto.ReportDto, error)
+	List(startDate, endDate time.Time) ([]dto.ReportDto, error)
 }
 
 type reportRepository struct {
@@ -15,10 +17,10 @@ type reportRepository struct {
 }
 
 // List implements ReportRepository.
-func (r *reportRepository) List(startDate string, endDate string) ([]dto.ReportDto, error) {
+func (r *reportRepository) List(startDate, endDate time.Time) ([]dto.ReportDto, error) {
 	var reports []dto.ReportDto
 
-	rows, err := r.db.Query(`SELECT t.id, t.employee_id, e.name, e.username, e.division, e.position, e.contact, t.room_id, r.name, r.room_type, r.capacity, t.description, t.status, t.start_time, t.end_time, t.created_at, t.updated_at FROM transactions t join employees e on e.id = t.employee_id JOIN rooms r on r.id = t.room_id order by created_at DESC`)
+	rows, err := r.db.Query(config.SelectReportList, startDate, endDate)
 	if err != nil {
 		log.Println("transactionsRepository.Query:", err.Error())
 		return nil, err
@@ -48,7 +50,7 @@ func (r *reportRepository) List(startDate string, endDate string) ([]dto.ReportD
 			return nil, err
 		}
 
-		roomFacilities, err := r.db.Query(`SELECT t.facility_id, f.name, t.quantity FROM trx_room_facility t JOIN facilities f ON t.facility_id = f.id WHERE t.room_id = $1`, report.RoomId)
+		roomFacilities, err := r.db.Query(config.SelectReportFacilityByRoomID, report.RoomId)
 		if err != nil {
 			log.Println("transactionsRepository.Query:", err.Error())
 			return nil, err

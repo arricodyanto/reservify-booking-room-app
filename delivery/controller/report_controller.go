@@ -15,7 +15,14 @@ type ReportController struct {
 }
 
 func (r *ReportController) downloadHandler(c *gin.Context) {
-	_, err := r.reportUC.PrintAllReports("", "")
+	rangeParam := c.Query("range")
+
+	if rangeParam == "" || (rangeParam != "day" && rangeParam != "week" && rangeParam != "month" && rangeParam != "year") {
+		common.SendErrorResponse(c, http.StatusBadRequest, "Invalid range parameter")
+		return
+	}
+
+	_, err := r.reportUC.PrintAllReports(rangeParam)
 	if err != nil {
 		common.SendErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
