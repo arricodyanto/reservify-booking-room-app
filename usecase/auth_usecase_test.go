@@ -46,7 +46,7 @@ func (suite *AuthUseCaseTestSuite) TestLogin_Success() {
 	mockAuthResponse := dto.AuthResponseDto{
 		Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
 	}
-	suite.aum.On("FindEmployeesByUsername", mockLogin.User).Return(mockUser, nil)
+	suite.aum.On("FindEmployeForLogin", mockLogin.User, mockLogin.Password).Return(mockUser, nil)
 	suite.jsm.On("CreateToken", mockUser).Return(mockAuthResponse, nil)
 	actual, err := suite.au.Login(mockLogin)
 	assert.Nil(suite.T(), err)
@@ -60,7 +60,7 @@ func (suite *AuthUseCaseTestSuite) TestLogin_Fail() {
 		Password: "password",
 	}
 
-	suite.aum.On("FindEmployeesByUsername", mockLogin.User).Return(entity.Employee{}, fmt.Errorf("error"))
+	suite.aum.On("FindEmployeForLogin", mockLogin.User, mockLogin.Password).Return(entity.Employee{}, fmt.Errorf("error"))
 	_, err := suite.au.Login(mockLogin)
 	assert.NotNil(suite.T(), err)
 	assert.Error(suite.T(), err)
@@ -87,7 +87,7 @@ func (suite *AuthUseCaseTestSuite) TestLogin_CreateTokenFail() {
 	mockAuthResponse := dto.AuthResponseDto{
 		Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
 	}
-	suite.aum.On("FindEmployeesByUsername", mockLogin.User).Return(mockUser, nil)
+	suite.aum.On("FindEmployeForLogin", mockLogin.User, mockLogin.Password).Return(mockUser, nil)
 	suite.jsm.On("CreateToken", mockUser).Return(mockAuthResponse, fmt.Errorf("error"))
 	_, err := suite.au.Login(mockLogin)
 	assert.NotNil(suite.T(), err)
