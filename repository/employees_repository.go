@@ -8,13 +8,12 @@ import (
 	"log"
 	"math"
 	"time"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type EmployeeRepository interface {
 	GetEmployeesByID(id string) (entity.Employee, error)
 	GetEmployeesByUsername(username string) (entity.Employee, error)
+	GetEmployeesByUsernameForLogin(username ,password string) (entity.Employee, error)
 	CreateEmployee(payload entity.Employee) (entity.Employee, error)
 	UpdateEmployee(payload entity.Employee) (entity.Employee, error)
 	List(page, size int) ([]entity.Employee, model.Paging, error)
@@ -24,34 +23,15 @@ type employeeRepository struct {
 	db *sql.DB
 }
 
-
-// CreateEmployee implements EmployeeRepository.
-func hashPassword(password string) (string, error) {
-	// Menghasilkan hashed password dengan salt menggunakan bcrypt
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(hashedPassword), nil
-}
-
 func (e *employeeRepository) CreateEmployee(payload entity.Employee) (entity.Employee, error) {
 	var employee entity.Employee
 
 	payload.UpdatedAt = time.Now()
 
-	// Hash password
-	hashedPassword, err := hashPassword(payload.Password)
-	if err != nil {
-		log.Println("Gagal menghash password: ", err.Error())
-		return entity.Employee{}, err
-	}
-
-	err = e.db.QueryRow(config.InsertEmployee,
+	err := e.db.QueryRow(config.InsertEmployee,
 		payload.Name,
 		payload.Username,
-		hashedPassword, // Gunakan password yang dihash, bukan plaintext
+		payload.Password,
 		payload.Role,
 		payload.Division,
 		payload.Position,
@@ -65,7 +45,7 @@ func (e *employeeRepository) CreateEmployee(payload entity.Employee) (entity.Emp
 
 	employee.Name = payload.Name
 	employee.Username = payload.Username
-	employee.Password = hashedPassword
+	employee.Password = payload.Password
 	employee.Role = payload.Role
 	employee.Division = payload.Division
 	employee.Position = payload.Position
@@ -117,6 +97,21 @@ func (e *employeeRepository) GetEmployeesByUsername(username string) (entity.Emp
 	return employee, nil
 }
 
+func (e *employeeRepository) GetEmployeesByUsernameForLogin(username, password string) (entity.Employee, error) {
+	var employee entity.Employee
+	err := e.db.QueryRow(config.SelectEmployeeForLogin, username, password).Scan(
+		&employee.ID,
+		&employee.Name,
+		&employee.Username,
+		&employee.Password,
+		&employee.Role)
+	if err != nil {
+		log.Println("employeeRepository.GetEmployeeByID.QueryRow: ", err.Error())
+		return entity.Employee{}, err
+	}
+	return employee, nil
+}
+
 // Akhir
 
 // UpdateEmployee implements EmployeeRepository.
@@ -124,16 +119,11 @@ func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Emp
 	var employee entity.Employee
 	payload.UpdatedAt = time.Now()
 
-	hashedPassword, err := hashPassword(payload.Password)
-	if err != nil {
-		log.Println("Gagal menghash password: ", err.Error())
-		return entity.Employee{}, err
-	}
 
-	err = e.db.QueryRow(config.UpdateEmployee,
+	err := e.db.QueryRow(config.UpdateEmployee,
 		payload.Name,
 		payload.Username,
-		hashedPassword,
+		payload.Password,
 		payload.Role,
 		payload.Division,
 		payload.Position,
@@ -148,7 +138,7 @@ func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Emp
 	employee.ID = payload.ID
 	employee.Name = payload.Name
 	employee.Username = payload.Username
-	employee.Password = hashedPassword
+	employee.Password = payload.Password
 	employee.Role = payload.Role
 	employee.Division = payload.Division
 	employee.Position = payload.Position
