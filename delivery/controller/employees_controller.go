@@ -77,8 +77,9 @@ func (e *EmployeeController) putHandler(ctx *gin.Context) {
 
 // pagination
 func (e *EmployeeController) ListHandler(ctx *gin.Context) {
-	page, _ := strconv.Atoi(ctx.Query("page"))
-	size, _ := strconv.Atoi(ctx.Query("size"))
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(ctx.DefaultQuery("size", "5"))
+
 	employees, paging, err := e.employeeUC.ListAll(page, size)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())

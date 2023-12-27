@@ -15,10 +15,10 @@ const (
 	GetEmployeeIdListTransaction  = `SELECT COUNT(*) FROM transactions WHERE employee_id = $1`
 	SelectTransactionByID         = `SELECT id, employee_id, room_id, description, status, start_time, end_time, created_at, updated_at FROM transactions WHERE id = $1`
 	SelectTransactionByEmployeeID = `SELECT id, employee_id, room_id, description, status, start_time, end_time, created_at, updated_at FROM transactions WHERE employee_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`
-	InsertTransactions            = `INSERT INTO transactions (employee_id, room_id, description, start_time, end_time, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, status, created_at`
-	UpdatePermission              = `UPDATE transactions SET status = $1, updated_at = $3 WHERE id = $2 RETURNING employee_id, room_id, description, start_time, end_time, created_at`
-	InsertRoomFacility            = `INSERT INTO trx_room_facility (room_id, facility_id, quantity, description, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at`
-	UpdateFacilityQuantity        = `UPDATE facilities SET quantity = quantity - $1 WHERE id = $2 RETURNING id, created_at, updated_at`
+	InsertTransactions            = `INSERT INTO transactions (employee_id, room_id, description, start_time, end_time, updated_at) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP) RETURNING id, status, created_at, updated_at`
+	UpdatePermission              = `UPDATE transactions SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING employee_id, room_id, description, start_time, end_time, created_at`
+	InsertRoomFacility            = `INSERT INTO trx_room_facility (room_id, facility_id, quantity, description, updated_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id, created_at, updated_at`
+	UpdateFacilityQuantity        = `UPDATE facilities SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, created_at, updated_at`
 	SelectQuantityFacility        = `SELECT quantity FROM facilities WHERE id = $1`
 	// `SELECT id, date, amount, transaction_type, balance, description, created_at, updated_at FROM expenses WHERE LOWER(transaction_type::text) = LOWER($1)`
 
@@ -34,20 +34,17 @@ const (
 	InsertFasilities     = `INSERT INTO facilities (name, quantity) VALUES ($1, $2) RETURNING id, created_at, updated_at`
 	SelectFasilitiesList = `SELECT id, name, quantity, created_at, updated_at FROM facilities ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 	SelectFasilitiesById = `SELECT id, name, quantity, created_at, updated_at FROM facilities WHERE id = $1`
-	UpdateFasilities     = `UPDATE facilities SET name = $1, quantity = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING created_at, updated_at`
+	UpdateFasilities     = `UPDATE facilities SET name = $1, quantity = $2, updated_at = $3 WHERE id = $4 RETURNING created_at`
 	TotalRowsFasilities  = `SELECT COUNT(*) FROM facilities`
 
 	// Employee
 	// done
-	InsertEmployee = "INSERT INTO employees(name, username, password, role, division, position, contact, updated_at) VALUES($1, $2, crypt($3, gen_salt('bf')), $4, $5, $6, $7, $8) RETURNING id, created_at;"
-
+	InsertEmployee    = "INSERT INTO employees(name, username, password, role, division, position, contact, updated_at) VALUES($1, $2, crypt($3, gen_salt('bf')), $4, $5, $6, $7, CURRENT_TIMESTAMP) RETURNING id, created_at, updated_at;"
 	SelectAllEmployee = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees LIMIT $1 OFFSET $2;"
-
 	// done
 	SelectEmployeeByID       = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE id = $1;"
 	SelectEmployeeByUsername = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE username = $1;"
 	SelectEmployeeForLogin   = `SELECT id, name, username, password, role FROM employees WHERE username = $1 AND password = crypt($2, password)`
-
 	// done
-	UpdateEmployee = `UPDATE employees SET name = $1, username = $2, password = $3, role = $4, division = $5, position = $6, contact = $7, updated_at = $8 WHERE id = $9 RETURNING created_at`
+	UpdateEmployee = `UPDATE employees SET name = $1, username = $2, password = crypt($3, password), role = $4, division = $5, position = $6, contact = $7, updated_at = CURRENT_TIMESTAMP WHERE id = $8 RETURNING created_at, updated_at`
 )
