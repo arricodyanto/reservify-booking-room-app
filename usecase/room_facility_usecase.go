@@ -30,7 +30,11 @@ func (rf *roomFacilityUsecase) FindAllRoomFacility(page int, size int) ([]entity
 
 // find room-facility by id
 func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) (entity.RoomFacility, int, error) {
+<<<<<<< HEAD
 	return rf.repo.GetRoomFacilityById(id)
+=======
+	return rf.repo.GetTransactionById(id)
+>>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 }
 
 // add room-facility
@@ -46,7 +50,11 @@ func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFac
 	newFacilityQuantity := quantity - payload.Quantity
 
 	// create room-facility transaction
+<<<<<<< HEAD
 	transactions, statusCode, err := rf.repo.CreateRoomFacility(payload, newFacilityQuantity)
+=======
+	transactions, statusCode, err := rf.repo.Create(payload, newFacilityQuantity)
+>>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	if err != nil {
 		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to save room-facility transations :%v", err.Error())
 	}
@@ -56,7 +64,11 @@ func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFac
 // update room-facility
 func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, int, error) {
 	// get old record
+<<<<<<< HEAD
 	oldRoomFacility, statusCode, err := rf.repo.GetRoomFacilityById(payload.ID)
+=======
+	oldRoomFacility, statusCode, err := rf.repo.GetTransactionById(payload.ID)
+>>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	if err != nil {
 		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to get previous data :%v", err.Error())
 	}

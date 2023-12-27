@@ -38,7 +38,13 @@ func (t *TransactionsRepoMock) List(page, size int, startDate, endDate time.Time
 
 }
 
+<<<<<<< HEAD
 func (t *TransactionsRepoMock) GetTransactionByEmployeId(EmployeeId string, page, size int) ([]entity.Transaction, model.Paging, error) {
 	args := t.Called(EmployeeId, page, size)
 	return args.Get(0).([]entity.Transaction), args.Get(1).(model.Paging), args.Error(2)
+=======
+func (t *TransactionsRepoMock) GetTransactionByEmployeId(EmployeeId string) ([]entity.Transaction, error) {
+	args := t.Called(EmployeeId)
+	return args.Get(0).([]entity.Transaction), args.Error(1)
+>>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 }

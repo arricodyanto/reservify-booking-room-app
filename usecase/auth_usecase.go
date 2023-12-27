@@ -15,7 +15,11 @@ type authUseCase struct {
 }
 
 func (a *authUseCase) Login(payload dto.AuthRequestDto) (dto.AuthResponseDto, error) {
+<<<<<<< HEAD
 	user, err := a.userUC.FindEmployeForLogin(payload.User, payload.Password)
+=======
+	user, err := a.userUC.FindEmployeesByUsername(payload.User)
+>>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	if err != nil {
 		return dto.AuthResponseDto{}, err
 	}
