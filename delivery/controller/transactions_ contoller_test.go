@@ -22,7 +22,7 @@ var expectedTransactions = entity.Transaction{
 	EmployeeId:     "1",
 	RoomId:         "1",
 	RoomFacilities: nil,
-	Description: "Test",
+	Description:    "Test",
 	Status:         "pending",
 	StartTime:      time.Date(2023, time.December, 25, 12, 0, 0, 0, time.UTC),
 	EndTime:        time.Date(2023, time.December, 25, 12, 0, 0, 0, time.UTC),
@@ -48,12 +48,12 @@ func (suite *TransactionsControllerTestSuite) SetupTest() {
 
 func (suite *TransactionsControllerTestSuite) TestCreateHandler_Success() {
 	mockPayload := entity.Transaction{
-		ID:             "1",
-        EmployeeId:     "1",
-        RoomId:         "1",
+		ID:          "1",
+		EmployeeId:  "1",
+		RoomId:      "1",
 		Description: "Test",
-		StartTime:      time.Date(2023, time.December, 25, 12, 0, 0, 0, time.UTC),
-	EndTime:        time.Date(2023, time.December, 25, 15, 0, 0, 0, time.UTC),
+		StartTime:   time.Date(2023, time.December, 25, 12, 0, 0, 0, time.UTC),
+		EndTime:     time.Date(2023, time.December, 25, 15, 0, 0, 0, time.UTC),
 	}
 
 	suite.tum.On("RequestNewBookingRooms", mockPayload).Return(expectedTransactions, nil)
@@ -69,14 +69,14 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_Success() {
 		"startTime": "2023-12-25T12:00:00Z",
         "endTime": "2023-12-25T15:00:00Z"
 		}`
-		
+
 	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
 
 	responseRecorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(responseRecorder)
 	c.Request = request
-		
+
 	handlerFunc.createHandler(c)
 	assert.Equal(suite.T(), http.StatusCreated, responseRecorder.Code)
 }
@@ -95,19 +95,19 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_fail() {
 	responseRecorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(responseRecorder)
 	c.Request = request
-		
+
 	handlerFunc.createHandler(c)
 	assert.Equal(suite.T(), http.StatusBadRequest, responseRecorder.Code)
 }
 
 func (suite *TransactionsControllerTestSuite) TestCreateHandler_InternalServerErrorFailure() {
 	mockPayload := entity.Transaction{
-		ID:             "1",
-        EmployeeId:     "1",
-        RoomId:         "1",
+		ID:          "1",
+		EmployeeId:  "1",
+		RoomId:      "1",
 		Description: "Test",
-		StartTime:      time.Date(2023, time.December, 25, 12, 0, 0, 0, time.UTC),
-	EndTime:        time.Date(2023, time.December, 25, 15, 0, 0, 0, time.UTC),
+		StartTime:   time.Date(2023, time.December, 25, 12, 0, 0, 0, time.UTC),
+		EndTime:     time.Date(2023, time.December, 25, 15, 0, 0, 0, time.UTC),
 	}
 
 	suite.tum.On("RequestNewBookingRooms", mockPayload).Return(expectedTransactions, fmt.Errorf("error"))
@@ -123,14 +123,14 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_InternalServerEr
 		"startTime": "2023-12-25T12:00:00Z",
         "endTime": "2023-12-25T15:00:00Z"
 		}`
-		
+
 	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
 
 	responseRecorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(responseRecorder)
 	c.Request = request
-		
+
 	handlerFunc.createHandler(c)
 	assert.Equal(suite.T(), http.StatusInternalServerError, responseRecorder.Code)
 }
@@ -288,7 +288,7 @@ func (suite *TransactionsControllerTestSuite) TestgetTransactionByEmployeeId_Fai
 
 func (suite *TransactionsControllerTestSuite) TestUpdateHandler_Success() {
 	mockPayload := entity.Transaction{
-		ID:       "1",
+		ID:     "1",
 		Status: "accepted",
 	}
 
@@ -303,7 +303,7 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_Success() {
 	c.Request = request
 	c.Set(resource, mockPayload)
 	handlerFunc.updateStatusHandler(c)
-	
+
 	assert.Equal(suite.T(), http.StatusCreated, responseRecorder.Code)
 }
 
@@ -322,13 +322,13 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_BadRequest() {
 	c.Request = request
 	c.Set(resource, mockPayload)
 	handlerFunc.updateStatusHandler(c)
-	
+
 	assert.Equal(suite.T(), http.StatusBadRequest, responseRecorder.Code)
 }
 
 func (suite *TransactionsControllerTestSuite) TestUpdateHandler_NotFound() {
 	mockPayload := entity.Transaction{
-		ID:       "nonexistent_id",
+		ID: "nonexistent_id",
 	}
 	mockError := errors.New("not found ID " + mockPayload.ID)
 
@@ -343,11 +343,10 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_NotFound() {
 	c.Request = request
 	c.Set(resource, mockPayload)
 	handlerFunc.updateStatusHandler(c)
-	
+
 	assert.Equal(suite.T(), http.StatusInternalServerError, responseRecorder.Code)
 }
 
 func TestTransactionControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionsControllerTestSuite))
 }
-
