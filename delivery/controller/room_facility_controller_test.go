@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"booking-room-app/entity"
+	"booking-room-app/mock/middleware_mock"
 	"booking-room-app/mock/usecase_room_facility"
 	"booking-room-app/shared/model"
 
@@ -31,6 +32,7 @@ type RoomFacilityControllerTestSuite struct {
 	suite.Suite
 	rg   *gin.RouterGroup
 	rfum *usecase_room_facility.RoomFacilityUseCaseMock
+	amm  *middleware_mock.AuthMiddlewareMock
 }
 
 func (suite *RoomFacilityControllerTestSuite) SetupTest() {
@@ -58,7 +60,7 @@ func (suite *RoomFacilityControllerTestSuite) TestCreateRoomFacilityHandler_Succ
 	ctx.Request = request
 
 	// create and call controller function [createRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.createRoomFacilityHandler(ctx)
 
 	// assert
@@ -79,7 +81,7 @@ func (suite *RoomFacilityControllerTestSuite) TestCreateRoomFacilityHandler_Bind
 	ctx.Request = request
 
 	// create and call controller function [createRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.createRoomFacilityHandler(ctx)
 
 	// assert
@@ -100,7 +102,7 @@ func (suite *RoomFacilityControllerTestSuite) TestCreateRoomFacilityHandler_Requ
 	ctx.Request = request
 
 	// create and call controller function [createRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.createRoomFacilityHandler(ctx)
 
 	// assert
@@ -121,7 +123,7 @@ func (suite *RoomFacilityControllerTestSuite) TestCreateRoomFacilityHandler_Uuid
 	ctx.Request = request
 
 	// create and call controller function [createRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.createRoomFacilityHandler(ctx)
 
 	// assert
@@ -142,7 +144,7 @@ func (suite *RoomFacilityControllerTestSuite) TestCreateRoomFacilityHandler_Uuid
 	ctx.Request = request
 
 	// create and call controller function [createRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.createRoomFacilityHandler(ctx)
 
 	// assert
@@ -166,7 +168,7 @@ func (suite *RoomFacilityControllerTestSuite) TestCreateRoomFacilityHandler_AddR
 	ctx.Request = request
 
 	// create and call controller function [createRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.createRoomFacilityHandler(ctx)
 
 	// assert
@@ -198,7 +200,7 @@ func (suite *RoomFacilityControllerTestSuite) TestListRoomFacilityHandler_Succes
 	ctx.Request = request
 
 	// create and call controller function [listRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.listRoomFacilityHandler(ctx)
 
 	// assert
@@ -229,7 +231,7 @@ func (suite *RoomFacilityControllerTestSuite) TestListRoomFacilityHandler_FindAl
 	ctx.Request = request
 
 	// create and call controller function [listRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.listRoomFacilityHandler(ctx)
 
 	// assert
@@ -253,7 +255,7 @@ func (suite *RoomFacilityControllerTestSuite) TestGetRoomFacilityById_Success() 
 	ctx.Request = request
 
 	// create and call controller function [getRoomFacilityById]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.getRoomFacilityById(ctx)
 
 	// assert
@@ -276,7 +278,7 @@ func (suite *RoomFacilityControllerTestSuite) TestGetRoomFacilityById_FindRoomFa
 	ctx.Request = request
 
 	// create and call controller function [getRoomFacilityById]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.getRoomFacilityById(ctx)
 
 	// assert
@@ -301,7 +303,7 @@ func (suite *RoomFacilityControllerTestSuite) TestUpdateRoomFacilityHandler_Succ
 	ctx.Request = request
 
 	// create and call controller function [updateRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.updateRoomFacilityHandler(ctx)
 
 	// assert
@@ -322,7 +324,7 @@ func (suite *RoomFacilityControllerTestSuite) TestUpdateRoomFacilityHandler_Bind
 	ctx.Request = request
 
 	// create and call controller function [updateRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.updateRoomFacilityHandler(ctx)
 
 	// assert
@@ -343,7 +345,7 @@ func (suite *RoomFacilityControllerTestSuite) TestUpdateRoomFacilityHandler_Requ
 	ctx.Request = request
 
 	// create and call controller function [updateRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.updateRoomFacilityHandler(ctx)
 
 	// assert
@@ -367,7 +369,7 @@ func (suite *RoomFacilityControllerTestSuite) TestUpdateRoomFacilityHandler_Upda
 	ctx.Request = request
 
 	// create and call controller function [updateRoomFacilityHandler]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.updateRoomFacilityHandler(ctx)
 
 	// assert
@@ -377,7 +379,7 @@ func (suite *RoomFacilityControllerTestSuite) TestUpdateRoomFacilityHandler_Upda
 /* test route */
 func (suite *RoomFacilityControllerTestSuite) TestRoute_Success() {
 	// create and call controller function [Route]
-	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg)
+	handlerFunc := NewRoomFacilityController(suite.rfum, suite.rg, suite.amm)
 	handlerFunc.Route()
 }
 
