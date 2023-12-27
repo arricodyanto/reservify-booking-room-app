@@ -20,6 +20,7 @@ type Server struct {
 	employeeUC     usecase.EmployeesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
 	transactionsUc usecase.TransactionsUsecase
+	reportUC       usecase.ReportUseCase
 	authUsc        usecase.AuthUseCase
 	engine         *gin.Engine
 	jwtService     service.JwtService
@@ -36,6 +37,7 @@ func (s *Server) initRoute() {
 	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
 	controller.NewTransactionsController(s.transactionsUc, rg, authMiddleware).Route()
 	controller.NewAuthController(s.authUsc, rg).Route()
+	controller.NewReportController(s.reportUC, rg, authMiddleware).Route()
 }
 
 func (s *Server) Run() {
@@ -60,6 +62,7 @@ func NewServer() *Server {
 	employeeRepo := repository.NewEmployeeRepository(db)
 	roomFacilityRepo := repository.NewRoomFacilityRepository(db)
 	transactionsRepo := repository.NewTransactionsRepository(db)
+	reportRepo := repository.NewReportRepository(db)
 
 	// Inject REPO ke -> useCase
 	roomUC := usecase.NewRoomUseCase(roomRepo)
@@ -69,6 +72,7 @@ func NewServer() *Server {
 	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
 	jwtService := service.NewJwtService(cfg.TokenConfig)
 	authUc := usecase.NewAuthUseCase(employeeUC, jwtService)
+	reportUC := usecase.NewReportUseCase(reportRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
@@ -80,6 +84,7 @@ func NewServer() *Server {
 		employeeUC:     employeeUC,
 		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
+		reportUC:       reportUC,
 		engine:         engine,
 		jwtService:     jwtService,
 		host:           host,
