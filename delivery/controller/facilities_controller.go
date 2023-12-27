@@ -2,6 +2,7 @@ package controller
 
 import (
 	"booking-room-app/config"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
@@ -12,8 +13,9 @@ import (
 )
 
 type FacilitiesController struct {
-	facilitiesUC usecase.FacilitiesUseCase
-	rg           *gin.RouterGroup
+	facilitiesUC   usecase.FacilitiesUseCase
+	rg             *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (f *FacilitiesController) updateHandler(ctx *gin.Context) {
@@ -76,15 +78,16 @@ func (f *FacilitiesController) createHandler(ctx *gin.Context) {
 }
 
 func (f *FacilitiesController) Route() {
-	f.rg.POST(config.FacilitiesCreate, f.createHandler)
-	f.rg.GET(config.FacilitiesList, f.listHandler)
-	f.rg.GET(config.FacilitiesGetById, f.getHandler)
-	f.rg.PUT(config.FacilitiesUpdate, f.updateHandler)
+	f.rg.POST(config.FacilitiesCreate, f.authMiddleware.RequireToken("admin"), f.createHandler)
+	f.rg.GET(config.FacilitiesList, f.authMiddleware.RequireToken("admin"), f.listHandler)
+	f.rg.GET(config.FacilitiesGetById, f.authMiddleware.RequireToken("admin"), f.getHandler)
+	f.rg.PUT(config.FacilitiesUpdate, f.authMiddleware.RequireToken("admin"), f.updateHandler)
 }
 
-func NewFacilitiesController(facilitiesUC usecase.FacilitiesUseCase, rg *gin.RouterGroup) *FacilitiesController {
+func NewFacilitiesController(facilitiesUC usecase.FacilitiesUseCase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *FacilitiesController {
 	return &FacilitiesController{
-		facilitiesUC: facilitiesUC,
-		rg:           rg,
+		facilitiesUC:   facilitiesUC,
+		rg:             rg,
+		authMiddleware: authMiddleware,
 	}
 }

@@ -1,11 +1,12 @@
 CREATE DATABASE booking_room_db;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
 
 CREATE TABLE employees (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id serial PRIMARY KEY,
     name VARCHAR(50),
     username VARCHAR(50) UNIQUE,
     password VARCHAR(200),
@@ -35,17 +36,18 @@ CREATE TABLE rooms (
     capacity  INT,
     status status_type DEFAULT 'available', -- 'available', 'booked', 'unavailable'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE trx_room_facility (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() UNIQUE,
     room_id         uuid NOT NULL,
     facility_id     uuid NOT NULL,
-    quantity        INT,
-    -- status VARCHAR(10) DEFAULT 'used', -- 'used', 'returned'
+    quantity        INT NOT NULL,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_composite PRIMARY KEY (column1, column2)
     FOREIGN KEY (room_id) REFERENCES rooms(id),
     FOREIGN KEY (facility_id) REFERENCES facilities(id)
 );

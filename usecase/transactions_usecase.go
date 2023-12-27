@@ -10,11 +10,10 @@ import (
 
 type TransactionsUsecase interface {
 	FindAllTransactions(page, size int,startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error)
-	FindTransactionsById(id string) ([]entity.Transaction, error)
-	FindTransactionsByEmployeeId(employeeId string) ([]entity.Transaction, error)
+	FindTransactionsById(id string) (entity.Transaction, error)
+	FindTransactionsByEmployeeId(employeeId string, page, size int) ([]entity.Transaction, model.Paging, error)
 	RequestNewBookingRooms(payload entity.Transaction) (entity.Transaction, error)
 	AccStatusBooking(payload entity.Transaction) (entity.Transaction, error)
-	
 }
 
 type transactionsUsecase struct {
@@ -25,19 +24,16 @@ func (t *transactionsUsecase) FindAllTransactions(page, size int, startDate, end
 	return t.repo.List(page, size, startDate, endDate)
 }
 
-func (t *transactionsUsecase) FindTransactionsById(id string) ([]entity.Transaction, error) {
+func (t *transactionsUsecase) FindTransactionsById(id string) (entity.Transaction, error) {
 	return t.repo.GetTransactionById(id)
 }
 
-func (t *transactionsUsecase) FindTransactionsByEmployeeId(employeeId string) ([]entity.Transaction, error) {
-	return t.repo.GetTransactionByEmployeId(employeeId)
+func (t *transactionsUsecase) FindTransactionsByEmployeeId(employeeId string, page, size int) ([]entity.Transaction, model.Paging, error) {
+	return t.repo.GetTransactionByEmployeId(employeeId, page, size)
 }
 
 func (t *transactionsUsecase) RequestNewBookingRooms(payload entity.Transaction) (entity.Transaction, error) {
-	// updatedAtStr := payload.UpdatedAt.Format("2006-01-02 15:04:05")
 	payload.UpdatedAt = time.Now()
-	// updatedAt, _ := time.Parse("2006-01-02 15:04:05", updatedAtStr)
-	// payload.UpdatedAt = updatedAt
 
 	transactions, err := t.repo.Create(payload)
 	if err != nil {

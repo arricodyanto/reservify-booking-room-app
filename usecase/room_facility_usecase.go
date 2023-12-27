@@ -5,13 +5,14 @@ import (
 	"booking-room-app/repository"
 	"booking-room-app/shared/model"
 	"fmt"
+	"net/http"
 )
 
 type RoomFacilityUsecase interface {
 	FindAllRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error)
-	FindRoomFacilityById(id string) (entity.RoomFacility, error)
-	AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error)
-	UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error)
+	FindRoomFacilityById(id string) (entity.RoomFacility, int, error)
+	AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, int, error)
+	UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, int, error)
 }
 
 type roomFacilityUsecase struct {
@@ -19,45 +20,45 @@ type roomFacilityUsecase struct {
 }
 
 // find all room-facility
-func (rf *roomFacilityUsecase) FindAllRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error) {
+func (rf *roomFacilityUsecase) FindAllRoomFacility(page int, size int) ([]entity.RoomFacility, model.Paging, error) {
 	if page == 0 && size == 0 {
 		page = 1
 		size = 5
 	}
-	return rf.repo.List(page, size)
+	return rf.repo.ListRoomFacility(page, size)
 }
 
 // find room-facility by id
-func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) (entity.RoomFacility, error) {
-	return rf.repo.GetTransactionById(id)
+func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) (entity.RoomFacility, int, error) {
+	return rf.repo.GetRoomFacilityById(id)
 }
 
 // add room-facility
-func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error) {
+func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, int, error) {
 	// Check that the quantity entered does not exceed the quantity in facility
-	quantity, err := rf.repo.GetQuantityFacilityByID(payload.FacilityId)
+	quantity, statusCode, err := rf.repo.GetQuantityFacilityByID(payload.FacilityId)
 	if err != nil {
-		return entity.RoomFacility{}, err
+		return entity.RoomFacility{}, statusCode, err
 	}
 	if payload.Quantity > quantity {
-		return entity.RoomFacility{}, fmt.Errorf("oppps, quantity exceeds the facility quantity")
+		return entity.RoomFacility{}, http.StatusBadRequest, fmt.Errorf("oppps, quantity exceeds the facility quantity")
 	}
 	newFacilityQuantity := quantity - payload.Quantity
 
 	// create room-facility transaction
-	transactions, err := rf.repo.Create(payload, newFacilityQuantity)
+	transactions, statusCode, err := rf.repo.CreateRoomFacility(payload, newFacilityQuantity)
 	if err != nil {
-		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to save room-facility transations :%v", err.Error())
+		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to save room-facility transations :%v", err.Error())
 	}
-	return transactions, nil
+	return transactions, http.StatusCreated, nil
 }
 
 // update room-facility
-func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, error) {
+func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, int, error) {
 	// get old record
-	oldRoomFacility, err := rf.repo.GetTransactionById(payload.ID)
+	oldRoomFacility, statusCode, err := rf.repo.GetRoomFacilityById(payload.ID)
 	if err != nil {
-		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to get previous data :%v", err.Error())
+		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to get previous data :%v", err.Error())
 	}
 
 	// partial update checking
@@ -72,21 +73,24 @@ func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.Room
 		payload.Quantity = oldRoomFacility.Quantity
 	} else {
 		// check that the quantity entered does not exceed the quantity in facility
-		facilityQuantity, err := rf.repo.GetQuantityFacilityByID(payload.FacilityId)
+		facilityQuantity, statusCode, err := rf.repo.GetQuantityFacilityByID(payload.FacilityId)
 		if err != nil {
-			return entity.RoomFacility{}, err
+			return entity.RoomFacility{}, statusCode, err
 		}
 		newFacilityQuantity = oldRoomFacility.Quantity - payload.Quantity + facilityQuantity // surplus or defisit are included in this one formula
 		if newFacilityQuantity < 0 {
-			return entity.RoomFacility{}, fmt.Errorf("oppps, quantity exceeds the facility quantity")
+			return entity.RoomFacility{}, http.StatusBadRequest, fmt.Errorf("oppps, quantity exceeds the facility quantity")
 		}
 	}
-
-	roomFacility, err := rf.repo.UpdateRoomFacility(payload, newFacilityQuantity)
-	if err != nil {
-		return entity.RoomFacility{}, fmt.Errorf("oppps, failed to update data transations :%v", err.Error())
+	if payload.Description == "" {
+		payload.Description = oldRoomFacility.Description
 	}
-	return roomFacility, nil
+
+	roomFacility, statusCode, err := rf.repo.UpdateRoomFacility(payload, newFacilityQuantity)
+	if err != nil {
+		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to update data transations :%v", err.Error())
+	}
+	return roomFacility, http.StatusOK, nil
 }
 
 func NewRoomFacilityUsecase(repo repository.RoomFacilityRepository) RoomFacilityUsecase {
