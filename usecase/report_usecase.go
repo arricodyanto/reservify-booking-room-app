@@ -20,10 +20,16 @@ type reportUseCase struct {
 
 // FindAllReports implements ReportUseCase.
 func (r *reportUseCase) PrintAllReports(rangeParam string) ([]dto.ReportDto, error) {
+	// Generate folder
+	err := os.MkdirAll("public", os.ModePerm)
+	if err != nil {
+		return []dto.ReportDto{}, fmt.Errorf("failed to create reports directory: %v", err)
+	}
+
 	// Generate file
 	file, err := os.Create("public/transaction.csv")
 	if err != nil {
-		return []dto.ReportDto{}, fmt.Errorf("failed to create reports file")
+		return []dto.ReportDto{}, fmt.Errorf("failed to create reports file: %v", err.Error())
 	}
 	defer file.Close()
 
@@ -37,17 +43,17 @@ func (r *reportUseCase) PrintAllReports(rangeParam string) ([]dto.ReportDto, err
 	var startDate, endDate time.Time
 	switch rangeParam {
 	case "day":
-		startDate = time.Now().AddDate(0, 0, -1)
-		endDate = time.Now()
+		startDate = time.Now().AddDate(0, 0, -1).Truncate(time.Second)
+		endDate = time.Now().Truncate(time.Second)
 	case "week":
-		startDate = time.Now().AddDate(0, 0, -7)
-		endDate = time.Now()
+		startDate = time.Now().AddDate(0, 0, -7).Truncate(time.Second)
+		endDate = time.Now().Truncate(time.Second)
 	case "month":
-		startDate = time.Now().AddDate(0, -1, 0)
-		endDate = time.Now()
+		startDate = time.Now().AddDate(0, -1, 0).Truncate(time.Second)
+		endDate = time.Now().Truncate(time.Second)
 	case "year":
-		startDate = time.Now().AddDate(-1, 0, 0)
-		endDate = time.Now()
+		startDate = time.Now().AddDate(-1, 0, 0).Truncate(time.Second)
+		endDate = time.Now().Truncate(time.Second)
 	}
 
 	reports, err := r.repo.List(startDate, endDate)
