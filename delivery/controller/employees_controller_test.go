@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 
 	// "strings"
 	"testing"
@@ -48,42 +49,184 @@ func (suite *EmployeeControllerTestSuite) SetupTest() {
 	suite.rg = rg
 }
 
-// func (suite *EmployeeControllerTestSuite) TestCreateHandler_Success(){
-// 	var expectEmployee = entity.Employee{
-// 		ID:        "1",
-// 		Name:      "John Doe",
-// 		Username:  "johndoe",
-// 		Password:  "johndoe001",
-// 		Role:      "admin",
-// 		Division:  "HR",
-// 		Position:  "Manager",
-// 		Contact:   "124325463",
-// 		CreatedAt: time.Now(),
-// 		UpdatedAt: time.Now(),
-// 	}
-// 	suite.eum.On("RegisterNewEmployee", expectEmployee).Return(expectEmployee, nil)
 
-// 	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
-// 	requestBody := `{
-// 		"name": "John Doe",
-// 		"username":"johndoe",
-// 		"password":"johndoe001",
-// 		"role":"admin",
-// 		"division":"HR",
-// 		"position: "Manajer",
-// 		"contact": "124325463"
-// 	}`
-// 	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", strings.NewReader(requestBody))
-// 	assert.NoError(suite.T(), err)
+func (suite *EmployeeControllerTestSuite) TestCreateHandler_Success(){
+	mockPayload := entity.Employee{
+		Name:      "a",
+		Username:  "a",
+		Password:  "a",
+		Role:      "admin",
+		Division:  "a",
+		Position:  "a",
+		Contact:   "1",
+	}
 
-// 	responseRecorder := httptest.NewRecorder()
-// 	ctx, _ := gin.CreateTestContext(responseRecorder)
-// 	ctx.Request = request
+	mockEmployee := expect
+	suite.eum.On("RegisterNewEmployee", mockPayload).Return(mockEmployee, nil)
 
-// 	handlerFunc.createHandler(ctx)
+	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
+	handlerFunc.Route()
+	requestBody := `{
+		"name": "a",
+		"username": "a",
+		"password": "a",
+		"role": "admin",
+		"division": "a",
+		"position": "a",
+		"contact": "1"
+	}`
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", strings.NewReader(requestBody))
+	assert.NoError(suite.T(), err)
 
-// 	assert.Equal(suite.T(), http.StatusCreated, responseRecorder.Code)
-// }
+	responseRecorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(responseRecorder)
+	ctx.Request = request
+
+	handlerFunc.createHandler(ctx)
+
+	assert.Equal(suite.T(), http.StatusCreated, responseRecorder.Code)
+}
+
+func (suite *EmployeeControllerTestSuite) TestCreateHandlerPayload_BadRequestFailure(){
+	mockPayload := entity.Employee{}
+	mockError := errors.New("example error message")
+
+	mockEmployee := expect
+	suite.eum.On("RegisterNewEmployee", &mockPayload).Return(mockEmployee, mockError)
+
+	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", nil)
+	assert.NoError(suite.T(), err)
+
+	responseRecorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(responseRecorder)
+	ctx.Request = request
+
+	handlerFunc.createHandler(ctx)
+
+	assert.Equal(suite.T(), http.StatusBadRequest, responseRecorder.Code)
+}
+
+func (suite *EmployeeControllerTestSuite) TestCreateHandler_InternalServerError(){
+	mockPayload := entity.Employee{
+		Name:      "a",
+		Username:  "a",
+		Password:  "a",
+		Role:      "admin",
+		Division:  "a",
+		Position:  "a",
+		Contact:   "1",
+	}
+	mockError := errors.New("example error message")
+	mockEmployee := expect
+	suite.eum.On("RegisterNewEmployee", mockPayload).Return(mockEmployee, mockError)
+
+	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
+	handlerFunc.Route()
+	requestBody := `{
+		"name": "a",
+		"username": "a",
+		"password": "a",
+		"role": "admin",
+		"division": "a",
+		"position": "a",
+		"contact": "1"
+	}`
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", strings.NewReader(requestBody))
+	assert.NoError(suite.T(), err)
+
+	responseRecorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(responseRecorder)
+	ctx.Request = request
+
+	handlerFunc.createHandler(ctx)
+
+	assert.Equal(suite.T(), http.StatusInternalServerError, responseRecorder.Code)
+}
+
+func (suite *EmployeeControllerTestSuite) TestUpdateHandler_Success(){
+	mockPayload := entity.Employee{
+		ID: "1",
+		Name:      "a",
+		Username:  "a",
+		Password:  "a",
+		Role:      "admin",
+		Division:  "a",
+		Position:  "a",
+		Contact:   "1",
+	}
+
+	mockEmployee := expect
+	suite.eum.On("UpdateEmployee", mockPayload).Return(mockEmployee, nil)
+
+	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
+	handlerFunc.Route()
+	requestBody := `{
+		"id": "1",
+		"name": "a",
+		"username": "a",
+		"password": "a",
+		"role": "admin",
+		"division": "a",
+		"position": "a",
+		"contact": "1"
+	}`
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", strings.NewReader(requestBody))
+	assert.NoError(suite.T(), err)
+
+	responseRecorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(responseRecorder)
+	ctx.Request = request
+
+	handlerFunc.putHandler(ctx)
+
+	assert.Equal(suite.T(), http.StatusOK, responseRecorder.Code)
+}
+
+func (suite *EmployeeControllerTestSuite) TestUpdateHandler_BadRequest(){
+	mockPayload := entity.Employee{}
+	mockError := errors.New("example error message")
+
+	mockEmployee := expect
+	suite.eum.On("UpdateEmployee", mockPayload).Return(mockEmployee, mockError)
+
+	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
+
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", nil)
+	assert.NoError(suite.T(), err)
+
+	responseRecorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(responseRecorder)
+	ctx.Request = request
+
+	handlerFunc.putHandler(ctx)
+
+	assert.Equal(suite.T(), http.StatusBadRequest, responseRecorder.Code)
+}
+
+func (suite *EmployeeControllerTestSuite) TestUpdateHandler_NotFound(){
+	mockPayload := entity.Employee{
+		ID: "error",
+	}
+	mockError := errors.New("not found ID " + mockPayload.ID)
+
+	mockEmployee := expect
+	suite.eum.On("UpdateEmployee", mockPayload).Return(mockEmployee, mockError)
+
+	handlerFunc := NewEmployeeController(suite.eum, suite.rg, suite.amm)
+	handlerFunc.Route()
+	requestBody := `{"id": "error"}`
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/employees", strings.NewReader(requestBody))
+	assert.NoError(suite.T(), err)
+
+	responseRecorder := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(responseRecorder)
+	ctx.Request = request
+
+	handlerFunc.putHandler(ctx)
+
+	assert.Equal(suite.T(), http.StatusNotFound, responseRecorder.Code)
+}
 
 func (suite *EmployeeControllerTestSuite) TestListHandler_Success(){
 	employee := []entity.Employee{expect}
