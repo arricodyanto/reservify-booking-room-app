@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
 	"fmt"
@@ -10,8 +11,9 @@ import (
 )
 
 type ReportController struct {
-	reportUC usecase.ReportUseCase
-	rg       *gin.RouterGroup
+	reportUC       usecase.ReportUseCase
+	rg             *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (r *ReportController) downloadHandler(c *gin.Context) {
@@ -34,9 +36,9 @@ func (r *ReportController) downloadHandler(c *gin.Context) {
 }
 
 func (r *ReportController) Route() {
-	r.rg.GET("/reports/download", r.downloadHandler)
+	r.rg.GET("/reports/download", r.authMiddleware.RequireToken("admin"), r.downloadHandler)
 }
 
-func NewReportController(reportUC usecase.ReportUseCase, rg *gin.RouterGroup) *ReportController {
-	return &ReportController{reportUC: reportUC, rg: rg}
+func NewReportController(reportUC usecase.ReportUseCase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *ReportController {
+	return &ReportController{reportUC: reportUC, rg: rg, authMiddleware: authMiddleware}
 }
