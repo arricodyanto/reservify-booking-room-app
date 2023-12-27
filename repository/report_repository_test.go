@@ -40,12 +40,6 @@ var expectedReport = dto.ReportDto{
 	UpdatedAt:  time.Now(),
 }
 
-var expectedRoomFacility = dto.RoomFacilityDto{
-	FacilityID: "1",
-	Name:       "LED Proyektor",
-	Quantity:   2,
-}
-
 type ReportRepositoryTestSuite struct {
 	suite.Suite
 	mockDb  *sql.DB
@@ -64,7 +58,7 @@ func (suite *ReportRepositoryTestSuite) TestList_Success() {
 	rows := sqlmock.NewRows([]string{"id", "employee_id", "name", "username", "division", "position", "contact", "room_id", "name", "room_type", "capacity", "description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedReport.ID, expectedReport.EmployeeId, expectedReport.Employee.Name, expectedReport.Employee.Username, expectedReport.Employee.Division, expectedReport.Employee.Position, expectedReport.Employee.Contact, expectedReport.RoomId, expectedReport.Room.Name, expectedReport.Room.RoomType, expectedReport.Room.Capacity, expectedReport.Description, expectedReport.Status, expectedReport.StartTime, expectedReport.EndTime, expectedReport.CreatedAt, expectedReport.UpdatedAt)
 
 	suite.mockSql.ExpectQuery(`SELECT`).WithArgs(expectedReport.StartTime, expectedReport.EndTime).WillReturnRows(rows)
-	suite.mockSql.ExpectQuery(`SELECT`).WithArgs(expectedReport.RoomId).WillReturnRows(sqlmock.NewRows([]string{"facility_id", "name", "quantity"}).AddRow(expectedRoomFacility.FacilityID, expectedRoomFacility.Name, expectedRoomFacility.Quantity))
+	suite.mockSql.ExpectQuery(`SELECT`).WithArgs(expectedReport.RoomId).WillReturnRows(sqlmock.NewRows([]string{"facility_id", "name", "quantity"}).AddRow(expectedReport.RoomFacilities[0].FacilityID, expectedReport.RoomFacilities[0].Name, expectedReport.RoomFacilities[0].Quantity))
 
 	actual, err := suite.repo.List(expectedReport.StartTime, expectedReport.EndTime)
 
@@ -106,7 +100,7 @@ func (suite *ReportRepositoryTestSuite) TestList_ScanRoomFacilityFailure() {
 	rows := sqlmock.NewRows([]string{"id", "employee_id", "name", "username", "division", "position", "contact", "room_id", "name", "room_type", "capacity", "description", "status", "start_time", "end_time", "created_at", "updated_at"}).AddRow(expectedReport.ID, expectedReport.EmployeeId, expectedReport.Employee.Name, expectedReport.Employee.Username, expectedReport.Employee.Division, expectedReport.Employee.Position, expectedReport.Employee.Contact, expectedReport.RoomId, expectedReport.Room.Name, expectedReport.Room.RoomType, expectedReport.Room.Capacity, expectedReport.Description, expectedReport.Status, expectedReport.StartTime, expectedReport.EndTime, expectedReport.CreatedAt, expectedReport.UpdatedAt)
 
 	suite.mockSql.ExpectQuery(`SELECT`).WithArgs(expectedReport.StartTime, expectedReport.EndTime).WillReturnRows(rows)
-	suite.mockSql.ExpectQuery(`SELECT`).WithArgs(expectedReport.RoomId).WillReturnRows(sqlmock.NewRows([]string{"facility_id"}).AddRow(expectedRoomFacility.FacilityID))
+	suite.mockSql.ExpectQuery(`SELECT`).WithArgs(expectedReport.RoomId).WillReturnRows(sqlmock.NewRows([]string{"facility_id"}).AddRow(expectedReport.RoomFacilities[0].FacilityID))
 
 	_, err := suite.repo.List(expectedReport.StartTime, expectedReport.EndTime)
 

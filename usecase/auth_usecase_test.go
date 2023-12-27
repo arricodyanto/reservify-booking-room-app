@@ -76,10 +76,10 @@ func (suite *AuthUseCaseTestSuite) TestLogin_Success() {
 }
 
 func (suite *AuthUseCaseTestSuite) TestLogin_Fail() {
-	mockLoginFail := dto.AuthRequestDto{
-		User:     "",
-		Password: "password",
-	}
+	// mockLoginFail := dto.AuthRequestDto{
+	// 	User:     "",
+	// 	Password: "password",
+	// }
 
 	suite.aum.On("FindEmployeForLogin", mockLogin.User, mockLogin.Password).Return(entity.Employee{}, fmt.Errorf("error"))
 	_, err := suite.au.Login(mockLogin)
