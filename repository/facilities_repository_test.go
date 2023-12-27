@@ -87,14 +87,12 @@ func (suite *FasilitiesRepositoryTestSuite) TestGetById_Fail() {
 // test update
 func (suite *FasilitiesRepositoryTestSuite) TestUpdate_Success() {
 
-	rows := sqlmock.NewRows([]string{"created_at"}).AddRow(
-		expectedFasilities.CreatedAt)
+	rows := sqlmock.NewRows([]string{"created_at", "updated_at"}).AddRow(
+		expectedFasilities.CreatedAt, expectedFasilities.UpdatedAt)
 
-	expectedFasilities.UpdatedAt = time.Now()
 	suite.mockSql.ExpectQuery(`UPDATE`).WithArgs(
 		expectedFasilities.Name,
 		expectedFasilities.Quantity,
-		expectedFasilities.UpdatedAt,
 		expectedFasilities.ID).WillReturnRows(rows)
 
 	actual, err := suite.repo.UpdateById(expectedFasilities)
@@ -106,7 +104,6 @@ func (suite *FasilitiesRepositoryTestSuite) TestUpdate_Fail() {
 	suite.mockSql.ExpectQuery(`UPDATE`).WithArgs(
 		expectedFasilities.Name,
 		expectedFasilities.Quantity,
-		expectedFasilities.UpdatedAt,
 		expectedFasilities.ID).WillReturnError(errors.New("error"))
 
 	_, err := suite.repo.UpdateById(expectedFasilities)
