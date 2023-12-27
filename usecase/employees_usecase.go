@@ -11,6 +11,7 @@ import (
 type EmployeesUseCase interface {
 	FindEmployeesByID(id string) (entity.Employee, error)
 	FindEmployeesByUsername(username string) (entity.Employee, error)
+	FindEmployeForLogin(username ,password string) (entity.Employee, error)
 	RegisterNewEmployee(payload entity.Employee) (entity.Employee, error)
 	UpdateEmployee(payload entity.Employee) (entity.Employee, error)
 	ListAll(page, size int) ([]entity.Employee, model.Paging, error)
@@ -26,6 +27,13 @@ func (e *employeesUseCase) FindEmployeesByUsername(username string) (entity.Empl
 		return entity.Employee{}, errors.New("id harus diisi")
 	}
 	return e.repo.GetEmployeesByUsername(username)
+}
+
+func (e *employeesUseCase)FindEmployeForLogin(username, password string) (entity.Employee, error){
+	if username == "" {
+		return entity.Employee{}, errors.New("id harus diisi")
+	}
+	return e.repo.GetEmployeesByUsernameForLogin(username, password)
 }
 
 // ListAll implements EmployeesUseCase.

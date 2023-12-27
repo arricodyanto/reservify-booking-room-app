@@ -1,10 +1,12 @@
 CREATE DATABASE booking_room_db;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
 
 CREATE TABLE employees (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id serial PRIMARY KEY,
     name VARCHAR(50),
     username VARCHAR(50) UNIQUE,
     password VARCHAR(200),
