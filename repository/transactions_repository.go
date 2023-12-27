@@ -15,11 +15,7 @@ type TransactionsRepository interface {
 	Create(payload entity.Transaction) (entity.Transaction, error)
 	List(page, size int, startDate, endDate time.Time) ([]entity.Transaction, model.Paging, error)
 	GetTransactionById(id string) (entity.Transaction, error)
-<<<<<<< HEAD
 	GetTransactionByEmployeId(EmployeeId string,page, size int) ([]entity.Transaction, model.Paging, error)
-=======
-	GetTransactionByEmployeId(EmployeeId string) ([]entity.Transaction, error)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	UpdatePemission(payload entity.Transaction) (entity.Transaction, error)
 }
 
@@ -65,10 +61,7 @@ func (t *transactionsRepository) List(page, size int,startDate, endDate time.Tim
             &roomFacility.ID,
             &roomFacility.FacilityId,
             &roomFacility.Quantity,
-<<<<<<< HEAD
             &roomFacility.Description,
-=======
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
             &roomFacility.CreatedAt,
             &roomFacility.UpdatedAt)
         if err!= nil {
@@ -127,11 +120,7 @@ func (t *transactionsRepository) GetTransactionById(id string) (entity.Transacti
 				&roomFacility.CreatedAt,
 				&roomFacility.UpdatedAt)
 			if err!= nil {
-<<<<<<< HEAD
 				log.Println("transactionsRoomFacilitiesRepository.Rows.Next():", err.Error())
-=======
-				log.Println("transactionsRepository.Rows.Next():", err.Error())
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 				return entity.Transaction{}, err
 			}
 			transactions.RoomFacilities = append(transactions.RoomFacilities, roomFacility)
@@ -142,13 +131,9 @@ func (t *transactionsRepository) GetTransactionById(id string) (entity.Transacti
 // list transaction by employee ID (employee) -GET
 func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string,page, size int) ([]entity.Transaction, model.Paging, error) {
 	var transactions []entity.Transaction
-<<<<<<< HEAD
 	offset := (page - 1) * size
 
 	rows, err := t.db.Query(config.SelectTransactionByEmployeeID, employeeId, size, offset)
-=======
-	rows, err := t.db.Query(config.SelectTransactionByEmployeeID, employeeId)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	
 	if err != nil {
 		return nil, model.Paging{}, err
@@ -234,10 +219,7 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 					payload.RoomId,
 					roomFacility.FacilityId,
 					roomFacility.Quantity,
-<<<<<<< HEAD
 					roomFacility.Description,
-=======
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 					payload.UpdatedAt).Scan(&roomFacility.ID, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
 		
 				if err != nil {
@@ -268,11 +250,7 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 	transactions = payload
 	return transactions, err
 }
-<<<<<<< HEAD
 
-=======
-// permission list (GA) -GET (batal)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 // update permission (GA) -PUT
 func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (entity.Transaction, error) {
 	var transactions entity.Transaction
@@ -293,3 +271,4 @@ func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (en
 func NewTransactionsRepository(db *sql.DB) TransactionsRepository {
 	return &transactionsRepository{db: db}
 }
+

@@ -161,27 +161,16 @@ func (suite *TransactionUseCaseTestSuite) TestFindAllTransactions_Success() {
 }
 
 func (suite *TransactionUseCaseTestSuite) TestFindTransactionsByEmployeeId_Success() {
-<<<<<<< HEAD
 	suite.trm.On("GetTransactionByEmployeId", expectedTransactions.EmployeeId, page, size).Return(expectedTransaction, expectedPaging, nil)
 
 	actual, _, err := suite.tuc.FindTransactionsByEmployeeId(expectedTransactions.EmployeeId, page, size)
-=======
-	suite.trm.On("GetTransactionByEmployeId", expectedTransactions.EmployeeId).Return(expectedTransaction, nil)
-
-	actual, err := suite.tuc.FindTransactionsByEmployeeId(expectedTransactions.EmployeeId)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 
 	assert.Nil(suite.T(), err)
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), expectedTransaction[0].Description, actual[0].Description)
 }
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 func TestTransactionUseCaseTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionUseCaseTestSuite))
 }
+

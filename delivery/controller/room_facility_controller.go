@@ -5,7 +5,6 @@ import (
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 
@@ -35,11 +34,7 @@ func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	}
 
 	// check valid uuid
-<<<<<<< HEAD
 	_, err = uuid.Parse(payload.RoomId)
-=======
-	_, err := uuid.Parse(payload.RoomId)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, "invalid uuid for roomId field")
 		return
@@ -120,3 +115,4 @@ func NewRoomFacilityController(transactionUC usecase.RoomFacilityUsecase, rg *gi
 		// authMiddleware: authMiddleware,
 	}
 }
+

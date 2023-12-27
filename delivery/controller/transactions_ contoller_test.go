@@ -2,10 +2,7 @@ package controller
 
 import (
 	"booking-room-app/entity"
-<<<<<<< HEAD
 	"booking-room-app/mock/middleware_mock"
-=======
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	"booking-room-app/mock/usecase_mock"
 	"errors"
 	"fmt"
@@ -39,10 +36,7 @@ type TransactionsControllerTestSuite struct {
 	suite.Suite
 	rg  *gin.RouterGroup
 	tum *usecase_mock.TransactionsUseCaseMock
-<<<<<<< HEAD
 	amm *middleware_mock.AuthMiddlewareMock
-=======
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 }
 
 func (suite *TransactionsControllerTestSuite) SetupTest() {
@@ -64,11 +58,7 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_Success() {
 
 	suite.tum.On("RequestNewBookingRooms", mockPayload).Return(expectedTransactions, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -96,11 +86,7 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_fail() {
 
 	suite.tum.On("RequestNewBookingRooms", &mockPayload).Return(expectedTransactions, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
@@ -126,11 +112,7 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_InternalServerEr
 
 	suite.tum.On("RequestNewBookingRooms", mockPayload).Return(expectedTransactions, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -156,11 +138,7 @@ func (suite *TransactionsControllerTestSuite) TestCreateHandler_InternalServerEr
 func (suite *TransactionsControllerTestSuite) TestListHandler_Success() {
 	mockTransactions := []entity.Transaction{expectedTransactions}
 	suite.tum.On("FindAllTransactions", page, size, time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(3000, time.December, 31, 0, 0, 0, 0, time.UTC)).Return(mockTransactions, expectedPaging, nil)
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
@@ -180,11 +158,7 @@ func (suite *TransactionsControllerTestSuite) TestListHandler_Success() {
 func (suite *TransactionsControllerTestSuite) TestListHandler_StartDateTimeBadRequest() {
 	mockTransactions := []entity.Transaction{expectedTransactions}
 	suite.tum.On("FindAllTransactions", page, size, time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(3000, time.December, 31, 0, 0, 0, 0, time.UTC)).Return(mockTransactions, expectedPaging, nil)
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s?startDate=err", apiGroup, transactionsPoint), nil)
@@ -204,11 +178,7 @@ func (suite *TransactionsControllerTestSuite) TestListHandler_StartDateTimeBadRe
 func (suite *TransactionsControllerTestSuite) TestListHandler_EndDateTimeBadRequest() {
 	mockTransactions := []entity.Transaction{expectedTransactions}
 	suite.tum.On("FindAllTransactions", page, size, time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(3000, time.December, 31, 0, 0, 0, 0, time.UTC)).Return(mockTransactions, expectedPaging, nil)
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s?endDate=err", apiGroup, transactionsPoint), nil)
@@ -229,11 +199,7 @@ func (suite *TransactionsControllerTestSuite) TestListHandler_PaginationBadReque
 	mockTransactions := []entity.Transaction{expectedTransactions}
 	mockError := errors.New("something went wrong")
 	suite.tum.On("FindAllTransactions", page, size, time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(3000, time.December, 31, 0, 0, 0, 0, time.UTC)).Return(mockTransactions, expectedPaging, mockError)
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s?page=err&size=err", apiGroup, transactionsPoint), nil)
@@ -254,11 +220,7 @@ func (suite *TransactionsControllerTestSuite) TestgetTransactionById_Success() {
 	// mockID := "1"
 	suite.tum.On("FindTransactionsById", "").Return(expectedTransactions, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -275,11 +237,7 @@ func (suite *TransactionsControllerTestSuite) TestGetTransactionById_Fail() {
 	mockError := errors.New("transaction not found")
 	suite.tum.On("FindTransactionsById", "").Return(expectedTransactions, mockError)
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -294,15 +252,9 @@ func (suite *TransactionsControllerTestSuite) TestGetTransactionById_Fail() {
 
 func (suite *TransactionsControllerTestSuite) TestgetTransactionByEmployeeId_Success() {
 	mockTransactions := []entity.Transaction{expectedTransactions}
-<<<<<<< HEAD
 	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, expectedPaging, nil)
 
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, nil)
-
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -319,15 +271,9 @@ func (suite *TransactionsControllerTestSuite) TestgetTransactionByEmployeeId_Fai
 	mockTransactions := []entity.Transaction{expectedTransactions}
 
 	mockError := errors.New("transaction not found")
-<<<<<<< HEAD
 	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, expectedPaging, mockError)
 
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	suite.tum.On("FindTransactionsByEmployeeId", "").Return(mockTransactions, mockError)
-
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
 
 	responseRecorder := httptest.NewRecorder()
@@ -348,11 +294,7 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_Success() {
 
 	suite.tum.On("AccStatusBooking", mockPayload).Return(mockPayload, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	requestBody := `{"id": "1","status": "accepted"}`
 	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -371,11 +313,7 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_BadRequest() {
 
 	suite.tum.On("AccStatusBooking", &mockPayload).Return(mockPayload, mockError)
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), nil)
 	assert.NoError(suite.T(), err)
 
@@ -396,11 +334,7 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_NotFound() {
 
 	suite.tum.On("AccStatusBooking", mockPayload).Return(mockPayload, mockError)
 
-<<<<<<< HEAD
 	handlerFunc := NewTransactionsController(suite.tum, suite.rg, suite.amm)
-=======
-	handlerFunc := NewTransactionsController(suite.tum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	requestBody := `{"id": "nonexistent_id"}`
 	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s%s", apiGroup, transactionsPoint), strings.NewReader(requestBody))
 	assert.NoError(suite.T(), err)
@@ -416,4 +350,5 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_NotFound() {
 func TestTransactionControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionsControllerTestSuite))
 }
+
 

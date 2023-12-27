@@ -64,11 +64,7 @@ func (suite *RoomControllerTestSuite) TestCreateHandler_Success() {
 
 	suite.rum.On("RegisterNewRoom", mockPayload).Return(expectedRoom, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -94,11 +90,7 @@ func (suite *RoomControllerTestSuite) TestCreateHandler_BadRequestFailure() {
 
 	suite.rum.On("RegisterNewRoom", &mockPayload).Return(expectedRoom, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", apiGroup, resource), nil)
@@ -123,11 +115,7 @@ func (suite *RoomControllerTestSuite) TestCreateHandler_InternalServerErrorFailu
 
 	suite.rum.On("RegisterNewRoom", mockPayload).Return(expectedRoom, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -151,11 +139,7 @@ func (suite *RoomControllerTestSuite) TestCreateHandler_InternalServerErrorFailu
 func (suite *RoomControllerTestSuite) TestGetHandler_Success() {
 	suite.rum.On("FindRoomByID", "").Return(expectedRoom, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s/%s", apiGroup, resource, expectedRoom.ID), nil)
@@ -173,11 +157,7 @@ func (suite *RoomControllerTestSuite) TestGetHandler_Success() {
 func (suite *RoomControllerTestSuite) TestGetHandler_Failure() {
 	suite.rum.On("FindRoomByID", "").Return(expectedRoom, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s/f7casja-881241-12313asd", apiGroup, resource), nil)
@@ -194,11 +174,7 @@ func (suite *RoomControllerTestSuite) TestListHandler_Success() {
 	mockRooms := []entity.Room{expectedRoom}
 	suite.rum.On("FindAllRoom", page, size).Return(mockRooms, expectedPaging, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s?page=%d&size=%d", apiGroup, resource, page, size), nil)
@@ -218,11 +194,7 @@ func (suite *RoomControllerTestSuite) TestListHandler_EmptyPaginationSuccess() {
 	mockRooms := []entity.Room{expectedRoom}
 	suite.rum.On("FindAllRoom", page, size).Return(mockRooms, expectedPaging, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, resource), nil)
@@ -242,11 +214,7 @@ func (suite *RoomControllerTestSuite) TestListHandler_StatusEmptyPaginationSucce
 	mockRooms := []entity.Room{expectedRoom}
 	suite.rum.On("FindAllRoomStatus", expectedRoom.Status, page, size).Return(mockRooms, expectedPaging, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s?status=%s", apiGroup, resource, expectedRoom.Status), nil)
@@ -266,11 +234,7 @@ func (suite *RoomControllerTestSuite) TestListHandler_StatusPaginationSuccess() 
 	mockRooms := []entity.Room{expectedRoom}
 	suite.rum.On("FindAllRoomStatus", expectedRoom.Status, page, size).Return(mockRooms, expectedPaging, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s?page=%d&size=%d&status=%s", apiGroup, resource, page, size, expectedRoom.Status), nil)
@@ -290,11 +254,7 @@ func (suite *RoomControllerTestSuite) TestListHandler_BadRequestFailure() {
 	mockRooms := []entity.Room{expectedRoom}
 	suite.rum.On("FindAllRoom", page, size).Return(mockRooms, model.Paging{}, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", apiGroup, resource), nil)
@@ -319,11 +279,7 @@ func (suite *RoomControllerTestSuite) TestUpdateDetailHandler_Success() {
 
 	suite.rum.On("UpdateRoomDetail", mockPayload).Return(expectedRoom, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -350,11 +306,7 @@ func (suite *RoomControllerTestSuite) TestUpdateDetailHandler_BadRequestFailure(
 
 	suite.rum.On("UpdateRoomDetail", &mockPayload).Return(expectedRoom, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s%s", apiGroup, resource), nil)
@@ -380,11 +332,7 @@ func (suite *RoomControllerTestSuite) TestUpdateDetailHandler_InternalServerErro
 
 	suite.rum.On("UpdateRoomDetail", mockPayload).Return(entity.Room{}, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -414,11 +362,7 @@ func (suite *RoomControllerTestSuite) TestUpdateStatusHandler_Success() {
 
 	suite.rum.On("UpdateRoomStatus", mockPayload).Return(expectedRoom, nil)
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -442,11 +386,7 @@ func (suite *RoomControllerTestSuite) TestUpdateStatusHandler_BadRequestFailure(
 
 	suite.rum.On("UpdateRoomStatus", &mockPayload).Return(expectedRoom, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s%s", apiGroup, resource), nil)
@@ -469,11 +409,7 @@ func (suite *RoomControllerTestSuite) TestUpdateStatusHandler_InternalServerErro
 
 	suite.rum.On("UpdateRoomStatus", mockPayload).Return(entity.Room{}, fmt.Errorf("error"))
 
-<<<<<<< HEAD
 	handlerFunc := NewRoomController(suite.rum, suite.amm, suite.rg)
-=======
-	handlerFunc := NewRoomController(suite.rum, suite.rg)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	handlerFunc.Route()
 
 	requestBody := `{
@@ -495,3 +431,4 @@ func (suite *RoomControllerTestSuite) TestUpdateStatusHandler_InternalServerErro
 func TestRoomControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(RoomControllerTestSuite))
 }
+

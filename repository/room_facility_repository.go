@@ -16,15 +16,9 @@ import (
 )
 
 type RoomFacilityRepository interface {
-<<<<<<< HEAD
 	CreateRoomFacility(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, int, error)
 	ListRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error)
 	GetRoomFacilityById(id string) (entity.RoomFacility, int, error)
-=======
-	Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, int, error)
-	List(page, size int) ([]entity.RoomFacility, model.Paging, error)
-	GetTransactionById(id string) (entity.RoomFacility, int, error)
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	UpdateRoomFacility(payload entity.RoomFacility, newFacilityQuantity int) (entity.RoomFacility, int, error)
 	GetQuantityFacilityByID(id string) (int, int, error)
 }
@@ -94,11 +88,7 @@ func (t *roomFacilityRepository) ListRoomFacility(page, size int) ([]entity.Room
 }
 
 // get by ID room facilities (ADMIN) -GET
-<<<<<<< HEAD
 func (t *roomFacilityRepository) GetRoomFacilityById(id string) (entity.RoomFacility, int, error) {
-=======
-func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacility, int, error) {
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	var roomFacility entity.RoomFacility
 	err := t.db.QueryRow(config.SelectRoomFacilityByID, id).Scan(
 		&roomFacility.ID,
@@ -120,11 +110,7 @@ func (t *roomFacilityRepository) GetTransactionById(id string) (entity.RoomFacil
 }
 
 // create room facilities (ADMIN) -POST
-<<<<<<< HEAD
 func (t *roomFacilityRepository) CreateRoomFacility(payload entity.RoomFacility, newFacilityQuantity int) (entity.RoomFacility, int, error) {
-=======
-func (t *roomFacilityRepository) Create(payload entity.RoomFacility, newQuantity int) (entity.RoomFacility, int, error) {
->>>>>>> ca0f7afa9631e97e14f1f754df6fa18acb05d135
 	var roomFacilities entity.RoomFacility
 
 	// begin transaction
@@ -217,3 +203,4 @@ func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility,
 func NewRoomFacilityRepository(db *sql.DB) RoomFacilityRepository {
 	return &roomFacilityRepository{db: db}
 }
+
