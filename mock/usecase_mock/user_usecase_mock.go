@@ -11,6 +11,11 @@ type UserUseCaseMock struct {
 	mock.Mock
 }
 
+func (m *UserUseCaseMock) FindEmployeForLogin(username, password string) (entity.Employee, error) {
+	args := m.Called(username, password)
+	return args.Get(0).(entity.Employee), args.Error(1)
+}
+
 func (m *UserUseCaseMock) FindEmployeesByID(id string) (entity.Employee, error) {
 	args := m.Called(id)
 	return args.Get(0).(entity.Employee), args.Error(1)

@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"log"
 	"math"
-	"time"
 )
 
 type FasilitiesRepository interface {
@@ -114,16 +113,14 @@ func (f *fasilitiesRepository) GetById(id string) (entity.Facilities, error) {
 func (f *fasilitiesRepository) UpdateById(payload entity.Facilities) (entity.Facilities, error) {
 	var fasilities entity.Facilities
 
-	payload.UpdatedAt = time.Now()
 	err := f.db.QueryRow(config.UpdateFasilities,
 		payload.Name,
 		payload.Quantity,
-		payload.UpdatedAt,
 		payload.ID).Scan(
-		&fasilities.CreatedAt)
+		&fasilities.CreatedAt, &fasilities.UpdatedAt)
 
 	if err != nil {
-		log.Println("fasilitiesRepository.exec:", err.Error())
+		log.Println("fasilitiesRepository.query:", err.Error())
 		return entity.Facilities{}, err
 	}
 
