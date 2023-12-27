@@ -35,8 +35,7 @@ func (e *employeeRepository) CreateEmployee(payload entity.Employee) (entity.Emp
 		payload.Role,
 		payload.Division,
 		payload.Position,
-		payload.Contact,
-		payload.UpdatedAt).Scan(&employee.ID, &employee.CreatedAt)
+		payload.Contact).Scan(&employee.ID, &employee.CreatedAt, &employee.UpdatedAt)
 
 	if err != nil {
 		log.Println("employeeRepository.QueryRow: ", err.Error())
@@ -128,8 +127,7 @@ func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Emp
 		payload.Division,
 		payload.Position,
 		payload.Contact,
-		payload.UpdatedAt,
-		payload.ID).Scan(&employee.CreatedAt)
+		payload.ID).Scan(&employee.CreatedAt, &employee.UpdatedAt)
 
 	if err != nil {
 		log.Println("employeeRepository.QueryRow: ", err.Error())
