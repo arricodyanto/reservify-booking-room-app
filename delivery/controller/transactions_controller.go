@@ -136,7 +136,7 @@ func (t *TransactionsController) Route() {
 	t.rg.GET(config.TransactionGetById, t.authMiddleware.RequireToken("admin", "ga", "employee"), t.getTransactionById)
 	t.rg.GET(config.TransactionGetByEmpId, t.authMiddleware.RequireToken("admin", "employee"), t.getTransactionByEmployeeId)
 	t.rg.POST(config.TransactionCreate, t.authMiddleware.RequireToken("admin", "employee"), t.createHandler)
-	t.rg.PUT(config.TransactionUpdatePerm, t.authMiddleware.RequireToken("ga"), t.updateStatusHandler)
+	t.rg.PUT(config.TransactionUpdatePerm, t.authMiddleware.RequireToken("admin", "ga"), t.updateStatusHandler)
 }
 
 func NewTransactionsController(transactionUC usecase.TransactionsUsecase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware,) *TransactionsController {

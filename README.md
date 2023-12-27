@@ -819,7 +819,7 @@ Request :
 {
         "employeeId": "string",
         "roomId": "string",
-        "roomFacilities": [
+        "roomFacilities": [ (optional)
             {
                 "facilityId": "string",
                 "quantity": int,
@@ -857,6 +857,183 @@ Response :
                 "updatedAt": "2000-01-01T00:00:00Z" (current time)
             }
         ],
+        "description": "string",
+        "status": "string",
+        "startTime": "2000-01-01T00:00:00Z",
+        "endTime": "2000-01-01T01:00:00Z",
+        "createdAt": "2000-01-01T00:00:00Z", (current time)
+        "updatedAt": "2000-01-01T00:00:00Z" (current time)
+    }
+}
+```
+
+#### Get Transactions
+
+Request :
+
+- Method : GET
+- Endpoint : `/transactions`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Query Param :
+  - page : int `optional`
+  - size : int `optional`
+  - startDate : date(yyyy-mm-dd) `optional`
+  - endDate : date(yyyy-mm-dd) `optional`
+- Authorization : Bearer Token
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data": [
+        {
+            "id": "string",
+            "employeeId": "string",
+            "roomId": "string",
+            "roomFacilities": [
+                {
+                    "id": "string",
+                    "facilityId": "string",
+                    "quantity": int,
+                    "description": "string",
+                    "createdAt": "2000-01-01T12:00:00Z",
+                    "updatedAt": "2000-01-01T12:00:00Z"
+                }
+            ],
+            "description": "string",
+            "status": "string",
+            "startTime": "2000-01-01T12:00:00Z",
+            "endTime": "2000-01-01T12:00:00Z",
+             "createdAt": "2000-01-01T12:00:00Z",
+            "updatedAt": "2000-01-01T12:00:00Z"
+        }
+    ],
+    "paging": {
+        "page": 1,          (default value)
+        "rowsPerPage": 5,   (default value)
+        "totalRows": int,
+        "totalPages": int
+    }
+}
+```
+
+#### Get Transaction By Id
+
+Request :
+
+- Method : GET
+- Endpoint : `/transactions/:id`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data": {
+        "id": "string",
+        "employeeId": "string",
+        "roomId": "string",
+        "roomFacilities": [
+            {
+                "id": "string",
+                "facilityId": "string",
+                "quantity": int,
+                "description": "string",
+                "createdAt": "2000-01-01T00:00:00Z",
+                "updatedAt": "2000-01-01T00:00:00Z"
+            }
+        ],
+        "description": "string",
+        "status": "string",
+        "startTime": "2000-01-01T00:00:00Z",
+        "endTime": "2000-01-01T00:00:00Z",
+        "createdAt": "2000-01-01T00:00:00Z",
+        "updatedAt": "2000-01-01T00:00:00Z"
+    }
+}
+```
+
+#### Get Transaction By Employee Id
+
+Request :
+
+- Method : GET
+- Endpoint : `/transactions/employee/:id`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data": {
+        "id": "string",
+        "employeeId": "string",
+        "roomId": "string",
+        "roomFacilities": [
+            {
+                "id": "string",
+                "facilityId": "string",
+                "quantity": int,
+                "description": "string",
+                "createdAt": "2000-01-01T00:00:00Z",
+                "updatedAt": "2000-01-01T00:00:00Z"
+            }
+        ],
+        "description": "string",
+        "status": "string",
+        "startTime": "2000-01-01T00:00:00Z",
+        "endTime": "2000-01-01T00:00:00Z",
+        "createdAt": "2000-01-01T00:00:00Z",
+        "updatedAt": "2000-01-01T00:00:00Z"
+    }
+}
+```
+
+##### Update Room Facility
+
+Request :
+
+- Method : PUT
+- Endpoint : `/transactions`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+```json
+{
+    "status": {
+        "code": 201,
+        "message": "Updated"
+    },
+    "data": {
+        "id": "string",
+        "employeeId": "string",
+        "roomId": "string",
         "description": "string",
         "status": "string",
         "startTime": "2000-01-01T00:00:00Z",

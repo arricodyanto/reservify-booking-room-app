@@ -255,8 +255,7 @@ func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (en
 	
 	err := t.db.QueryRow(config.UpdatePermission,
 		payload.Status,
-		payload.ID,
-		payload.UpdatedAt).Scan(&payload.EmployeeId, &payload.RoomId,&payload.Description,&payload.StartTime, &payload.EndTime, &payload.CreatedAt)
+		payload.ID).Scan(&payload.EmployeeId, &payload.RoomId,&payload.Description,&payload.StartTime, &payload.EndTime, &payload.CreatedAt)
 		if err != nil {
 			log.Println("transactionsRepository.UpdateStatus:", err.Error())
 			return entity.Transaction{}, err
