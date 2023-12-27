@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"booking-room-app/config"
-	"booking-room-app/entity"
 	"booking-room-app/entity/dto"
 	"database/sql"
 	"log"
@@ -50,19 +48,17 @@ func (r *reportRepository) List(startDate string, endDate string) ([]dto.ReportD
 			return nil, err
 		}
 
-		roomFacilities, err := r.db.Query(config.SelectRoomWithFacilities, report.RoomId)
+		roomFacilities, err := r.db.Query(`SELECT t.facility_id, f.name, t.quantity FROM trx_room_facility t JOIN facilities f ON t.facility_id = f.id WHERE t.room_id = $1`, report.RoomId)
 		if err != nil {
 			log.Println("transactionsRepository.Query:", err.Error())
 			return nil, err
 		}
 		for roomFacilities.Next() {
-			var roomFacility entity.RoomFacility
+			var roomFacility dto.RoomFacilityDto
 			err = roomFacilities.Scan(
-				&roomFacility.ID,
-				&roomFacility.FacilityId,
-				&roomFacility.Quantity,
-				&roomFacility.CreatedAt,
-				&roomFacility.UpdatedAt)
+				&roomFacility.FacilityID,
+				&roomFacility.Name,
+				&roomFacility.Quantity)
 			if err != nil {
 				log.Println("transactionsRepository.Rows.Next():", err.Error())
 				return nil, err

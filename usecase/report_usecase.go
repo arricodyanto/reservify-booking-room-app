@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 )
 
 type ReportUseCase interface {
@@ -41,12 +40,10 @@ func (r *reportUseCase) PrintAllReports(startDate string, endDate string) ([]dto
 
 	// Write transaction data to csv file
 	for _, report := range reports {
-
-		var roomFacilitiesStr string
-		for _, facility := range report.RoomFacilities {
-			roomFacilitiesStr += strconv.Itoa(facility.Quantity) + ","
+		var roomFacilityString string
+		for _, v := range report.RoomFacilities {
+			roomFacilityString += fmt.Sprintf("- %s, %d buah (facility_id: %s)\n", v.Name, v.Quantity, v.FacilityID)
 		}
-		roomFacilitiesStr = strings.TrimSuffix(roomFacilitiesStr, ",")
 
 		row := []string{
 			report.ID,
@@ -60,7 +57,7 @@ func (r *reportUseCase) PrintAllReports(startDate string, endDate string) ([]dto
 			report.Room.Name,
 			report.Room.RoomType,
 			strconv.Itoa(report.Room.Capacity),
-			roomFacilitiesStr,
+			roomFacilityString,
 			report.Description,
 			report.Status,
 			report.StartTime.Format("15:04"),

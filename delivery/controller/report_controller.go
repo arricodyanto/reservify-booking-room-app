@@ -23,8 +23,7 @@ func (r *ReportController) downloadHandler(c *gin.Context) {
 
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", "transaction.csv"))
 	c.Header("Content-Type", "text/csv")
-	common.SendSingleResponse(c, http.StatusOK, "downloading file..")
-	c.File("/reports/transaction.csv")
+	c.File("public/transaction.csv")
 }
 
 func (r *ReportController) Route() {
