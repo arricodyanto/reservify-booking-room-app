@@ -83,20 +83,20 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
-
+	
 	var response []interface{}
 	var responseUsername []interface{}
-
+	
 	for _, v := range employees {
 		response = append(response, v)
 	}
-
+	
 	username := ctx.Query("username")
-	if username == "" {
+	if username == ""{
 		common.SendPagedResponse(ctx, response, paging, "Ok")
 	}
-	for _, v := range employees {
-		if strings.Contains(strings.ToLower(v.Username), strings.ToLower(username)) {
+	for _, v := range employees{
+		if strings.Contains(strings.ToLower(v.Username), strings.ToLower(username)){
 			responseUsername = append(responseUsername, v)
 		}
 	}
@@ -114,7 +114,7 @@ func (e *EmployeeController) Route() {
 	e.rg.GET(config.EmployeesList, e.ListHandler)
 }
 
-func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup) *EmployeeController {
+func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup) *EmployeeController{
 	return &EmployeeController{
 		employeeUC: employeeUC,
 		rg:         rg,

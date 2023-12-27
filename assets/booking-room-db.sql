@@ -1,5 +1,6 @@
 CREATE DATABASE booking_room_db;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
 
