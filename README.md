@@ -52,6 +52,23 @@ Request :
 
 ```json
 {
+  "name": "string",
+  "username": "string",
+  "password": "string",
+  "role": "string",
+  "division": "string",
+  "position": "string",
+  "contact": "string"
+}
+```
+
+Response :
+
+- Status : 201 Created
+- Body :
+
+```json
+{
   "status": {
     "code": 201,
     "message": "Created"
@@ -68,23 +85,6 @@ Request :
     "createdAt": "2000-01-01T12:00:00Z", (curent time)
     "updatedAt": "2000-01-01T12:00:00Z"  (curent time)
   }
-}
-```
-
-Response :
-
-- Status : 201 Created
-- Body :
-
-```json
-{
-  "name": "string",
-  "username": "string",
-  "password": "string",
-  "role": "string",
-  "division": "string",
-  "position": "string",
-  "contact": "string"
 }
 ```
 
@@ -123,8 +123,8 @@ Response :
             "division": "string",
             "position": "string",
             "contact": "string",
-            "createdAt": "2000-01-01T12:00:00Z", (curent time)
-            "updatedAt": "2000-01-01T12:00:00Z"  (curent time)
+            "createdAt": "2000-01-01T12:00:00Z",
+            "updatedAt": "2000-01-01T12:00:00Z"
         }
     ],
     "paging": {
@@ -137,7 +137,7 @@ Response :
 
 ```
 
-##### Get By Employee Id
+##### Get Employee By Id
 
 Request :
 
@@ -256,7 +256,7 @@ Response :
     "position": "string",
     "contact": "string",
     "createdAt": "2000-01-01T00:00:00Z",
-    "updatedAt": "2000-01-01T00:00:00Z"
+    "updatedAt": "2000-01-01T00:00:00Z" (current time)
   }
 }
 ```
@@ -297,8 +297,8 @@ Response :
         "id": "string",
         "name": "string",
         "quantity": int,
-        "createdAt": "2000-01-01T00:00:00Z",
-        "updatedAt": "2000-01-01T00:00:00Z"
+        "createdAt": "2000-01-01T00:00:00Z", (current time)
+        "updatedAt": "2000-01-01T00:00:00Z" (current time)
     }
 }
 ```
@@ -461,6 +461,408 @@ Response :
         "status": "string",
         "createdAt": "2000-01-01T12:00:00Z", (curent time)
         "updatedAt": "2000-01-01T12:00:00Z"  (curent time)
+    }
+}
+```
+
+###### Get Rooms
+
+Request :
+
+- Method : GET
+- Endpoint : `/rooms`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+- Query Param :
+  - page : int `optional`
+  - size : int `optional`
+
+Response :
+
+- Status : 201 Ok
+- Body :
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data": [
+        {
+            "id": "string",
+            "name": "string",
+            "room_type": "string",
+            "capacity": int,
+            "status": "string",
+            "created_at": "2000-01-01T00:00:00Z",
+            "updated_at": "2000-01-01T00:00:00Z"
+        }
+    ],
+    "paging": {
+        "page": 1, (default value)
+        "rowsPerPage": 5, (default value)
+        "totalRows": int,
+        "totalPages": int
+    }
+}
+```
+
+##### Get Room By Id
+
+Request :
+
+- Method : GET
+- Endpoint : `/rooms/:id`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+- Query Param :
+  - page : int `optional`
+  - size : int `optional`
+
+Response :
+
+- Status : 201 Ok
+- Body :
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data":{
+        "id": "string",
+        "name": "string",
+        "room_type": "string",
+        "capacity": int,
+        "status": "string",
+        "created_at": "2000-01-01T00:00:00Z",
+        "updated_at": "2000-01-01T00:00:00Z"
+    }
+}
+```
+
+##### Update Rooms
+
+Request :
+
+- Method : GET
+- Endpoint : `/rooms`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+```json
+{
+    "id": "string",
+    "name": "string",
+    "room_type": "string",
+    "capacity": int,  (optional)
+    "status": "string"  (optional)
+}
+```
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+    "status": {
+        "code": 201,
+        "message": "Updated"
+    },
+    "data": {
+        "id": "string",
+        "name": "string",
+        "room_type": "string",
+        "capacity": int,
+        "status": "string",
+        "created_at": "2000-01-01T00:00:00Z",
+        "updated_at": "2000-01-01T00:00:00Z" (current time)
+    }
+}
+```
+
+##### Update Rooms Status
+
+Request :
+
+- Method : GET
+- Endpoint : `/rooms`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+```json
+{
+  "id": "string",
+  "status": "string"
+}
+```
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+    "status": {
+        "code": 201,
+        "message": "Updated"
+    },
+    "data": {
+        "id": "string",
+        "name": "string",
+        "room_type": "string",
+        "capacity": int,
+        "status": "string",
+        "created_at": "2000-01-01T00:00:00Z",
+        "updated_at": "2000-01-01T00:00:00Z" (current time)
+    }
+}
+```
+
+#### Room Facility API
+
+##### Create Room Facility
+
+##### Create Employee
+
+Request :
+
+- Method : POST
+- Endpoint : `/roomfacilities`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+- Body :
+
+```json
+{
+    "roomId": "string",
+    "facilityId": "string",
+    "quantity": int,
+    "description": "string"
+}
+```
+
+Response :
+
+- Status : 201 Created
+- Body :
+
+```json
+{
+  "status": {
+      "code": 201,
+      "message": "Created"
+  },
+  "data": {
+      "id": "string",
+      "roomId": "string",
+      "facilityId": "string",
+      "quantity": int,
+      "description": "string",
+      "createdAt": "2000-01-01T12:00:00Z", (curent time)
+      "updatedAt": "2000-01-01T12:00:00Z"  (curent time)
+  }
+}
+```
+
+#### Get Room Facilities
+
+Request :
+
+- Method : GET
+- Endpoint : `/roomfacilities`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Query Param :
+  - page : int `optional`
+  - size : int `optional`
+- Authorization : Bearer Token
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data": [
+        {
+            "id": "string",
+            "roomId": "string",
+            "facilityId": "string",
+            "quantity": 5,
+            "description": "string",
+            "createdAt": "2000-01-01T12:00:00Z",
+            "updatedAt": "2000-01-01T12:00:00Z"
+        }
+    ],
+     "paging": {
+        "page": 1,          (default value)
+        "rowsPerPage": 5,   (default value)
+        "totalRows": int,
+        "totalPages": int
+    }
+}
+```
+
+##### Get Room Facility By Id
+
+Request :
+
+- Method : GET
+- Endpoint : `/roomfacilities/:id`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+  "status": {
+    "code": 200,
+    "message": "Ok"
+  },
+  "data": {
+    "id": "string",
+    "roomId": "string",
+    "facilityId": "string",
+    "quantity": int,
+    "description": "string",
+    "createdAt": "2000-01-01T00:00:00Z",
+    "updatedAt": "2000-01-01T00:00:00Z"
+  }
+}
+```
+
+##### Update Room Facility
+
+Request :
+
+- Method : PUT
+- Endpoint : `/roomfacilities`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+
+```json
+{
+    "id": "string",
+    "quantity": int,
+    "description": "string"
+}
+```
+
+Response :
+
+- Status : 200 OK
+- Body :
+
+```json
+{
+    "status": {
+        "code": 201,
+        "message": "Updated"
+    },
+    "data": {
+        "id": "string",
+        "roomId": "string",
+        "facilityId": "string",
+        "quantity": int,
+        "description": "string",
+        "createdAt": "2000-01-01T00:00:00Z",
+        "updatedAt": "2000-01-01T00:00:00Z" (current time)
+    }
+}
+```
+
+#### Transaction API
+
+##### Create Transaction
+
+Request :
+
+- Method : POST
+- Endpoint : `/transactions`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+- Body :
+
+```json
+{
+        "employeeId": "string",
+        "roomId": "string",
+        "roomFacilities": [
+            {
+                "facilityId": "string",
+                "quantity": int,
+                "description": "string"
+            }
+        ],
+        "description": "string",
+        "startTime": "2000-01-01T00:00:00Z",
+        "endTime": "2000-01-01T01:00:00Z"
+}
+```
+
+Response :
+
+- Status : 201 Created
+- Body :
+
+```json
+{
+    "status": {
+        "code": 201,
+        "message": "Created"
+    },
+    "data": {
+        "id": "string",
+        "employeeId": "string",
+        "roomId": "string",
+        "roomFacilities": [
+            {
+                "id": "string",
+                "facilityId": "string",
+                "quantity": int,
+                "description": "string",
+                "createdAt": "2000-01-01T00:00:00Z", (current time)
+                "updatedAt": "2000-01-01T00:00:00Z" (current time)
+            }
+        ],
+        "description": "string",
+        "status": "string",
+        "startTime": "2000-01-01T00:00:00Z",
+        "endTime": "2000-01-01T01:00:00Z",
+        "createdAt": "2000-01-01T00:00:00Z", (current time)
+        "updatedAt": "2000-01-01T00:00:00Z" (current time)
     }
 }
 ```
