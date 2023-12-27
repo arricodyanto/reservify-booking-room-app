@@ -127,7 +127,7 @@ func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Emp
 		payload.Division,
 		payload.Position,
 		payload.Contact,
-		payload.ID).Scan(&employee.CreatedAt, &employee.CreatedAt)
+		payload.ID).Scan(&employee.CreatedAt, &employee.UpdatedAt)
 
 	if err != nil {
 		log.Println("employeeRepository.QueryRow: ", err.Error())
