@@ -431,3 +431,4 @@ func (suite *RoomControllerTestSuite) TestUpdateStatusHandler_InternalServerErro
 func TestRoomControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(RoomControllerTestSuite))
 }
+

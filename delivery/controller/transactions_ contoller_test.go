@@ -350,3 +350,4 @@ func (suite *TransactionsControllerTestSuite) TestUpdateHandler_NotFound() {
 func TestTransactionControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionsControllerTestSuite))
 }
+

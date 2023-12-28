@@ -116,3 +116,4 @@ func NewRoomFacilityController(transactionUC usecase.RoomFacilityUsecase, rg *gi
 		authMiddleware: authMiddleware,
 	}
 }
+

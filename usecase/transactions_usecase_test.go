@@ -173,3 +173,4 @@ func (suite *TransactionUseCaseTestSuite) TestFindTransactionsByEmployeeId_Succe
 func TestTransactionUseCaseTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionUseCaseTestSuite))
 }
+

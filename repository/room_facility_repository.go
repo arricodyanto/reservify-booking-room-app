@@ -203,3 +203,4 @@ func (t *roomFacilityRepository) UpdateRoomFacility(payload entity.RoomFacility,
 func NewRoomFacilityRepository(db *sql.DB) RoomFacilityRepository {
 	return &roomFacilityRepository{db: db}
 }
+

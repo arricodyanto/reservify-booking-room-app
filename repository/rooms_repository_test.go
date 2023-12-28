@@ -240,3 +240,4 @@ func (suite *RoomRepositoryTestSuite) TestUpdateStatus_Failure() {
 func TestRoomRepositoryTestSuite(t *testing.T) {
 	suite.Run(t, new(RoomRepositoryTestSuite))
 }
+

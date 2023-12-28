@@ -30,3 +30,4 @@ func (a *authUseCase) Login(payload dto.AuthRequestDto) (dto.AuthResponseDto, er
 func NewAuthUseCase(userUC EmployeesUseCase, jwtService service.JwtService) AuthUseCase {
 	return &authUseCase{userUC: userUC, jwtService: jwtService}
 }
+

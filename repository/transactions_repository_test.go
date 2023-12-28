@@ -639,3 +639,4 @@ func TestTransactionsRepositoryTestSuite(t *testing.T) {
 	suite.Run(t, new(TransactionsRepositoryTestSuite))
 }
 	
+

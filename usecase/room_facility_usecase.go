@@ -96,3 +96,4 @@ func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.Room
 func NewRoomFacilityUsecase(repo repository.RoomFacilityRepository) RoomFacilityUsecase {
 	return &roomFacilityUsecase{repo: repo}
 }
+

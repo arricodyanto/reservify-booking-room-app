@@ -268,3 +268,4 @@ func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (en
 func NewTransactionsRepository(db *sql.DB) TransactionsRepository {
 	return &transactionsRepository{db: db}
 }
+

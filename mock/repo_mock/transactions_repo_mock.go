@@ -42,3 +42,4 @@ func (t *TransactionsRepoMock) GetTransactionByEmployeId(EmployeeId string, page
 	args := t.Called(EmployeeId, page, size)
 	return args.Get(0).([]entity.Transaction), args.Get(1).(model.Paging), args.Error(2)
 }
+
