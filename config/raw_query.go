@@ -20,7 +20,6 @@ const (
 	InsertRoomFacility            = `INSERT INTO trx_room_facility (room_id, facility_id, quantity, description, updated_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id, created_at, updated_at`
 	UpdateFacilityQuantity        = `UPDATE facilities SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, created_at, updated_at`
 	SelectQuantityFacility        = `SELECT quantity FROM facilities WHERE id = $1`
-	SelectRoomByID2               = `SELECT status FROM rooms WHERE id = $1`
 	// `SELECT id, date, amount, transaction_type, balance, description, created_at, updated_at FROM expenses WHERE LOWER(transaction_type::text) = LOWER($1)`
 
 	InsertRoom            = `INSERT INTO rooms (name, room_type, capacity, status) VALUES ($1, $2, $3, $4) RETURNING id, created_at, updated_at`
