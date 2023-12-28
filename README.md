@@ -18,7 +18,7 @@ Below are instructions on how to use the API based on the features provided by t
 
 ### API Spec
 
-#### Login API
+#### Login API {Admin, Employee, GA}
 
 Request :
 
@@ -38,7 +38,7 @@ Request :
 
 #### Employee API
 
-##### Create Employee
+##### Create Employee {Admin}
 
 Request :
 
@@ -88,7 +88,7 @@ Response :
 }
 ```
 
-##### Get Employees
+##### Get Employees {Admin, Employee, GA}
 
 Request :
 
@@ -137,7 +137,7 @@ Response :
 
 ```
 
-##### Get Employee By Id
+##### Get Employee By Id {Admin, Employee, GA}
 
 Request :
 
@@ -174,7 +174,7 @@ Response :
 }
 ```
 
-##### Get By Employee Usename
+##### Get By Employee Usename {Admin, Employee, GA}
 
 Request :
 
@@ -211,7 +211,7 @@ Response :
 }
 ```
 
-##### Update Employee
+##### Update Employee {Admin}
 
 Request :
 
@@ -263,7 +263,7 @@ Response :
 
 #### Facility API
 
-##### Create Facility
+##### Create Facility {Admin}
 
 Request :
 
@@ -303,7 +303,7 @@ Response :
 }
 ```
 
-##### Get Facilities
+##### Get Facilities {Admin, Employee, GA}
 
 Request :
 
@@ -345,7 +345,7 @@ Response :
 }
 ```
 
-##### Get Facility By Id
+##### Get Facility By Id {Admin, Employee, GA}
 
 Request :
 
@@ -378,7 +378,7 @@ Response :
 
 ```
 
-##### Update Facility By Id
+##### Update Facility By Id {Admin}
 
 Request :
 
@@ -421,7 +421,7 @@ Response :
 
 #### Room API
 
-##### Create Room
+##### Create Room {Admin}
 
 Request :
 
@@ -510,7 +510,7 @@ Response :
 }
 ```
 
-##### Get Room By Id
+##### Get Room By Id {Admin, Employee, GA}
 
 Request :
 
@@ -547,7 +547,44 @@ Response :
 }
 ```
 
-##### Update Rooms
+##### Get Room {Admin, Employee, GA}
+
+Request :
+
+- Method : GET
+- Endpoint : `/rooms`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+- Query Param :
+  - page : int `optional`
+  - size : int `optional`
+
+Response :
+
+- Status : 201 Ok
+- Body :
+
+```json
+{
+    "status": {
+        "code": 200,
+        "message": "Ok"
+    },
+    "data":{
+        "id": "string",
+        "name": "string",
+        "room_type": "string",
+        "capacity": int,
+        "status": "string",
+        "created_at": "2000-01-01T00:00:00Z",
+        "updated_at": "2000-01-01T00:00:00Z"
+    }
+}
+```
+
+##### Update Rooms {Admin}
 
 Request :
 
@@ -591,7 +628,7 @@ Response :
 }
 ```
 
-##### Update Rooms Status
+##### Update Rooms Status {Admin}
 
 Request :
 
@@ -634,9 +671,7 @@ Response :
 
 #### Room Facility API
 
-##### Create Room Facility
-
-##### Create Employee
+##### Create Room Facility {Admin}
 
 Request :
 
@@ -680,7 +715,7 @@ Response :
 }
 ```
 
-#### Get Room Facilities
+##### Get Room Facilities {Admin}
 
 Request :
 
@@ -725,7 +760,7 @@ Response :
 }
 ```
 
-##### Get Room Facility By Id
+##### Get Room Facility By Id {Admin}
 
 Request :
 
@@ -759,7 +794,7 @@ Response :
 }
 ```
 
-##### Update Room Facility
+##### Update Room Facility {Admin}
 
 Request :
 
@@ -803,7 +838,7 @@ Response :
 
 #### Transaction API
 
-##### Create Transaction
+##### Create Transaction {Admin, Employee}
 
 Request :
 
@@ -867,7 +902,7 @@ Response :
 }
 ```
 
-#### Get Transactions
+##### Get Transactions {Admin, GA}
 
 Request :
 
@@ -921,7 +956,7 @@ Request :
 }
 ```
 
-#### Get Transaction By Id
+##### Get Transaction By Id {Admin, Employee, GA}
 
 Request :
 
@@ -967,7 +1002,7 @@ Response :
 }
 ```
 
-#### Get Transaction By Employee Id
+##### Get Transaction By Employee Id {Admin, Employee, GA}
 
 Request :
 
@@ -1013,7 +1048,7 @@ Response :
 }
 ```
 
-##### Update Room Facility
+##### Update Room Facility {Admin}
 
 Request :
 
@@ -1043,3 +1078,18 @@ Request :
     }
 }
 ```
+
+#### Report API
+
+##### Download Report {Admin}
+
+Request :
+
+- Method : GET
+- Endpoint : `/reports/download`
+- Header :
+  - Content-Type : application/json
+  - Accept : application/json
+- Authorization : Bearer Token
+- Query Param :
+- range : string
