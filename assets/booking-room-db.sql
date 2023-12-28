@@ -6,7 +6,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TYPE role_type AS ENUM ('employee', 'admin', 'ga');
 
 CREATE TABLE employees (
-    id serial PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50),
     username VARCHAR(50) UNIQUE,
     password VARCHAR(200),
