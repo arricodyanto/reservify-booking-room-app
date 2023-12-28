@@ -34,7 +34,7 @@ CREATE TABLE rooms (
     name      VARCHAR(100) NOT NULL,
     room_type VARCHAR(100) NOT NULL,
     capacity  INT NOT NULL,
-    status status_type DEFAULT 'available', -- 'available', 'booked', 'unavailable'
+    status status_type DEFAULT 'available', 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -58,7 +58,7 @@ CREATE TABLE transactions (
     employee_id uuid NOT NULL,
     room_id uuid NOT NULL,
     description TEXT,
-    status transaction_status DEFAULT 'pending', -- 'pending', 'accepted', 'declined'
+    status transaction_status DEFAULT 'pending',
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

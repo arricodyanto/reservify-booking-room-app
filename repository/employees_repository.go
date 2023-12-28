@@ -13,7 +13,7 @@ import (
 type EmployeeRepository interface {
 	GetEmployeesByID(id string) (entity.Employee, error)
 	GetEmployeesByUsername(username string) (entity.Employee, error)
-	GetEmployeesByUsernameForLogin(username ,password string) (entity.Employee, error)
+	GetEmployeesByUsernameForLogin(username, password string) (entity.Employee, error)
 	CreateEmployee(payload entity.Employee) (entity.Employee, error)
 	UpdateEmployee(payload entity.Employee) (entity.Employee, error)
 	List(page, size int) ([]entity.Employee, model.Paging, error)
@@ -75,7 +75,6 @@ func (e *employeeRepository) GetEmployeesByID(id string) (entity.Employee, error
 	return employee, nil
 }
 
-// Awal
 func (e *employeeRepository) GetEmployeesByUsername(username string) (entity.Employee, error) {
 	var employee entity.Employee
 	err := e.db.QueryRow(config.SelectEmployeeByUsername, username).Scan(
@@ -111,13 +110,10 @@ func (e *employeeRepository) GetEmployeesByUsernameForLogin(username, password s
 	return employee, nil
 }
 
-// Akhir
-
 // UpdateEmployee implements EmployeeRepository.
 func (e *employeeRepository) UpdateEmployee(payload entity.Employee) (entity.Employee, error) {
 	var employee entity.Employee
 	payload.UpdatedAt = time.Now()
-
 
 	err := e.db.QueryRow(config.UpdateEmployee,
 		payload.Name,

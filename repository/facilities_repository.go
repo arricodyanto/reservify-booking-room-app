@@ -127,7 +127,6 @@ func (f *fasilitiesRepository) UpdateById(payload entity.Facilities) (entity.Fac
 	fasilities.ID = payload.ID
 	fasilities.Name = payload.Name
 	fasilities.Quantity = payload.Quantity
-	fasilities.UpdatedAt = payload.UpdatedAt
 
 	return fasilities, nil
 }
