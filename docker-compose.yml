@@ -6,13 +6,12 @@ services:
       - .env
     ports:
       - '8080:8080'
+#   db:
+#     image: postgres:alpine
+#     volumes:
+#       - db-volume:/var/lib/postgresql/data
 
-  db:
-    image: postgres:alpine
-    volumes:
-      - db-volume:/var/lib/postgresql/data
-
-volumes:
-  db-volume:
-    external: true
-    name: db-volume
+# volumes:
+#   db-volume:
+#     external: true
+#     name: db-volume
