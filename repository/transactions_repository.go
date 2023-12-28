@@ -196,8 +196,17 @@ func (t *transactionsRepository) GetTransactionByEmployeId(employeeId string,pag
 
 // (create transaction) Request booking rooms (employee & admin) -POST
 func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Transaction, error) {
+	var roomStatus string
+	err := t.db.QueryRow(config.SelectRoomByID2,
+		payload.RoomId).Scan(&roomStatus)
+		if err != nil {
+			return entity.Transaction{}, err
+		}
+	if roomStatus != "available" {
+		return entity.Transaction{}, fmt.Errorf("the room cannot be booked")
+	}
 	var transactions entity.Transaction	
-	err := t.db.QueryRow(config.InsertTransactions,
+	err = t.db.QueryRow(config.InsertTransactions,
 		payload.EmployeeId,
 		payload.RoomId,
 		payload.Description,

@@ -20,6 +20,7 @@ const (
 	InsertRoomFacility            = `INSERT INTO trx_room_facility (room_id, facility_id, quantity, description, updated_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id, created_at, updated_at`
 	UpdateFacilityQuantity        = `UPDATE facilities SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, created_at, updated_at`
 	SelectQuantityFacility        = `SELECT quantity FROM facilities WHERE id = $1`
+	SelectRoomByID2               = `SELECT status FROM rooms WHERE id = $1`
 	// `SELECT id, date, amount, transaction_type, balance, description, created_at, updated_at FROM expenses WHERE LOWER(transaction_type::text) = LOWER($1)`
 
 	InsertRoom            = `INSERT INTO rooms (name, room_type, capacity, status) VALUES ($1, $2, $3, $4) RETURNING id, created_at, updated_at`
@@ -46,7 +47,7 @@ const (
 	SelectEmployeeByUsername = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE username = $1;"
 	SelectEmployeeForLogin   = `SELECT id, name, username, password, role FROM employees WHERE username = $1 AND password = crypt($2, password)`
 	// done
-	
+
 	UpdateEmployee = `UPDATE employees SET name = $1, username = $2, password = crypt($3, password), role = $4, division = $5, position = $6, contact = $7, updated_at = CURRENT_TIMESTAMP WHERE id = $8 RETURNING created_at, updated_at`
 
 	SelectReportList             = `SELECT t.id, t.employee_id, e.name, e.username, e.division, e.position, e.contact, t.room_id, r.name, r.room_type, r.capacity, t.description, t.status, t.start_time, t.end_time, t.created_at, t.updated_at FROM transactions t JOIN employees e on e.id = t.employee_id JOIN rooms r on r.id = t.room_id WHERE t.created_at BETWEEN $1 AND $2 ORDER BY created_at DESC`
