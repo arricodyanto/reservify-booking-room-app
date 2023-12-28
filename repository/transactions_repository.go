@@ -202,8 +202,7 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 		payload.RoomId,
 		payload.Description,
 		payload.StartTime,
-		payload.EndTime,
-		payload.UpdatedAt).Scan(&payload.ID, &payload.Status, &payload.CreatedAt)
+		payload.EndTime).Scan(&payload.ID, &payload.Status, &payload.CreatedAt, &payload.UpdatedAt)
 		if err != nil {
 			return entity.Transaction{}, err
 		}
@@ -219,8 +218,7 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 					payload.RoomId,
 					roomFacility.FacilityId,
 					roomFacility.Quantity,
-					roomFacility.Description,
-					payload.UpdatedAt).Scan(&roomFacility.ID, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+					roomFacility.Description).Scan(&roomFacility.ID, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
 		
 				if err != nil {
 					return entity.Transaction{}, err
@@ -236,9 +234,9 @@ func (t *transactionsRepository) Create(payload entity.Transaction) (entity.Tran
 				}
 		
 				// Kurangi quantity di tabel facilities
-				err = t.db.QueryRow(config.UpdateFacilityQuantity,
+				_, err := t.db.Query(config.UpdateFacilityQuantity,
 					roomFacility.Quantity,
-					roomFacility.FacilityId).Scan(&roomFacility.ID, &roomFacility.CreatedAt, &roomFacility.UpdatedAt)
+					roomFacility.FacilityId)
 				if err != nil {
 					return entity.Transaction{}, err
 				}
@@ -257,8 +255,7 @@ func (t *transactionsRepository) UpdatePemission(payload entity.Transaction) (en
 	
 	err := t.db.QueryRow(config.UpdatePermission,
 		payload.Status,
-		payload.ID,
-		payload.UpdatedAt).Scan(&payload.EmployeeId, &payload.RoomId,&payload.Description,&payload.StartTime, &payload.EndTime, &payload.CreatedAt)
+		payload.ID).Scan(&payload.EmployeeId, &payload.RoomId,&payload.Description,&payload.StartTime, &payload.EndTime, &payload.CreatedAt)
 		if err != nil {
 			log.Println("transactionsRepository.UpdateStatus:", err.Error())
 			return entity.Transaction{}, err

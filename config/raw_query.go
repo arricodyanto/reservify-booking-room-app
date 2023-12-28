@@ -46,5 +46,9 @@ const (
 	SelectEmployeeByUsername = "SELECT id, name, username, password, role, division, position, contact, created_at, updated_at FROM employees WHERE username = $1;"
 	SelectEmployeeForLogin   = `SELECT id, name, username, password, role FROM employees WHERE username = $1 AND password = crypt($2, password)`
 	// done
+	
 	UpdateEmployee = `UPDATE employees SET name = $1, username = $2, password = crypt($3, password), role = $4, division = $5, position = $6, contact = $7, updated_at = CURRENT_TIMESTAMP WHERE id = $8 RETURNING created_at, updated_at`
+
+	SelectReportList             = `SELECT t.id, t.employee_id, e.name, e.username, e.division, e.position, e.contact, t.room_id, r.name, r.room_type, r.capacity, t.description, t.status, t.start_time, t.end_time, t.created_at, t.updated_at FROM transactions t JOIN employees e on e.id = t.employee_id JOIN rooms r on r.id = t.room_id WHERE t.created_at BETWEEN $1 AND $2 ORDER BY created_at DESC`
+	SelectReportFacilityByRoomID = `SELECT t.facility_id, f.name, t.quantity FROM trx_room_facility t JOIN facilities f ON t.facility_id = f.id WHERE t.room_id = $1`
 )

@@ -111,7 +111,7 @@ func (suite *TransactionsRepositoryTestSuite) SetupTest() {
 }
 
 func (suite *TransactionsRepositoryTestSuite) TestUpdatePermission_Success() {
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdatePermission)).WithArgs(expectedTransactions.Status, expectedTransactions.ID, expectedTransactions.UpdatedAt).WillReturnRows(
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdatePermission)).WithArgs(expectedTransactions.Status, expectedTransactions.ID).WillReturnRows(
 	sqlmock.NewRows([]string{"employee_id", "room_id", "description", "start_time", "end_time", "created_at"}).AddRow(
 		expectedTransactions.EmployeeId, 
 		expectedTransactions.RoomId,
@@ -127,7 +127,7 @@ func (suite *TransactionsRepositoryTestSuite) TestUpdatePermission_Success() {
 }
 
 func (suite *TransactionsRepositoryTestSuite) TestUpdatePermission_Fail() {
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdatePermission)).WithArgs(expectedTransactions.Status, expectedTransactions.ID, expectedTransactions.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"employee_id"}).AddRow(expectedTransactions.EmployeeId))
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdatePermission)).WithArgs(expectedTransactions.Status, expectedTransactions.ID).WillReturnRows(sqlmock.NewRows([]string{"employee_id"}).AddRow(expectedTransactions.EmployeeId))
 
 	_, err := suite.repo.UpdatePemission(expectedTransactions)
 	assert.Error(suite.T(), err)
@@ -271,31 +271,30 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_Success() {
         expectedTransactions.RoomId,
         expectedTransactions.Description,
         expectedTransactions.StartTime,
-        expectedTransactions.EndTime,
-		expectedTransactions.UpdatedAt).WillReturnRows(
-        sqlmock.NewRows([]string{"id", "status", "created_at"}).AddRow(
+        expectedTransactions.EndTime).WillReturnRows(
+        sqlmock.NewRows([]string{"id", "status", "created_at", "updated_at"}).AddRow(
 		expectedTransactions.ID, 
 		expectedTransactions.Status,
-		expectedTransactions.CreatedAt))
+		expectedTransactions.CreatedAt,
+		expectedTransactions.UpdatedAt))
 		
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
-		expectedRoomFacilities.RoomId, 
-		expectedRoomFacilities.FacilityId, 
-		expectedRoomFacilities.Quantity,
-		expectedRoomFacilities.Description,
-		expectedRoomFacilities.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
-		expectedRoomFacilities.ID, 
-		expectedRoomFacilities.CreatedAt, 
-		expectedRoomFacilities.UpdatedAt))
-
+		suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
+			expectedRoomFacilities.RoomId, 
+			expectedRoomFacilities.FacilityId, 
+			expectedRoomFacilities.Quantity,
+			expectedRoomFacilities.Description).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
+				expectedRoomFacilities.ID, 
+				expectedRoomFacilities.CreatedAt, 
+				expectedRoomFacilities.UpdatedAt))
+				
+				
 	rows := sqlmock.NewRows([]string{"quantity"}).AddRow(expectedFasilities.Quantity)
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectQuantityFacility)).WithArgs(expectedRoomFacilities.FacilityId).WillReturnRows(rows)
-		
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.UpdateFacilityQuantity)).WithArgs(expectedRoomFacilities.Quantity, expectedFasilities.ID).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(expectedFasilities.ID, expectedFasilities.CreatedAt, expectedFasilities.UpdatedAt))
 
-
-    actual, err := suite.repo.Create(expectedTransactions)
-    assert.Nil(suite.T(), err)
+	suite.mockSql.ExpectQuery(regexp.QuoteMeta(`UPDATE facilities SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`)).WithArgs(expectedRoomFacilities.Quantity, expectedFasilities.ID).RowsWillBeClosed().WillReturnRows()
+	
+	actual, err := suite.repo.Create(expectedTransactions)
+	assert.Nil(suite.T(), err)			
     assert.Equal(suite.T(), expectedTransactions.Description, actual.Description)
 }
 
@@ -305,8 +304,7 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_Fail() {
         expectedTransactions.RoomId,
         expectedTransactions.Description,
         expectedTransactions.StartTime,
-        expectedTransactions.EndTime,
-		expectedTransactions.UpdatedAt).WillReturnError(fmt.Errorf("error"))
+        expectedTransactions.EndTime).WillReturnError(fmt.Errorf("error"))
 
     _, err := suite.repo.Create(expectedTransactions)
     assert.NotNil(suite.T(), err)
@@ -330,12 +328,12 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_RoomFacilitiesNil() {
         expected.RoomId,
         expected.Description,
         expected.StartTime,
-        expected.EndTime,
-		expected.UpdatedAt).WillReturnRows(
-        sqlmock.NewRows([]string{"id", "status", "created_at"}).AddRow(
-			expected.ID, 
-			expected.Status,
-			expected.CreatedAt))
+        expected.EndTime).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "status", "created_at", "updated_at"}).AddRow(
+			expectedTransactions.ID, 
+			expectedTransactions.Status,
+			expectedTransactions.CreatedAt,
+			expectedTransactions.UpdatedAt))
 
 	actual, err := suite.repo.Create(expected)
     assert.Nil(suite.T(), err)
@@ -348,21 +346,22 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_RoomFacilitiesScanFaill
         expectedTransactions.RoomId,
         expectedTransactions.Description,
         expectedTransactions.StartTime,
-        expectedTransactions.EndTime,
-		expectedTransactions.UpdatedAt).WillReturnRows(
-        sqlmock.NewRows([]string{"id", "status", "created_at"}).AddRow(
-		expectedTransactions.ID, 
-		expectedTransactions.Status,
-		expectedTransactions.CreatedAt))
+        expectedTransactions.EndTime).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "status", "created_at", "updated_at"}).AddRow(
+			expectedTransactions.ID, 
+			expectedTransactions.Status,
+			expectedTransactions.CreatedAt,
+			expectedTransactions.UpdatedAt))
 		
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
 		expectedRoomFacilities.RoomId, 
 		expectedRoomFacilities.FacilityId, 
 		expectedRoomFacilities.Quantity, 
 		expectedRoomFacilities.Description, 
-		expectedRoomFacilities.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at"}).AddRow(
-		expectedRoomFacilities.ID, 
-		expectedRoomFacilities.CreatedAt))
+		expectedRoomFacilities.Description).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
+			expectedRoomFacilities.ID, 
+			expectedRoomFacilities.CreatedAt, 
+			expectedRoomFacilities.UpdatedAt))
 		
 	_, err := suite.repo.Create(expectedTransactions)
     assert.NotNil(suite.T(), err)
@@ -375,25 +374,24 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_RoomFacilitiesScanQuant
         expectedTransactions.RoomId,
         expectedTransactions.Description,
         expectedTransactions.StartTime,
-        expectedTransactions.EndTime,
-		expectedTransactions.UpdatedAt).WillReturnRows(
-        sqlmock.NewRows([]string{"id", "status", "created_at"}).AddRow(
+        expectedTransactions.EndTime).WillReturnRows(
+        sqlmock.NewRows([]string{"id", "status", "created_at", "updated_at"}).AddRow(
 		expectedTransactions.ID, 
 		expectedTransactions.Status,
-		expectedTransactions.CreatedAt))
+		expectedTransactions.CreatedAt,
+		expectedTransactions.UpdatedAt))
 		
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
-		expectedRoomFacilities.RoomId, 
-		expectedRoomFacilities.FacilityId, 
-		expectedRoomFacilities.Quantity, 
-		expectedRoomFacilities.Description, 
-		expectedRoomFacilities.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
-		expectedRoomFacilities.ID, 
-		expectedRoomFacilities.CreatedAt,
-		expectedRoomFacilities.UpdatedAt))
+		suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
+			expectedRoomFacilities.RoomId, 
+			expectedRoomFacilities.FacilityId, 
+			expectedRoomFacilities.Quantity,
+			expectedRoomFacilities.Description).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
+				expectedRoomFacilities.ID, 
+				expectedRoomFacilities.CreatedAt, 
+				expectedRoomFacilities.UpdatedAt))
 
-		// rows := sqlmock.NewRows([]string{"quantity"}).AddRow(expectedFasilities.Quantity)
-		suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectQuantityFacility)).WillReturnError(fmt.Errorf("error"))
+		rows := sqlmock.NewRows([]string{"quantity"}).AddRow(expectedFasilities.Quantity)
+		suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectQuantityFacility)).WithArgs("xxx").WillReturnRows(rows)
 		
 	_, err := suite.repo.Create(expectedTransactions)
     assert.NotNil(suite.T(), err)
@@ -415,22 +413,21 @@ func (suite *TransactionsRepositoryTestSuite) TestCreate_RoomFacilitiesQuantityF
         expectedTransactions.RoomId,
         expectedTransactions.Description,
         expectedTransactions.StartTime,
-        expectedTransactions.EndTime,
-		expectedTransactions.UpdatedAt).WillReturnRows(
-        sqlmock.NewRows([]string{"id", "status", "created_at"}).AddRow(
+        expectedTransactions.EndTime).WillReturnRows(
+        sqlmock.NewRows([]string{"id", "status", "created_at", "updated_at"}).AddRow(
 		expectedTransactions.ID, 
 		expectedTransactions.Status,
-		expectedTransactions.CreatedAt))
+		expectedTransactions.CreatedAt,
+		expectedTransactions.UpdatedAt))
 		
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta( config.InsertRoomFacility)).WithArgs(
-		expectedRoomFacilities.RoomId, 
-		expectedRoomFacilities.FacilityId, 
-		expectedRoomFacilities.Quantity, 
-		expectedRoomFacilities.Description, 
-		expectedRoomFacilities.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
-		expectedRoomFacilities.ID, 
-		expectedRoomFacilities.CreatedAt, 
-		expectedRoomFacilities.UpdatedAt))
+		suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
+			expectedRoomFacilities.RoomId, 
+			expectedRoomFacilities.FacilityId, 
+			expectedRoomFacilities.Quantity,
+			expectedRoomFacilities.Description).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
+				expectedRoomFacilities.ID, 
+				expectedRoomFacilities.CreatedAt, 
+				expectedRoomFacilities.UpdatedAt))
 
 	rows := sqlmock.NewRows([]string{"quantity"}).AddRow(expectedF.Quantity)
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectQuantityFacility)).WithArgs(expectedRoomFacilities.FacilityId).WillReturnRows(rows)
@@ -447,22 +444,21 @@ func (suite *TransactionsRepositoryTestSuite) TestCreateUpdateFacilityQuantity_F
         expectedTransactions.RoomId,
         expectedTransactions.Description,
         expectedTransactions.StartTime,
-        expectedTransactions.EndTime,
-		expectedTransactions.UpdatedAt).WillReturnRows(
-        sqlmock.NewRows([]string{"id", "status", "created_at"}).AddRow(
+        expectedTransactions.EndTime).WillReturnRows(
+        sqlmock.NewRows([]string{"id", "status", "created_at", "updated_at"}).AddRow(
 		expectedTransactions.ID, 
 		expectedTransactions.Status,
-		expectedTransactions.CreatedAt))
+		expectedTransactions.CreatedAt,
+		expectedTransactions.UpdatedAt))
 		
-	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
-		expectedRoomFacilities.RoomId, 
-		expectedRoomFacilities.FacilityId, 
-		expectedRoomFacilities.Quantity,
-		expectedRoomFacilities.Description,
-		expectedRoomFacilities.UpdatedAt).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
-		expectedRoomFacilities.ID, 
-		expectedRoomFacilities.CreatedAt, 
-		expectedRoomFacilities.UpdatedAt))
+		suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.InsertRoomFacility)).WithArgs(
+			expectedRoomFacilities.RoomId, 
+			expectedRoomFacilities.FacilityId, 
+			expectedRoomFacilities.Quantity,
+			expectedRoomFacilities.Description).WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at"}).AddRow(
+				expectedRoomFacilities.ID, 
+				expectedRoomFacilities.CreatedAt, 
+				expectedRoomFacilities.UpdatedAt))
 
 	rows := sqlmock.NewRows([]string{"quantity"}).AddRow(expectedFasilities.Quantity)
 	suite.mockSql.ExpectQuery(regexp.QuoteMeta(config.SelectQuantityFacility)).WithArgs(expectedRoomFacilities.FacilityId).WillReturnRows(rows)
