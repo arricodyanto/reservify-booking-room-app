@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"booking-room-app/entity"
-	repo_mock "booking-room-app/mock/repo"
+	"booking-room-app/mock/repo_mock"
 	"booking-room-app/shared/model"
 	"fmt"
 	"testing"

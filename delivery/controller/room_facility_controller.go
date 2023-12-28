@@ -2,25 +2,28 @@ package controller
 
 import (
 	"booking-room-app/config"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
 
 type RoomFacilityController struct {
-	transactionUC usecase.RoomFacilityUsecase
-	rg            *gin.RouterGroup
-	// authMiddleware middleware.AuthMiddleware
+	transactionUC  usecase.RoomFacilityUsecase
+	rg             *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	var payload entity.RoomFacility
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -32,7 +35,7 @@ func (t *RoomFacilityController) createRoomFacilityHandler(ctx *gin.Context) {
 	}
 
 	// check valid uuid
-	_, err := uuid.Parse(payload.RoomId)
+	_, err = uuid.Parse(payload.RoomId)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusBadRequest, "invalid uuid for roomId field")
 		return
@@ -100,16 +103,17 @@ func (t *RoomFacilityController) updateRoomFacilityHandler(ctx *gin.Context) {
 }
 
 func (t *RoomFacilityController) Route() {
-	t.rg.GET(config.RoomFacilityList, t.listRoomFacilityHandler)
-	t.rg.GET(config.RoomFacilityGetById, t.getRoomFacilityById)
-	t.rg.POST(config.RoomFacilityCreate, t.createRoomFacilityHandler)
-	t.rg.PUT(config.RoomFacilityUpdate, t.updateRoomFacilityHandler)
+	t.rg.GET(config.RoomFacilityList, t.authMiddleware.RequireToken("admin"), t.listRoomFacilityHandler)
+	t.rg.GET(config.RoomFacilityGetById, t.authMiddleware.RequireToken("admin"), t.getRoomFacilityById)
+	t.rg.POST(config.RoomFacilityCreate, t.authMiddleware.RequireToken("admin"), t.createRoomFacilityHandler)
+	t.rg.PUT(config.RoomFacilityUpdate, t.authMiddleware.RequireToken("admin"), t.updateRoomFacilityHandler)
 }
 
-func NewRoomFacilityController(transactionUC usecase.RoomFacilityUsecase, rg *gin.RouterGroup) *RoomFacilityController {
+func NewRoomFacilityController(transactionUC usecase.RoomFacilityUsecase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *RoomFacilityController {
 	return &RoomFacilityController{
-		transactionUC: transactionUC,
-		rg:            rg,
-		// authMiddleware: authMiddleware,
+		transactionUC:  transactionUC,
+		rg:             rg,
+		authMiddleware: authMiddleware,
 	}
 }
+

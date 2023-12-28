@@ -2,6 +2,7 @@ package controller
 
 import (
 	"booking-room-app/config"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
@@ -12,8 +13,9 @@ import (
 )
 
 type EmployeeController struct {
-	employeeUC usecase.EmployeesUseCase
-	rg         *gin.RouterGroup
+	employeeUC     usecase.EmployeesUseCase
+	rg             *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (e *EmployeeController) createHandler(ctx *gin.Context) {
@@ -75,14 +77,15 @@ func (e *EmployeeController) putHandler(ctx *gin.Context) {
 
 // pagination
 func (e *EmployeeController) ListHandler(ctx *gin.Context) {
-	page, _ := strconv.Atoi(ctx.Query("page"))
-	size, _ := strconv.Atoi(ctx.Query("size"))
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(ctx.DefaultQuery("size", "5"))
+
 	employees, paging, err := e.employeeUC.ListAll(page, size)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	var response []interface{}
 
 	for _, v := range employees {
@@ -92,18 +95,18 @@ func (e *EmployeeController) ListHandler(ctx *gin.Context) {
 }
 
 // route
-
 func (e *EmployeeController) Route() {
-	e.rg.GET(config.EmployeesGetById, e.getByIdHandler)
-	e.rg.GET(config.EmployeesGetByUsername, e.getByUsernameHandler)
-	e.rg.POST(config.EmployeesCreate, e.createHandler)
-	e.rg.PUT(config.EmployeesUpdate, e.putHandler)
-	e.rg.GET(config.EmployeesList, e.ListHandler)
+	e.rg.GET(config.EmployeesGetById, e.authMiddleware.RequireToken("admin", "employee", "ga"), e.getByIdHandler)
+	e.rg.GET(config.EmployeesGetByUsername, e.authMiddleware.RequireToken("admin", "employee", "ga"), e.getByUsernameHandler)
+	e.rg.POST(config.EmployeesCreate, e.authMiddleware.RequireToken("admin"), e.createHandler)
+	e.rg.PUT(config.EmployeesUpdate, e.authMiddleware.RequireToken("admin"), e.putHandler)
+	e.rg.GET(config.EmployeesList, e.authMiddleware.RequireToken("admin", "employee", "ga"), e.ListHandler)
 }
 
-func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup) *EmployeeController{
+func NewEmployeeController(employeeUC usecase.EmployeesUseCase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *EmployeeController {
 	return &EmployeeController{
-		employeeUC: employeeUC,
-		rg:         rg,
+		employeeUC:     employeeUC,
+		rg:             rg,
+		authMiddleware: authMiddleware,
 	}
 }

@@ -20,17 +20,17 @@ type roomFacilityUsecase struct {
 }
 
 // find all room-facility
-func (rf *roomFacilityUsecase) FindAllRoomFacility(page, size int) ([]entity.RoomFacility, model.Paging, error) {
+func (rf *roomFacilityUsecase) FindAllRoomFacility(page int, size int) ([]entity.RoomFacility, model.Paging, error) {
 	if page == 0 && size == 0 {
 		page = 1
 		size = 5
 	}
-	return rf.repo.List(page, size)
+	return rf.repo.ListRoomFacility(page, size)
 }
 
 // find room-facility by id
 func (rf *roomFacilityUsecase) FindRoomFacilityById(id string) (entity.RoomFacility, int, error) {
-	return rf.repo.GetTransactionById(id)
+	return rf.repo.GetRoomFacilityById(id)
 }
 
 // add room-facility
@@ -46,7 +46,7 @@ func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFac
 	newFacilityQuantity := quantity - payload.Quantity
 
 	// create room-facility transaction
-	transactions, statusCode, err := rf.repo.Create(payload, newFacilityQuantity)
+	transactions, statusCode, err := rf.repo.CreateRoomFacility(payload, newFacilityQuantity)
 	if err != nil {
 		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to save room-facility transations :%v", err.Error())
 	}
@@ -56,7 +56,7 @@ func (rf *roomFacilityUsecase) AddRoomFacilityTransaction(payload entity.RoomFac
 // update room-facility
 func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.RoomFacility) (entity.RoomFacility, int, error) {
 	// get old record
-	oldRoomFacility, statusCode, err := rf.repo.GetTransactionById(payload.ID)
+	oldRoomFacility, statusCode, err := rf.repo.GetRoomFacilityById(payload.ID)
 	if err != nil {
 		return entity.RoomFacility{}, statusCode, fmt.Errorf("oppps, failed to get previous data :%v", err.Error())
 	}
@@ -96,3 +96,4 @@ func (rf *roomFacilityUsecase) UpdateRoomFacilityTransaction(payload entity.Room
 func NewRoomFacilityUsecase(repo repository.RoomFacilityRepository) RoomFacilityUsecase {
 	return &roomFacilityUsecase{repo: repo}
 }
+

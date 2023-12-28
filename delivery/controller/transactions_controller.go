@@ -2,6 +2,7 @@ package controller
 
 import (
 	"booking-room-app/config"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/entity"
 	"booking-room-app/shared/common"
 	"booking-room-app/usecase"
@@ -16,7 +17,7 @@ import (
 type TransactionsController struct {
 	transactionUC usecase.TransactionsUsecase
 	rg *gin.RouterGroup
-	// authMiddleware middleware.AuthMiddleware
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (t *TransactionsController) createHandler(ctx *gin.Context) {
@@ -91,15 +92,28 @@ func (t *TransactionsController) getTransactionById(ctx *gin.Context) {
 }
 
 func (t *TransactionsController) getTransactionByEmployeeId(ctx *gin.Context) {
+	page, _ := strconv.Atoi(ctx.Query("page"))
+	size, _ := strconv.Atoi(ctx.Query("size"))
 	employeeId := ctx.Param("employeeId")
-	transactions, err := t.transactionUC.FindTransactionsByEmployeeId(employeeId)
+
+	if page == 0 || size == 0 {
+		page = 1
+		size = 5
+	}
+
+	transactions, paging, err := t.transactionUC.FindTransactionsByEmployeeId(employeeId, page, size)
 	if err != nil {
 		fmt.Println(employeeId)
 		common.SendErrorResponse(ctx, http.StatusNotFound, "transaction with employee ID "+employeeId+" not found")
 		return
 	}
 
-	common.SendSingleResponse(ctx, transactions, "Ok")
+	var response []interface{}
+	for _, v := range transactions {
+		response = append(response, v)
+	}
+
+	common.SendPagedResponse(ctx, response, paging, "Ok")
 }
 
 func (t *TransactionsController) updateStatusHandler(ctx *gin.Context) {
@@ -118,17 +132,17 @@ func (t *TransactionsController) updateStatusHandler(ctx *gin.Context) {
 }
 
 func (t *TransactionsController) Route() {
-	t.rg.GET(config.TransactionList, t.listHandler)
-	t.rg.GET(config.TransactionGetById, t.getTransactionById)
-	t.rg.GET(config.TransactionGetByEmpId, t.getTransactionByEmployeeId)
-	t.rg.POST(config.TransactionCreate, t.createHandler)
-	t.rg.PUT(config.TransactionUpdatePerm, t.updateStatusHandler)
+	t.rg.GET(config.TransactionList, t.authMiddleware.RequireToken("admin", "ga"), t.listHandler)
+	t.rg.GET(config.TransactionGetById, t.authMiddleware.RequireToken("admin", "ga", "employee"), t.getTransactionById)
+	t.rg.GET(config.TransactionGetByEmpId, t.authMiddleware.RequireToken("admin", "employee"), t.getTransactionByEmployeeId)
+	t.rg.POST(config.TransactionCreate, t.authMiddleware.RequireToken("admin", "employee"), t.createHandler)
+	t.rg.PUT(config.TransactionUpdatePerm, t.authMiddleware.RequireToken("admin", "ga"), t.updateStatusHandler)
 }
 
-func NewTransactionsController(transactionUC usecase.TransactionsUsecase, rg *gin.RouterGroup) *TransactionsController {
+func NewTransactionsController(transactionUC usecase.TransactionsUsecase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware,) *TransactionsController {
 	return &TransactionsController{
 		transactionUC: transactionUC,
 		rg:         rg,
-		// authMiddleware: authMiddleware,
+		authMiddleware: authMiddleware,
 	}
 }

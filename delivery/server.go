@@ -3,7 +3,9 @@ package delivery
 import (
 	"booking-room-app/config"
 	"booking-room-app/delivery/controller"
+	"booking-room-app/delivery/middleware"
 	"booking-room-app/repository"
+	"booking-room-app/shared/service"
 	"booking-room-app/usecase"
 	"database/sql"
 	"fmt"
@@ -15,21 +17,27 @@ import (
 type Server struct {
 	roomUC         usecase.RoomUseCase
 	facilitiesUC   usecase.FacilitiesUseCase
-	employeeUC usecase.EmployeesUseCase
+	employeeUC     usecase.EmployeesUseCase
 	roomFacilityUc usecase.RoomFacilityUsecase
 	transactionsUc usecase.TransactionsUsecase
+	reportUC       usecase.ReportUseCase
+	authUsc        usecase.AuthUseCase
 	engine         *gin.Engine
+	jwtService     service.JwtService
 	host           string
 }
 
 func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
 
-	controller.NewRoomController(s.roomUC, rg).Route()
-	controller.NewFacilitiesController(s.facilitiesUC, rg).Route()
-	controller.NewEmployeeController(s.employeeUC, rg).Route()
-	controller.NewRoomFacilityController(s.roomFacilityUc, rg).Route()
-	controller.NewTransactionsController(s.transactionsUc, rg).Route()
+	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
+	controller.NewRoomController(s.roomUC, authMiddleware, rg).Route()
+	controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
+	controller.NewEmployeeController(s.employeeUC, rg, authMiddleware).Route()
+	controller.NewRoomFacilityController(s.roomFacilityUc, rg, authMiddleware).Route()
+	controller.NewTransactionsController(s.transactionsUc, rg, authMiddleware).Route()
+	controller.NewAuthController(s.authUsc, rg).Route()
+	controller.NewReportController(s.reportUC, rg, authMiddleware).Route()
 }
 
 func (s *Server) Run() {
@@ -54,6 +62,7 @@ func NewServer() *Server {
 	employeeRepo := repository.NewEmployeeRepository(db)
 	roomFacilityRepo := repository.NewRoomFacilityRepository(db)
 	transactionsRepo := repository.NewTransactionsRepository(db)
+	reportRepo := repository.NewReportRepository(db)
 
 	// Inject REPO ke -> useCase
 	roomUC := usecase.NewRoomUseCase(roomRepo)
@@ -61,17 +70,23 @@ func NewServer() *Server {
 	employeeUC := usecase.NewEmployeeUseCase(employeeRepo)
 	roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
 	transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
+	jwtService := service.NewJwtService(cfg.TokenConfig)
+	authUc := usecase.NewAuthUseCase(employeeUC, jwtService)
+	reportUC := usecase.NewReportUseCase(reportRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
 	return &Server{
+		authUsc:        authUc,
 		roomUC:         roomUC,
 		facilitiesUC:   facilitiesUC,
-		employeeUC: employeeUC,
+		employeeUC:     employeeUC,
 		transactionsUc: transactionsUc,
 		roomFacilityUc: roomFacilityUc,
+		reportUC:       reportUC,
 		engine:         engine,
+		jwtService:     jwtService,
 		host:           host,
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -29,7 +29,6 @@ type TokenConfig struct {
 	JwtSigningMethod *jwt.SigningMethodHMAC
 	JwtExpiresTime   time.Duration
 }
-
 type Config struct {
 	DbConfig
 	ApiConfig

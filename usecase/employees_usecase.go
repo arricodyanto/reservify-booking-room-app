@@ -11,6 +11,7 @@ import (
 type EmployeesUseCase interface {
 	FindEmployeesByID(id string) (entity.Employee, error)
 	FindEmployeesByUsername(username string) (entity.Employee, error)
+	FindEmployeForLogin(username ,password string) (entity.Employee, error)
 	RegisterNewEmployee(payload entity.Employee) (entity.Employee, error)
 	UpdateEmployee(payload entity.Employee) (entity.Employee, error)
 	ListAll(page, size int) ([]entity.Employee, model.Paging, error)
@@ -23,17 +24,24 @@ type employeesUseCase struct {
 // FindEmployeesByUsername implements EmployeesUseCase.
 func (e *employeesUseCase) FindEmployeesByUsername(username string) (entity.Employee, error) {
 	if username == "" {
-		return entity.Employee{}, errors.New("id harus diisi")
+		return entity.Employee{}, errors.New("username harus diisi")
 	}
 	return e.repo.GetEmployeesByUsername(username)
 }
 
+func (e *employeesUseCase)FindEmployeForLogin(username, password string) (entity.Employee, error){
+	if username == "" {
+		return entity.Employee{}, errors.New("username harus diisi")
+	}
+	return e.repo.GetEmployeesByUsernameForLogin(username, password)
+}
+
 // ListAll implements EmployeesUseCase.
 func (e *employeesUseCase) ListAll(page int, size int) ([]entity.Employee, model.Paging, error) {
-	if page == 0 && size == 0 {
-		page = 1
-		size = 5
-	}
+	// if page == 0 && size == 0 {
+	// 	page = 1
+	// 	size = 5
+	// }
 	return e.repo.List(page, size)
 }
 
